@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * Default Layout
+ *  
+ * @author
+ * @version
+ */
+
+echo '<?xml version="1.0" encoding="UTF-8" ?>';
+echo $this->doctype();
+?>
+
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<?php 
+		echo $this->headTitle();
+	    echo $this->headScript();
+	    echo $this->headStyle();
+	    ?>
+	</head>
+	
+	<body>
+		<h1><?php echo $this->placeholder('title') ?></h1>
+		<?php echo $this->layout()->content ?>
+
+		<br />
+		<br />
+	</body>
+
+</html>
