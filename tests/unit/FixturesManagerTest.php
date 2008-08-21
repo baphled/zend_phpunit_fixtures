@@ -326,8 +326,8 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testCheckDataTypeCanBuildOurCreateTableQuery() {
     	$query = $this->_getGenericQuery();
     	$dataType = $this->_getTestTableStructure();
-    		$result = $this->_fixturesManager->_convertDataType($dataType,'blah');
-    		$this->assertEquals($query,$result);
+    	$result = $this->_fixturesManager->_convertDataType($dataType,'blah');
+    	$this->assertEquals($query,$result);
     }
     
     /**
@@ -348,7 +348,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeThrowsExceptionIfParamIsInvalid() {
     	$dataType = $this->_getIllegalDataTypeTestTableStructure();
     	$this->setExpectedException('ErrorException');
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$this->_fixturesManager->_convertDataType($dataType);
     }
     
 	/**
@@ -369,6 +369,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testConvertDatasQueryCanActuallyCreateTable() {
+		$result = '';
 		$this->assertTrue($result);
 	}
 }
