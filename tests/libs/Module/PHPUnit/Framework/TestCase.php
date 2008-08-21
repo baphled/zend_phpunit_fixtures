@@ -31,7 +31,7 @@
  *       all models need both or possibly either.
  *
  */
-require_once './TestConfigSettings.php';
+require_once 'TestConfigSettings.php';
 
 class Module_PHPUnit_Framework_TestCase  extends PHPUnit_Framework_TestCase {
     

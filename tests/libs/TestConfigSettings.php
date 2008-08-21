@@ -23,7 +23,7 @@ class TestConfigSettings {
 	
     static function setUpConfig($env = 'development') {
         $root = realpath(dirname(__FILE__) . '/../');
-        $configFile = $root .'/configs/settings.ini';               // smell?
+        $configFile = $root .'/../configs/settings.ini';               // smell?
         self::$_config = new Zend_Config_Ini( $configFile, $env);
         Zend_Registry::set('config',self::$_config);
     }
