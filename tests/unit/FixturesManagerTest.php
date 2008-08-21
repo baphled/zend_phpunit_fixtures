@@ -357,7 +357,8 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testTurnFixtureFieldsArrayIntoString() {
 		$query = 'CREATE TABLE nufix (id INT(10) PRIMARY KEY AUTO_INCREMENT, parent_id INT(10) NULL, model VARCHAR(255) DEFAULT "", alias VARCHAR(255) DEFAULT "", lft INT(10) NULL, rght INT(10) NULL);';
-		$result = $this->_fixturesManager->_convertDataType($this->_getTestTableStructure(),'nufix');		
+		$result = $this->_fixturesManager->_convertDataType($this->_getTestTableStructure(),'nufix');
+		$this->assertEquals($query,$result);		
 	}
 	
 	/**
