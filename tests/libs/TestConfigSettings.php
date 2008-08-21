@@ -10,6 +10,7 @@
  * @copyright 2008
  * @package IntraBetxTestSuite
  *
+ * 
  * Date:19/08/08
  * Made getParam private, seeing as it should
  * only be used internally.
