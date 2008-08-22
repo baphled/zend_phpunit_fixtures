@@ -13,7 +13,7 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/features/models/' . PATH_SEPARATOR . get_include_path () );
+set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/features/models/' . PATH_SEPARATOR . get_include_path () );
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
@@ -30,9 +30,9 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 				'title' 	  => 'new feature',
 				'description' => 'To test a new feature'
 			),
-			'anotherFeature' => array(
-				'title' 	  => 'sum feature',
-				'description' => 'new feature'
+			'anotherFeature'  => array(
+				'title' 	  => 'second feature',
+				'description' => 'second feature'
 			),
 			'viewableFeature' => array(
 				'id'		  => 1,
@@ -100,6 +100,17 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Now we can check that featureExists returns true if the feature
+	 * has already been entered.
+	 */
+	function testFeatureExistsReturnsTrueIfFeatureAlreadyExists() {
+		$this->_feature->addNewFeature($this->_fixtures['anotherFeature']);
+		$feature = $this->_fixtures['anotherFeature'];
+		$result = $this->_feature->_featureExists($feature);
+		$this->assertTrue($result);
+	}
+	
+	/**
 	 * list the features
 	 * if empty, should throw an exception
 	 */
@@ -130,4 +141,14 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$result = $this->_feature->viewFeatureById(1);
 		$this->assertEquals($result, $expected);
 	}
+	
+	/*
+	 * test if feature can be updated
+	 */
+	function testEditFeature(){
+		$data = $this->_fixtures['anotherFeature'];
+		$this->_feature->addNewFeature($data);
+
+	}
+
 }
