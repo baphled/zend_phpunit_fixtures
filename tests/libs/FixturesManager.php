@@ -39,8 +39,8 @@ class FixturesManager {
         $data = '';
         if($key === 'length') {
             $data .= '(' .$value .')';
-            return $data;
         }
+        return $data;
     }
     
     /**
@@ -52,7 +52,7 @@ class FixturesManager {
      * @return  String  $data
      * 
      */
-    function _checkDataTypeValueNull($key,$value) {
+    private function _checkDataTypeValueNull($key,$value) {
     	$data = '';
         if($key === 'null') {
             if(TRUE === $value) {
@@ -61,8 +61,8 @@ class FixturesManager {
             elseif(FALSE === $value) {
                 $data .= ' NOT NULL';
             }
-            return $data;
         }
+        return $data;
     }
     
 	/**
@@ -84,8 +84,14 @@ class FixturesManager {
             if($value === 'integer') {
                 $typeSegment = ' INT';
             }
-            return $typeSegment;
+            if($value === 'date') {
+            	$typeSegment = ' DATE';
+            }
+            if($value === 'datetime') {
+            	$typeSegment = ' DATETIME';
+            }
         }
+        return $typeSegment;
     }
     
 	
@@ -114,22 +120,26 @@ class FixturesManager {
 	 * @todo Function is way to long need to refactor
 	 * 
 	 */
-     function _convertDataType($dataType,$tablename='default') {
+     function _convertDataType($dataTypeInfo,$tablename='default') {
      	if(NULL === $tablename) {
      		throw new ErrorException('Needs a tablename to create a table.');
      	}
-		if(!is_array($dataType)) {
+		if(!is_array($dataTypeInfo)) {
 			throw new ErrorException('DataType is invalid.');
 		}
         else {
           $stmt = 'CREATE TABLE ' .$tablename .' (';
         }
-	   foreach($dataType as $field=>$values) {
-            $data = '';
-            if(!isset($values['length'])) {
+        $query = '';
+	   foreach($dataTypeInfo as $field=>$dataType) {
+            if(!isset($dataType['length']) 
+                && $dataType['type'] !== 'date'
+                && $dataType['type'] !== 'datetime'
+            ) {
             	throw new ErrorException('Datatype must have a length');
             }
-            foreach ($values as $key=>$value) {
+            $data = '';
+            foreach ($dataType as $key=>$value) {
             	$data .= $this->_checkDataTypeValues($key,$value);
             	$data .= $this->_checkDataTypeValuesLength($key,$value);
             	$data .= $this->_checkDataTypeValueNull($key,$value);
@@ -143,5 +153,20 @@ class FixturesManager {
         // remove the trailing ', ' and replace with ');'
         $stmt .= eregi_replace(', $',');',$query);
         return $stmt;
+	}
+	
+	/**
+	 * Builds our fixtures DB table
+	 *
+	 * @param Array $dataType
+	 * @param String $tableName
+	 * @return Bool
+	 */
+	public function buildFixtureTable($dataType,$tableName) {
+		if(empty($tableName)) {
+			throw new ErrorException('Table must have a name');
+		}
+		$query = $this->_convertDataType($dataType,$tableName);
+		return true;
 	}
 }

@@ -10,6 +10,10 @@
  * @copyright 2008
  * @package IntraBetxTestSuite
  *
+ * Date:21/08/08
+ * Fixed configFile & renamed to configPath, was not
+ * working properly due to an silly oversight, will
+ * now build properly and retrieve settings.ini
  * 
  * Date:19/08/08
  * Made getParam private, seeing as it should
@@ -20,16 +24,29 @@ Zend_Loader::registerAutoload();
 
 class TestConfigSettings {
 	
+	/**
+	 * Used to store our configurations
+	 *
+	 * @var Zend_Config
+	 */
 	static protected $_config;
 	
+	/**
+	 * Sets up our configurations, retrieves settings
+	 * and registers them to zend.
+	 *
+	 * @param String $env  The settings environment 
+	 *                      we want to configure.
+	 * 
+	 */
     static function setUpConfig($env = 'development') {
-        $root = realpath(dirname(__FILE__) . '/../../configs/');
-        $configFile = $root .'/settings.ini';               // smell?
-        self::$_config = new Zend_Config_Ini( $configFile, $env);
+        $root = realpath(dirname(__FILE__) . '/../../configs/'); // smelly, could be anything
+        $configPath = $root .'/settings.ini';          
+        self::$_config = new Zend_Config_Ini( $configPath, $env);
         Zend_Registry::set('config',self::$_config);
     }
     
-    private static function _getDBParams($config) {
+    static function getDBParams($config) {
         $params = array( 'host'     => $config->database->hostname,
                  'username' => $config->database->username,
                  'password' => $config->database->password,
@@ -42,7 +59,7 @@ class TestConfigSettings {
     	if(null === $config->type ) {
     		$adapter = 'PDO_MYSQL';
     	}
-        $params = self::_getDBParams($config);
+        $params = self::getDBParams($config);
         $db = Zend_Db::factory($adapter, $params);
         $db->setFetchMode(Zend_Db::FETCH_OBJ);
         Zend_Db_Table::setDefaultAdapter($db);
