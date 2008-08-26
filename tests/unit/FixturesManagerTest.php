@@ -28,7 +28,7 @@ set_include_path ( '.' . PATH_SEPARATOR .realpath(dirname(__FILE__) .'/../libs/'
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
-require_once 'FixturesManager.php';
+require_once '../libs/FixturesManager.php';
 
 class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	
@@ -51,6 +51,38 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		return array('id' => array('type' => 'integer', 'length' => 11, 'key' => 'primary'));
 	}
 	
+	private function _getAppleFixtureDataStructure() {
+	   $fixtures = array(
+	   array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
+       array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
+       array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
+       array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
+       array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
+       array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
+       array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21')
+       );
+       return $fixtures;
+	}
+	
+	private function _getTestAppleTableStructure() {
+        $fields = array(
+            'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
+            'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
+            'color' => array('type' => 'string', 'length' => 255, 'default' => ''),
+            'name' => array('type' => 'string', 'length' => 255, 'default' => ''),
+            'created' => array('type' => 'datetime', 'null' => FALSE),
+            'date' => array('type' => 'date', 'null' => FALSE),
+            'modified' => array('type' => 'datetime', 'null' => FALSE)
+        );
+        return $fields;
+    }
+    private function _getDateDataType() {
+        return array('date' => array('type' => 'date', 'null' => FALSE));
+    }
+    
+    private function _getDateTimeDataType() {
+    	return array('created' => array('type' => 'datetime', 'null' => FALSE));
+    }
 	private function _getTestTableStructure() {
         $fields = array(
             'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
@@ -147,7 +179,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testFieldsArrayStoresCorrectDataType() {
 		$fields = $this->_getIllegalDataTypeTestTableStructure();
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_convertDataType($fields);
+		$this->_fixturesManager->convertDataType($fields);
 	}
 	
 	/**
@@ -158,7 +190,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testDoesBuildQueryReturnAString() {
 		$fields = $this->_getTestTableStructure();
-		$result = $this->_fixturesManager->_convertDataType($fields,'blah');
+		$result = $this->_fixturesManager->convertDataType($fields,'blah');
 		$this->assertType('string',$result); 
 	}
 	
@@ -168,7 +200,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testDoesConstructQueryReturnStringContainingCreateTable() {
 		$fields = $this->_getTestTableStructure();
-		$result = $this->_fixturesManager->_convertDataType($fields,'blah');
+		$result = $this->_fixturesManager->convertDataType($fields,'blah');
 		$this->assertContains('CREATE TABLE', $result);
 	}
 	
@@ -178,7 +210,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testDoesConstructQueryReturnContainTheCorrectTableName() {
 		$fields = $this->_getTestTableStructure();
-		$result = $this->_fixturesManager->_convertDataType($fields,'fakeTable');
+		$result = $this->_fixturesManager->convertDataType($fields,'fakeTable');
 		$this->assertContains('fakeTable',$result);
 	}
 	
@@ -189,7 +221,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testStringDataTypesConvertedToVarchar() {
 		$dataType = $this->_getStringDataType();
-		$result = $this->_fixturesManager->_convertDataType($dataType);
+		$result = $this->_fixturesManager->convertDataType($dataType);
 		$this->assertContains('model',$result);
 	}
 	
@@ -200,7 +232,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testConvertDataTypeThrowsExceptionOnInvalidDataType() {
 		$dataType ='not a datatype';
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_convertDataType($dataType);	
+		$this->_fixturesManager->convertDataType($dataType);	
 	}
 	
     /**
@@ -211,7 +243,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypesReturnsValueWithFieldName() {
     	$name = 'model';
     	$fields = $this->_getStringDataType();
-    	$result = $this->_fixturesManager->_convertDataType($fields);
+    	$result = $this->_fixturesManager->convertDataType($fields);
         $this->assertContains($name,$result);
     }
     
@@ -222,7 +254,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeConvertsStringToVarChar() {
     	$dataType = $this->_getStringDataType();
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('VARCHAR(255)',$result);
     }
     
@@ -233,7 +265,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeHandlesDefaultValues() {
     	$dataType = $this->_getStringDataType();
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('DEFAULT ""',$result);
     }
     
@@ -243,7 +275,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeHandlesAbleToSetDefaultDataOnStrings() {
     	$dataType = $this->_getStringDataTypeWithDefault();
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('DEFAULT "sum text"',$result);
     	//echo $result;
     }
@@ -255,7 +287,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testWeGetTheQuerySegmentWeExpect() {
     	$query = 'model VARCHAR(255) DEFAULT "sum text"';
     	$dataType = $this->_getStringDataTypeWithDefault();
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
     
@@ -268,7 +300,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeConvertToIntegerToInt() {
     	$dataType = $this->_getIntegerDataType();
     	$query = 'parent_id INT(10)';
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
     
@@ -279,7 +311,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeParseNullsInIntegerDataTypes() {
     	$query = 'parent_id INT(10) NULL';
     	$dataType = $this->_getIntegerDataType();
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
     
@@ -289,7 +321,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeParseNotNullInIntegerDataTypes() {
     	$query = 'parent_id INT(10) NOT NULL';
     	$dataType = $this->_getIntegerDataTypeWithNotNull();
-        $result = $this->_fixturesManager->_convertDataType($dataType);
+        $result = $this->_fixturesManager->convertDataType($dataType);
         $this->assertContains($query,$result);
     }
     
@@ -301,7 +333,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeCanHandleCustomVarcharLengths() {
     	$query = 'model VARCHAR(23) DEFAULT "none"';
     	$dataType = array('model' => array('type' => 'string', 'length' =>23, 'default' => 'none'));
-    	$result = $this->_fixturesManager->_convertDataType($dataType);
+    	$result = $this->_fixturesManager->convertDataType($dataType);
         $this->assertContains($query,$result);
     }
     
@@ -312,9 +344,72 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeCanParsePrimaryKeys() {
     	$query = 'id INT(11) PRIMARY KEY AUTO_INCREMENT';
         $dataType = $this->_getPrimaryKeyDataType();
-        $result = $this->_fixturesManager->_convertDataType($dataType);
+        $result = $this->_fixturesManager->convertDataType($dataType);
         $this->assertContains($query,$result);
     }
+    
+    /**
+     * Can we parse a date type?
+     * 
+     */
+    function testConvertDataTypeCanParseDate() {
+    	$query = 'DATE';
+    	$dataType = $this->_getDateDataType();
+    	$result = $this->_fixturesManager->convertDataType($dataType);
+    	$this->assertContains($query,$result);
+    }
+    
+    /**
+     * Make sure that our date datatype is created as a proper
+     * SQL query.
+     */
+    function testConvertDataTypeReturnsExpectedQueryFromParsedDate() {
+    	$query = 'CREATE TABLE pool (date DATE NOT NULL);';
+    	$table = 'pool';
+    	$dataType = $this->_getDateDataType();
+    	$result = $this->_fixturesManager->convertDataType($dataType,$table);
+    	$this->assertEquals($query,$result);
+    }
+    
+    /**
+     * Next we need to make sure we can parse datetime datatypes
+     * 
+     */
+    function testConvertDataTypeCanParseDateTimeDataTypes() {
+    	$query = 'CREATE TABLE snooker (created DATETIME NOT NULL);';
+    	$table = 'snooker';
+    	$dataType = $this->_getDateTimeDataType();
+    	$result = $this->_fixturesManager->convertDataType($dataType,$table);
+    	$this->assertEquals($query,$result);
+    }
+    
+    /**
+     * Now we have a method of parsing date & datetime,
+     * we can now check that we can parse our mixed datatype array,
+     * which will be used to further test our later units.
+     * 
+     */
+    function testConvertDataTypeReturnsExpectedQueryString() {
+    	$query = 'CREATE TABLE apples (id INT(10) PRIMARY KEY AUTO_INCREMENT, apple_id INT(10) NULL, color VARCHAR(255) DEFAULT "", name VARCHAR(255) DEFAULT "", created DATETIME NOT NULL, date DATE NOT NULL, modified DATETIME NOT NULL);';
+    	$table = 'apples';
+    	$dataType = $this->_getTestAppleTableStructure();
+    	$result = $this->_fixturesManager->convertDataType($dataType,$table);
+    	$this->assertEquals($query,$result);
+    }
+    
+    /**
+     * Though we can parse our date & datetime datatypes, we will check that
+     * our query is built as expected.
+     * 
+     */
+    function testConvertDataTypeParsesDateAndSetsDefaultToCurrentDate() {
+    	$query = 'CREATE TABLE side (id INT(10) PRIMARY KEY AUTO_INCREMENT, apple_id INT(10) NULL, color VARCHAR(255) DEFAULT "", name VARCHAR(255) DEFAULT "", created DATETIME NOT NULL, date DATE NOT NULL, modified DATETIME NOT NULL);';
+    	$table = 'side';
+    	$dataType = $this->_getTestAppleTableStructure();
+    	$result = $this->_fixturesManager->convertDataType($dataType,$table);
+    	$this->assertContains($query,$result);
+    }
+    
     
     /**
      * Okay now we are pretty comfortable with with our
@@ -326,7 +421,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testCheckDataTypeCanBuildOurCreateTableQuery() {
     	$query = $this->_getGenericQuery();
     	$dataType = $this->_getTestTableStructure();
-    	$result = $this->_fixturesManager->_convertDataType($dataType,'blah');
+    	$result = $this->_fixturesManager->convertDataType($dataType,'blah');
     	$this->assertEquals($query,$result);
     }
     
@@ -337,7 +432,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeNowTakesTableNameAsParam() {
     	$query = $this->_getGenericQuery();
     	$dataType = $this->_getTestTableStructure();
-    	$result = $this->_fixturesManager->_convertDataType($dataType,'blah');
+    	$result = $this->_fixturesManager->convertDataType($dataType,'blah');
     	$this->assertEquals($query,$result);
     }
     /**
@@ -348,7 +443,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     function testConvertDataTypeThrowsExceptionIfParamIsInvalid() {
     	$dataType = $this->_getIllegalDataTypeTestTableStructure();
     	$this->setExpectedException('ErrorException');
-    	$this->_fixturesManager->_convertDataType($dataType);
+    	$this->_fixturesManager->convertDataType($dataType);
     }
     
 	/**
@@ -357,7 +452,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testTurnFixtureFieldsArrayIntoString() {
 		$query = 'CREATE TABLE nufix (id INT(10) PRIMARY KEY AUTO_INCREMENT, parent_id INT(10) NULL, model VARCHAR(255) DEFAULT "", alias VARCHAR(255) DEFAULT "", lft INT(10) NULL, rght INT(10) NULL);';
-		$result = $this->_fixturesManager->_convertDataType($this->_getTestTableStructure(),'nufix');
+		$result = $this->_fixturesManager->convertDataType($this->_getTestTableStructure(),'nufix');
 		$this->assertEquals($query,$result);		
 	}
 	
@@ -369,8 +464,111 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * created table.
 	 * 
 	 */
-	function testConvertDatasQueryCanActuallyCreateTable() {
-		$result = '';
+	function testBuildFixtureTableReturnsTrue() {
+		$dataType = $this->_getTestTableStructure();
+		$result = $this->_fixturesManager->buildFixtureTable($dataType,'info');
 		$this->assertTrue($result);
+	}
+	
+	/**
+	 * If table name is empty we need to throw an exception.
+	 *
+	 */
+	function testBuildFixtureTableThrowsExceptionOnEmptyTableName() {
+		$tableName = '';
+		$dataType = $this->_getTestTableStructure();
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->buildFixtureTable($dataType,$tableName);
+	}
+	
+	/**
+	 * What happens if we try to build a table using an invalid query.
+	 * convertDataTypeShouldThrowAnError.
+	 * 
+	 */
+	function testBuildFixtureTableShouldReturnFalseIfDataTypeInvalidLength() {
+		$tableName = 'blah';
+		$dataType = $this->_getIllegalDataTypeTestTableStructure();
+		$result = $this->_fixturesManager->buildFixtureTable($dataType,$tableName);
+		$this->assertFalse($result);
+	}
+	
+	/**
+	 * If we successfully convert the datatype into an query
+	 * we return true, else we return false.
+	 * 
+	 */
+	function testBuildFixtureTableShouldReturnFalseOnFailure() {
+		$tableName = 'tennis';
+		$dataType = $this->_getAppleFixtureDataStructure();   // invalid fixture structure.
+		$result = $this->_fixturesManager->buildFixtureTable($dataType,$tableName);
+		$this->assertFalse($result);
+	}
+	
+	/**
+	 * What does Zend_Db_Table::query return
+	 * 
+	 */
+	function testZendDbTableQueryReturnsWhatOnFailure() {
+		
+	}
+	
+	/**
+	 * Ok, now we will need a DB creation method to actually make our
+	 * table for us. This method will return false on failure & true
+	 * on success.
+	 * 
+	 */
+	function testMakeDBTableReturnsFalseOnFailure() {
+		$query = 'CREATE TABLE SFSFSDsdsd;';
+		$this->setExpectedException('ErrorException');
+		$result = $this->_fixturesManager->_makeDBTable($query);
+	}
+	
+	/**
+	 * Here we need to make sure that anything without CREATE TABLE
+	 * is dismissed and thrown as an exception
+	 */
+	function testMakeDBTableThrowsExceptionIfPassedANonCreateTableQuery() {
+		$query = 'sfdsfa';
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->_makeDBTable($query);
+		
+	}
+	
+	/**
+	 * We now need to see what happens when we pass a legal query
+	 * 
+	 */
+	function testMakeDBTableReturnsTrueOnSuccess() {
+		$query = $this->_getGenericQuery();
+		$result = $this->_fixturesManager->_makeDBTable($query);
+		$this->assertTrue($result);
+	}
+	
+	/**
+	 * Now we need to be able to insert data into our dynamic tables.
+	 *  
+	 */
+	
+	/**
+	 * Our buildInsertQuery method needs to contain INSERT INTO
+	 * 
+	 */
+	function testBuildInsertQueryReturnsInsertInto() {
+		$insertData = $this->_getAppleFixtureDataStructure();
+		$result = $this->_fixturesManager->_buildInsertQuery($insertData);
+		$this->assertContains('INSERT INTO',$result);
+	}
+	
+	/**
+	 * What happens when we try to insert an invalid insert query
+	 * 
+	 */
+	function testQueryStatement() {
+	   $db = Zend_Registry::get('db');
+	   $query = 'sfsadf';
+	   $this->setExpectedException('PDOException');
+	   new Zend_Db_Statement_Mysqli($db,$query);
 	}
 }

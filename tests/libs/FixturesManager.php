@@ -30,9 +30,20 @@
  * 
  */
 
+require_once 'Zend/Loader.php';
+Zend_Loader::registerAutoload ();
+
 class FixturesManager {
 
-	public function __construct() {
+    /**
+     * Zend DB, used to connect to our DB
+    */
+    private $_db;
+    
+	public function __construct($env='development') {
+		TestConfigSettings::setUpConfig($env);
+		TestConfigSettings::setUpDBAdapter();
+		$this->_db = Zend_Registry::get('db');
 	}
     
     private function _checkDataTypeValuesLength($key,$value) {
@@ -109,6 +120,27 @@ class FixturesManager {
         }
     }
     
+    function _buildInsertQuery($insertData) {
+    	return 'INSERT INTO';
+    }
+    
+    function _makeDBTable($query) {
+    	if(!eregi(' \(',$query)) {
+    		throw new ErrorException('Illegal query.');
+    	}
+    	else {
+    		try {
+    		echo $query;
+	    		$stmt = new Zend_Db_Statement_Mysqli($this->_db,$query);
+	    		$stmt->execute();
+	    		return true;
+    		}
+    		catch(PDOException $e) {
+    			throw new PDOException($e->getMessage());
+    		}
+    	}
+    	return false;
+    }
 	/**
 	 * Converts a Datatype array into SQL.
 	 * We only are only creating these one at a time
@@ -120,7 +152,7 @@ class FixturesManager {
 	 * @todo Function is way to long need to refactor
 	 * 
 	 */
-     function _convertDataType($dataTypeInfo,$tablename='default') {
+     public function convertDataType($dataTypeInfo,$tablename='default') {
      	if(NULL === $tablename) {
      		throw new ErrorException('Needs a tablename to create a table.');
      	}
@@ -163,10 +195,16 @@ class FixturesManager {
 	 * @return Bool
 	 */
 	public function buildFixtureTable($dataType,$tableName) {
+		$query = '';
 		if(empty($tableName)) {
 			throw new ErrorException('Table must have a name');
 		}
-		$query = $this->_convertDataType($dataType,$tableName);
-		return true;
+		try {
+		  $query = $this->convertDataType($dataType,$tableName);
+		}
+		catch(ErrorException $e) {
+			return false;
+		}
+		 return true;
 	}
 }

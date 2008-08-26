@@ -29,6 +29,7 @@ class modelTest extends Module_PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$this->_setUpConfig ();
 		parent::setUp ();
+		$this->_model = new Model();
 	}
 	
 	public function tearDown() {
@@ -38,5 +39,6 @@ class modelTest extends Module_PHPUnit_Framework_TestCase {
 	
 	function testAssert() {
 		$this->assertEquals(1,1);
+		$this->assertNotNull($this->_model);
 	}
 }

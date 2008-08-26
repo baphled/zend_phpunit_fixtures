@@ -71,7 +71,7 @@ class BootstrapInitialize extends Zend_Controller_Plugin_Abstract
         $this->initControllers();
     }
     
-    protected function initView() {
+    private function initView() {
     	// bootstrap layouts
     	$layoutPath = $this->_root .'/application/default/layouts';
         Zend_Layout::startMvc(array(
@@ -80,13 +80,13 @@ class BootstrapInitialize extends Zend_Controller_Plugin_Abstract
         ));
     }
     
-    protected function _setEnv( $env ) {
+    private function _setEnv( $env ) {
     	$configFile = $this->_root .'configs/settings.ini';
     	$this->_config = new Zend_Config_Ini( $configFile, $env);
         Zend_Registry::set('config',$this->_config);
     }
     
-    protected function initDb() {
+    private function initDb() {
     	$config = $this->_config;
     	$params = array( 'host'     => $config->database->hostname,
                         'username' => $config->database->username,
@@ -97,7 +97,7 @@ class BootstrapInitialize extends Zend_Controller_Plugin_Abstract
         Zend_Db_Table::setDefaultAdapter($db);
     }
 
-    public function initControllers() {
+    private function initControllers() {
     	$this->_frontController = Zend_Controller_Front::getInstance();
     	$this->_frontController->addControllerDirectory($this->_root .'/application/default/controllers/');
     }

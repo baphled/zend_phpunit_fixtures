@@ -5,9 +5,9 @@
  * 
  * @author Nadjaha (ibetxadmin) Wohedally 2008
  * @version $Id$
- * @copyright ibetX Ltd2008
+ * @copyright ibetX Ltd 2008
  * @package 
- * @subpackage TestSuite
+ * @subpackage FeaturesListTestSuite
  *
  * Date: 21 Aug 2008
  * 
