@@ -9,9 +9,16 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package 
+ * @package FixturesManager
  * @subpackage TestSuite
  *
+ * Date: 27/07/2008
+ * 3rd session, refactoring tests to _makeDBTable, as it will be private
+ * and is now linking to the DB.
+ * Zend_DB_Statement does not throw exception if a query is illegal
+ * making it hard to validate, will need to implement some validation
+ * of our own in the meantime.
+ * 
  * Date: 20/08/2008
  * Finished 2nd session, we have now implemented convertDataType,
  * we'll refactor next session & then move on to storing, retrieving
@@ -34,8 +41,21 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	
 	private $_fixturesManager;
 	
+	private $_stub;
+	
 	public function __construct() {
 		$this->setName ( 'FixturesManagerTest Case' );
+		
+		/*
+		 * For the moment we will only leave this here
+		 * eventually we will move to its own private
+		 * function.
+		 * 
+		 */
+		$this->_stub = $this->getMock('FixturesManager',array('_makeDBTable'));
+        $this->_stub->expects($this->any())
+                    ->method('_makeDBTable')
+                    ->will($this->returnValue(TRUE));
 	}
 	
 	public function setUp() {
@@ -170,7 +190,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 			$this->assertArrayHasKey('type',$field);	
 		}
 	}
-    
+	
 	/**
 	 * How will we make sure that our array has
 	 * a valid data type.
@@ -506,14 +526,6 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * What does Zend_Db_Table::query return
-	 * 
-	 */
-	function testZendDbTableQueryReturnsWhatOnFailure() {
-		
-	}
-	
-	/**
 	 * Ok, now we will need a DB creation method to actually make our
 	 * table for us. This method will return false on failure & true
 	 * on success.
@@ -522,7 +534,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testMakeDBTableReturnsFalseOnFailure() {
 		$query = 'CREATE TABLE SFSFSDsdsd;';
 		$this->setExpectedException('ErrorException');
-		$result = $this->_fixturesManager->_makeDBTable($query);
+		$this->_fixturesManager->_makeDBTable($query);
 	}
 	
 	/**
@@ -538,23 +550,20 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	
 	/**
 	 * We now need to see what happens when we pass a legal query
-	 * @todo should stub out.
+	 * 
 	 */
 	function testMakeDBTableReturnsTrueOnSuccess() {
-		$query = $this->_getGenericQuery();
-		$fixturesManStub = $this->getMock('FixturesManager',array('_makeDBTable'));
-		$fixturesManStub->expects($this->any())
-		            ->method('_makeDBTable')
-		            ->will($this->returnValue(TRUE));
-		            
-		$result = $fixturesManStub->_makeDBTable($query);
+		$query = $this->_getGenericQuery();            
+		$result = $this->_stub->_makeDBTable($query); // @todo atm always returns true, need to expand on.
 		$this->assertTrue($result);
 	}
 	
-	/**
-	 * Now we need to be able to insert data into our dynamic tables.
-	 *  
-	 */
+    /**
+     * What happens when we try to insert an invalid insert query?
+     * cool we get an error from Zend_Db_Statement.
+     * Fatal error: Call to undefined method PDOStatement::result_metadata() in /usr/share/php/Zend/Db/Statement/Mysqli.php on line 221
+     * 
+     */
 	
 	/**
 	 * Our buildInsertQuery method needs to contain INSERT INTO
@@ -566,9 +575,5 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		$this->assertContains('INSERT INTO',$result);
 	}
 	
-	/**
-	 * What happens when we try to insert an invalid insert query
-	 * 
-	 */
-
+	
 }
