@@ -20,13 +20,18 @@
  * parses our array & creates our schema. Need to implement
  * fixture parsing and insertiong into the dynamically created
  * table.
- *  
+ * Remove convertDataType tablename exception seeing as we are
+ * using a default within the parameter.
+ * 
  * Date: 20/08/08
  * Created basic implementation of Fixturesmanager, will need
  * to improve tests for creating schema out of our array but
  * have a decent idea of how things should be.
  * 
  * @todo Look into creating fixtures on the fly.
+ * @todo Have noticed that because we only check that the query has
+ *       a CREATE TABLE string, this can be circumvented producing
+ *       a zend related error, need to fix.
  * 
  */
 
@@ -124,23 +129,32 @@ class FixturesManager {
     	return 'INSERT INTO';
     }
     
+    /**
+     * Used to actually execute our dynamically
+     * made SQL which creates an instance of our
+     * db for us.
+     *
+     * @param String $query
+     * @return bool
+     * 
+     * @todo Because Zend feel exceptions are pointless
+     *       in sections, Statement.php doesn't throw error
+     *       when we pass it an illegally form query, wudda???
+     * 
+     */
     function _makeDBTable($query) {
     	if(!eregi(' \(',$query)) {
     		throw new ErrorException('Illegal query.');
     	}
+        $stmt = new Zend_Db_Statement_Mysqli($this->_db,$query);
+       	if($stmt->execute()) {
+            return true;
+        }
     	else {
-    		try {
-    		echo $query;
-	    		$stmt = new Zend_Db_Statement_Mysqli($this->_db,$query);
-	    		$stmt->execute();
-	    		return true;
-    		}
-    		catch(PDOException $e) {
-    			throw new PDOException($e->getMessage());
-    		}
-    	}
-    	return false;
+           throw new PDOException('Unable to execute query');  
+        }
     }
+   
 	/**
 	 * Converts a Datatype array into SQL.
 	 * We only are only creating these one at a time
@@ -153,9 +167,6 @@ class FixturesManager {
 	 * 
 	 */
      public function convertDataType($dataTypeInfo,$tablename='default') {
-     	if(NULL === $tablename) {
-     		throw new ErrorException('Needs a tablename to create a table.');
-     	}
 		if(!is_array($dataTypeInfo)) {
 			throw new ErrorException('DataType is invalid.');
 		}
