@@ -129,6 +129,13 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->_feature->addNewFeature($data);
 	}
 	
+	function testUserIdThrowExceptionIfNotNull(){
+		$id = null;
+		$this->setExpectedException('ErrorException');
+		$this->_feature->updateFeature($id,$this->_fixtures['completeFeature']);
+		
+	}
+	
 	function testAddNewFeatureReturnsIntegerOnSuccess(){
 		$data1 = $this->_fixtures['completeFeature'];
 		$data2 = $this->_fixtures['secondFeature'];
@@ -141,12 +148,41 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	 * returns false.
 	 * 
 	*/
-	/*
 	function testAddNewFeatureDoesNotAllowDuplicateData() {
+		$data = $this->_fixtures['completeFeature'];
+		$this->_feature->addNewFeature($data);
 		$feature = $this->_fixtures['anotherFeature'];
 		$result = $this->_feature->_featureExists($feature);
 		$this->assertEquals(FALSE,$result);
 	}
-	*/
+	
+	function testFeatureExistReturnsTrueOnFeatureDuplication(){
+		$data = $this->_fixtures['completeFeature'];
+		$this->_feature->addNewFeature($data);
+		$result = $this->_feature->_featureExists($data);
+		$this->assertEquals(True,$result);
+	}
+	
+	function testUpdateFeaturesReturnTrueOnSuccess(){
+		$data = $this->_fixtures['completeFeature'];
+		$this->_feature->addNewFeature($data);
+		$data1 = $this->_fixtures['secondFeature'];
+		$result = $this->_feature->updateFeature(1,$data1);
+		$this->assertTrue($result);
+	}
+	
+	function testUpdateFeaturesReturnFalseOnFailure(){
+		$data = $this->_fixtures['completeFeature'];
+		$this->_feature->addNewFeature($data);
+		$result = $this->_feature->updateFeature(1,$data);
+		$this->assertFalse($result);		
+	}
+	
+	function testViewFeatureById(){
+		$data = $this->_fixtures['completeFeature'];
+		$this->_feature->addNewFeature($data);
+		$result = $this->_feature->viewFeature(1);
+		$this->assertType('array', $result);
+	}
 
 }
