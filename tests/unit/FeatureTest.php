@@ -26,6 +26,12 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->setName ( 'FeatureTest Case' );
 		
 		$this->_fixtures = array(
+			'userFixture'	  => array(
+				'id'		  => 1,
+				'fname'		  => 'nadjaha',
+				'lname'		  => 'wohedally',
+				'position'	  => 'developer'
+			),
 			'completeFeature' => array(
 				'title' 	  => 'new feature',
 				'description' => 'To test a new feature'
@@ -45,19 +51,11 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$this->_setUpConfig ();
 		parent::setUp ();
-		$this->_db = Zend_Registry::get('db');
-		$this->_db->query('drop table if exists features');
-		$this->_db->query(' CREATE TABLE features(
-							id int AUTO_INCREMENT PRIMARY KEY ,
-							title varchar( 255 ) NOT NULL ,
-							description varchar( 255 ) NOT NULL
-						 )');
 		$this->_feature = new Features();
 	}
 	
 	public function tearDown() {
 		$this->_feature = null;
-		$this->_db->query('drop table features');
 		parent::tearDown ();
 	}
 	
@@ -66,89 +64,6 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * test for invalid data. 
-	 * data must be an array, if not throw an exception
-	 */
-	public function testInvalidParam(){
-		$data = 'crappy stuff';
-		$this->setExpectedException('ErrorException');
-		$this->_feature->addNewFeature($data);		
-	}
-	
-	/**
-	 * return exception if the title is null
-	 *
-	 */
-	function testParamFeatureKeyNotNull() {
-		$data = array(
-					'title' 	  => null,
-					'description' => 'To test a new feature'
-				);
-		$this->setExpectedException('ErrorException');
-		$this->_feature->addNewFeature($data);
-	}
-	
-	/**
-	 * Need to test that if we have duplicate data our function
-	 * returns false.
 	 * 
 	 */
-	function testAddNewFeatureDoesNotAllowDuplicateData() {
-		$feature = $this->_fixtures['anotherFeature'];
-		$result = $this->_feature->_featureExists($feature);
-		$this->assertEquals(FALSE,$result);
-	}
-	
-	/**
-	 * Now we can check that featureExists returns true if the feature
-	 * has already been entered.
-	 */
-	function testFeatureExistsReturnsTrueIfFeatureAlreadyExists() {
-		$this->_feature->addNewFeature($this->_fixtures['anotherFeature']);
-		$feature = $this->_fixtures['anotherFeature'];
-		$result = $this->_feature->_featureExists($feature);
-		$this->assertTrue($result);
-	}
-	
-	/**
-	 * list the features
-	 * if empty, should throw an exception
-	 */
-	function testFeatureListEmpty(){
-		$this->setExpectedException('ErrorException');
-		$this->_feature->listFeatures();
-	}
-	
-	/**
-	 * Enter description here...
-	 *
-	 */
-	function testShowFeatureReturnsWhatWeExpect(){
-		$data = $this->_fixtures['completeFeature'];
-		$this->_feature->addNewFeature($data);	
-		$result = $this->_feature->listFeatures();
-		$this->assertEquals(1,count($result));
-	}
-	
-	/**
-	 * check if feature that has been entered
-	 * is what we are getting back
-	 */
-	function testViewFeatureByIdReturnsExpected(){
-		$data 	  = $this->_fixtures['completeFeature'];
-		$expected = $this->_fixtures['viewableFeature'];
-		$this->_feature->addNewFeature($data);	
-		$result = $this->_feature->viewFeatureById(1);
-		$this->assertEquals($result, $expected);
-	}
-	
-	/*
-	 * test if feature can be updated
-	 */
-	function testEditFeature(){
-		$data = $this->_fixtures['anotherFeature'];
-		$this->_feature->addNewFeature($data);
-
-	}
-
 }
