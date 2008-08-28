@@ -10,7 +10,7 @@
  *  
  */
 
-class Features {
+class Features extends FeatureModel {
 	function addNewFeature($data){
 		if(!is_array($data)){
 			throw new ErrorException('ffkkd');
@@ -18,9 +18,9 @@ class Features {
 		if(null === $data['title'] || empty($data['title'])){
 			throw new ErrorException('title must not be empty');			
 		}
-		if(null === $data['userId'] || empty($data['userId'])){
+		if(null === $data['userid'] || empty($data['userid'])){
 			throw new ErrorException('User id must not be empty');			
 		}		
-		return 1;
+		return $this->insert($data);
 	} 
 }

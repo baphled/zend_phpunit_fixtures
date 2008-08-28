@@ -25,11 +25,6 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	public function __construct() {			
 		$this->setName ( 'FeatureTest Case' );
 		
-		$this->_stub = $this->getMock('FeatureModel', array('insert'));
-		$this->_stub->expects($this->any())
-					->method('insert')
-					->will($this->returnValue(1));
-		
 		$this->_fixtures = array(
 			'userFixture'	  => array(
 				'id'		  => 1,
@@ -42,12 +37,17 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 				'description' => 'second feature'
 			),
 			'completeFeature' => array(
-				'userId'	  => 1,
+				'userid'	  => 1,
 				'title' 	  => 'new feature',
 				'description' => 'To test a new feature'
 			),
+			'secondFeature' => array(
+				'userid'	  => 23,
+				'title' 	  => 'anuva feature',
+				'description' => 'feature description'
+			),
 			'anotherFeature'  => array(
-				'userId'	  => 1,
+				'userid'	  => 1,
 				'title' 	  => 'second feature',
 				'description' => 'second feature'
 			),
@@ -62,11 +62,20 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$this->_setUpConfig ();
 		parent::setUp ();
+		$this->_db = Zend_Registry::get('db');
+		$this->_db->query('drop table if exists features');
+		$this->_db->query(' CREATE TABLE features(
+							id int AUTO_INCREMENT PRIMARY KEY ,
+							userid int(10) NOT NULL,
+							title varchar( 255 ) NOT NULL ,
+							description varchar( 255 ) NOT NULL							
+						)');
 		$this->_feature = new Features();
 	}
 	
 	public function tearDown() {
 		$this->_feature = null;
+		$this->_db->query('drop table features');
 		parent::tearDown ();
 	}
 	
@@ -120,5 +129,24 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->_feature->addNewFeature($data);
 	}
 	
+	function testAddNewFeatureReturnsIntegerOnSuccess(){
+		$data1 = $this->_fixtures['completeFeature'];
+		$data2 = $this->_fixtures['secondFeature'];
+		$this->_feature->addNewFeature($data1);
+		$this->assertEquals(2,$this->_feature->addNewFeature($data2));
+	}
+
+	/**
+	 * Need to test that if we have duplicate data our function
+	 * returns false.
+	 * 
+	*/
+	/*
+	function testAddNewFeatureDoesNotAllowDuplicateData() {
+		$feature = $this->_fixtures['anotherFeature'];
+		$result = $this->_feature->_featureExists($feature);
+		$this->assertEquals(FALSE,$result);
+	}
+	*/
 
 }
