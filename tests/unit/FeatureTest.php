@@ -22,8 +22,13 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	
 	private $_feature;
 	
-	public function __construct() {
+	public function __construct() {			
 		$this->setName ( 'FeatureTest Case' );
+		
+		$this->_stub = $this->getMock('FeatureModel', array('insert'));
+		$this->_stub->expects($this->any())
+					->method('insert')
+					->will($this->returnValue(1));
 		
 		$this->_fixtures = array(
 			'userFixture'	  => array(
@@ -32,11 +37,17 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 				'lname'		  => 'wohedally',
 				'position'	  => 'developer'
 			),
+			'noUserIDFeature' => array(
+				'title' 	  => 'second feature',
+				'description' => 'second feature'
+			),
 			'completeFeature' => array(
+				'userId'	  => 1,
 				'title' 	  => 'new feature',
 				'description' => 'To test a new feature'
 			),
 			'anotherFeature'  => array(
+				'userId'	  => 1,
 				'title' 	  => 'second feature',
 				'description' => 'second feature'
 			),
@@ -64,6 +75,50 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * 
+	 * check if param set is valid
 	 */
+	function testInvalidParam(){
+		$data = 'crappy stuff';
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);		
+	}
+	
+	/**
+	 * return exception if the title is null
+	 *
+	*/
+	function testParamFeatureTitleNotNull() {
+		$data = array(
+					'title' 	  => null,
+					'description' => 'To test a new feature'
+				);
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
+	
+	function testParamFeatureTitleNotEmpty() {
+		$data = array(
+					'title' 	  => '',
+					'description' => 'To test a new feature'
+				);
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
+	
+	/**
+	 * test that addNew returns true on success
+	 */
+	function testAddNewFeatureReturnsTrueOnSuccess(){
+		$data = $this->_fixtures['completeFeature'];
+		$result = $this->_feature->addNewFeature($data);
+		$this->assertEquals(1,$result);
+	}
+	
+	function testAddNewFeatureThrowsExceptionOnNoUserId(){
+		$data = $this->_fixtures['noUserIDFeature'];
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
+	
+
 }
