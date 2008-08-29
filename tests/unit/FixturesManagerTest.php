@@ -12,6 +12,16 @@
  * @package FixturesManager
  * @subpackage TestSuite
  *
+ * Date: 28/07/2008
+ * 4th session, introduced real interacting with _makeDBTable (now _runFixtureQuery)
+ * to determine where our error was coming from, is now solved.
+ * As mentioned have refactor _makeDBTable to a more meaningful name (_runFixtureQuery).
+ * Stubbed out buildFixtureTable in testBuildFixtureTableReturnsTrue, so
+ * that we don't access the DB directly, also did the same for
+ * testMakeDBTableReturnsTrueOnSuccessUsingStubs for the same reason.
+ * Have added tests to loop through a list of our DB tables & delete each
+ * one. We will use this to automatically cleanup our fixture tables.
+ * 
  * Date: 27/07/2008
  * 3rd session, refactoring tests to _makeDBTable, as it will be private
  * and is now linking to the DB.
@@ -51,10 +61,17 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		 * eventually we will move to its own private
 		 * function.
 		 * 
+		 * @todo Is far from perfect, really want to
+		 *       specify how many times the method is
+		 *       run and what to return.
+		 * 
 		 */
-		$this->_stub = $this->getMock('FixturesManager',array('_makeDBTable'));
+		$this->_stub = $this->getMock('FixturesManager',array('_runFixtureQuery','buildFixtureTable'));
         $this->_stub->expects($this->any())
-                    ->method('_makeDBTable')
+                    ->method('_runFixtureQuery')
+                    ->will($this->returnValue(TRUE));
+        $this->_stub->expects($this->any())
+                    ->method('buildFixtureTable')
                     ->will($this->returnValue(TRUE));
 	}
 	
@@ -67,6 +84,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	private function _getGenericQuery() {
 		return 'CREATE TABLE blah (id INT(10) PRIMARY KEY AUTO_INCREMENT, parent_id INT(10) NULL, model VARCHAR(255) DEFAULT "", alias VARCHAR(255) DEFAULT "", lft INT(10) NULL, rght INT(10) NULL);';
 	}
+	
 	private function _getPrimaryKeyDataType() {
 		return array('id' => array('type' => 'integer', 'length' => 11, 'key' => 'primary'));
 	}
@@ -481,12 +499,13 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * turn arrays into SQL queries.
 	 * 
 	 * We need to now be able to add fixtures to our newly
-	 * created table.
+	 * created table. We now stub out as we know the implementation
+	 * works as expected.
 	 * 
 	 */
 	function testBuildFixtureTableReturnsTrue() {
 		$dataType = $this->_getTestTableStructure();
-		$result = $this->_fixturesManager->buildFixtureTable($dataType,'info');
+		$result = $this->_stub->buildFixtureTable($dataType,'info');
 		$this->assertTrue($result);
 	}
 	
@@ -505,9 +524,12 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * What happens if we try to build a table using an invalid query.
 	 * convertDataTypeShouldThrowAnError.
 	 * 
+	 * Replaced with our stub seeing as our implemention is now executing
+	 * our query
+	 * 
 	 */
 	function testBuildFixtureTableShouldReturnFalseIfDataTypeInvalidLength() {
-		$tableName = 'blah';
+		$tableName = 'illegalTable';
 		$dataType = $this->_getIllegalDataTypeTestTableStructure();
 		$result = $this->_fixturesManager->buildFixtureTable($dataType,$tableName);
 		$this->assertFalse($result);
@@ -516,6 +538,12 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	/**
 	 * If we successfully convert the datatype into an query
 	 * we return true, else we return false.
+	 * 
+	 * As this test wont go as far as executing our query, we'll
+	 * use the actual method.
+	 * 
+	 * There's no need to stub this as we wont go as far as actually
+	 * executing our SQL.
 	 * 
 	 */
 	function testBuildFixtureTableShouldReturnFalseOnFailure() {
@@ -534,7 +562,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testMakeDBTableReturnsFalseOnFailure() {
 		$query = 'CREATE TABLE SFSFSDsdsd;';
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_makeDBTable($query);
+		$this->_fixturesManager->_runFixtureQuery($query);
 	}
 	
 	/**
@@ -544,19 +572,105 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testMakeDBTableThrowsExceptionIfPassedANonCreateTableQuery() {
 		$query = 'sfdsfa';
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_makeDBTable($query);
-		
+		$this->_fixturesManager->_runFixtureQuery($query);
 	}
 	
 	/**
-	 * We now need to see what happens when we pass a legal query
+	 * We now need to see what happens when we pass a legal query.
+	 * 
+	 * We have stubbed as direct access will execute a SQL command.
 	 * 
 	 */
-	function testMakeDBTableReturnsTrueOnSuccess() {
+	function testMakeDBTableReturnsTrueOnSuccessUsingStubs() {
 		$query = $this->_getGenericQuery();            
-		$result = $this->_stub->_makeDBTable($query); // @todo atm always returns true, need to expand on.
+		$result = $this->_stub->_runFixtureQuery($query); // @todo atm always returns true, need to expand on.
 		$this->assertTrue($result);
 	}
+	
+	/**
+	 * We want to implement functionality that allows us to check
+	 * whether a table is already within the DB. To do this we will
+	 * need to check that our method returns false on failure (default).
+	 *  
+	 */
+	function testTableExistsReturnsFalseOnNonExistentTable() {
+		$result = $this->_fixturesManager->_tableExists('blah');
+		$this->assertFalse($result);
+	}
+	
+	/**
+	 * As we will be checking for our tables 1 by 1 we need to
+	 * make sure that we are passing a string as a parameter.
+	 * 
+	 */
+	function testTableExistsThrowsExceptionWhenParameterIsNull() {
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->_tableExists(null);
+	}
+	
+	/**
+	 * We now need to work out how we are going to check whether a table
+	 * is already created. It seems we have a listTables function which
+	 * we can use to return an array of tables within our current DB, we'll
+	 * use this.
+	 * 
+	 * @todo Needs to be remove, is only here for demo purposes.
+	 * 
+	 */
+	function testListTablesArrayCanBeUsedToDeleteAllOurFixtureTables() {
+		$expected = array('blah','info');
+		$data = $this->_getTestTableStructure();
+		$this->_fixturesManager->buildFixtureTable($data,'blah');
+		$this->_fixturesManager->buildFixtureTable($data,'info');
+		$result = $this->_fixturesManager->_listFixturesTables();
+		$this->assertEquals(2,count($result));
+		$this->assertSame($expected,$result);
+		$wasDeleted = $this->_fixturesManager->deleteFixturesTable();
+		$this->assertTrue($wasDeleted);
+	}
+	
+	/**
+	 * We want to be able to make sure that our param is an array
+	 * 
+	 */
+	function testDeleteFixturesTableThrowsExceptionIsNotAnArray() {
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->deleteFixturesTable();
+	}
+
+	/**
+	 * Now we want to loop through our array and check if each
+	 * fixture table exists. If it doesn't throw error.
+	 * 
+	 * @todo Realistically, this functionality would be down to
+	 *       a DB checker, will skip until we implement that.
+	 */
+	function testDeleteFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
+		$this->_fixturesManager->deleteFixturesTable();
+	}
+	
+	/**
+	 * Is a little bit naughty but the implementation of
+	 * executing a query was giving us an error, now we
+	 * are catching our errors. Once sorted we will extend
+	 * so we can ascertain whether we can actually delete
+	 * our table, can come in handy at some point & makes
+	 * extended use of our test.
+	 *
+	 */
+	function testDeleteDBTableCanDeleteAnActualTable() {
+		$query = $this->_getGenericQuery();
+		$result = $this->_fixturesManager->_runFixtureQuery($query);
+		$this->assertTrue($result);
+		$wasDeleted = $this->_fixturesManager->deleteFixturesTable();
+		$this->assertTrue($wasDeleted);
+	}
+	
+	/**
+	 * Really need to make sure that we are able to delete tables
+	 * that we have created (especially when using a real DB).
+	 * 
+	 */
 	
     /**
      * What happens when we try to insert an invalid insert query?
