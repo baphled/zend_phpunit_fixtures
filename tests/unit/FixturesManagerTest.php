@@ -6,12 +6,19 @@
  * Used to work with the fixtures we'll need to run
  * our test cases.
  * 
+ * To get running you will need to configure settings.ini.
+ * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
  * @package FixturesManager
  * @subpackage TestSuite
  *
+ * Date: 29/07/2008
+ * 5th session, working on refactoring and implementing fixtures insertion method.
+ * Also cleaning up test case, removing uneeded tests, refactoring and also will try
+ * to cover uncovered code.
+ * 
  * Date: 28/07/2008
  * 4th session, introduced real interacting with _makeDBTable (now _runFixtureQuery)
  * to determine where our error was coming from, is now solved.
@@ -54,7 +61,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	private $_stub;
 	
 	public function __construct() {
-		$this->setName ( 'FixturesManagerTest Case' );
+		$this->setName ('FixturesManagerTest Case');
 		
 		/*
 		 * For the moment we will only leave this here
@@ -89,15 +96,19 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		return array('id' => array('type' => 'integer', 'length' => 11, 'key' => 'primary'));
 	}
 	
+	private function _getSingleAppleFixtureDataStructure() {
+		return array('id' => 1, 'apple_id' => 2, 'color' => 'Red', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26');
+	}
+	
 	private function _getAppleFixtureDataStructure() {
 	   $fixtures = array(
-	   array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
-       array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
-       array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
-       array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
-       array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
-       array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
-       array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21')
+		   array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
+	       array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
+	       array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
+	       array('id' => 6, 'apple_id' => 2, 'color' => 'Blue Green', 'name' => 'Test Name', 'created' => '2006-12-25 05:23:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:36'),
+	       array('id' => 7, 'apple_id' => 7, 'color' => 'Green', 'name' => 'Blue Green', 'created' => '2006-12-25 05:24:06', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:16'),
+	       array('id' => 8, 'apple_id' => 6, 'color' => 'My new appleOrange', 'name' => 'My new apple', 'created' => '2006-12-25 05:29:39', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:29:39'),
+	       array('id' => 9, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21')
        );
        return $fixtures;
 	}
@@ -114,6 +125,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
         );
         return $fields;
     }
+    
     private function _getDateDataType() {
         return array('date' => array('type' => 'date', 'null' => FALSE));
     }
@@ -121,6 +133,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     private function _getDateTimeDataType() {
     	return array('created' => array('type' => 'datetime', 'null' => FALSE));
     }
+    
 	private function _getTestTableStructure() {
         $fields = array(
             'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
@@ -175,6 +188,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
         $dataType = array( 'model' => array('type' => 'string', 'length' => 255, 'default' => 'sum text'));
         return $dataType;
     }
+    
     private function _getIllegalDataTypeTestTableStructure() {
             $fields = array(
             'id' => array('type' => 'integer', 'key' => 'primary'),
@@ -559,7 +573,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * on success.
 	 * 
 	 */
-	function testMakeDBTableReturnsFalseOnFailure() {
+	function testRunFixtureQueryReturnsFalseOnFailure() {
 		$query = 'CREATE TABLE SFSFSDsdsd;';
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->_runFixtureQuery($query);
@@ -569,9 +583,15 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * Here we need to make sure that anything without CREATE TABLE
 	 * is dismissed and thrown as an exception
 	 */
-	function testMakeDBTableThrowsExceptionIfPassedANonCreateTableQuery() {
+	function testRunFixtureQueryThrowsExceptionIfPassedANonCreateTableQuery() {
 		$query = 'sfdsfa';
 		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->_runFixtureQuery($query);
+	}
+	
+	function testRunFixtureQueryThrowsExceptionIfPassedAnUnexecutableQuery() {
+		$query = 'CREATE TABLE (id serial);';
+		$this->setExpectedException('PDOException');
 		$this->_fixturesManager->_runFixtureQuery($query);
 	}
 	
@@ -581,61 +601,10 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * We have stubbed as direct access will execute a SQL command.
 	 * 
 	 */
-	function testMakeDBTableReturnsTrueOnSuccessUsingStubs() {
+	function testRunFixtureQueryReturnsTrueOnSuccessUsingStubs() {
 		$query = $this->_getGenericQuery();            
 		$result = $this->_stub->_runFixtureQuery($query); // @todo atm always returns true, need to expand on.
 		$this->assertTrue($result);
-	}
-	
-	/**
-	 * We want to implement functionality that allows us to check
-	 * whether a table is already within the DB. To do this we will
-	 * need to check that our method returns false on failure (default).
-	 *  
-	 */
-	function testTableExistsReturnsFalseOnNonExistentTable() {
-		$result = $this->_fixturesManager->_tableExists('blah');
-		$this->assertFalse($result);
-	}
-	
-	/**
-	 * As we will be checking for our tables 1 by 1 we need to
-	 * make sure that we are passing a string as a parameter.
-	 * 
-	 */
-	function testTableExistsThrowsExceptionWhenParameterIsNull() {
-		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_tableExists(null);
-	}
-	
-	/**
-	 * We now need to work out how we are going to check whether a table
-	 * is already created. It seems we have a listTables function which
-	 * we can use to return an array of tables within our current DB, we'll
-	 * use this.
-	 * 
-	 * @todo Needs to be remove, is only here for demo purposes.
-	 * 
-	 */
-	function testListTablesArrayCanBeUsedToDeleteAllOurFixtureTables() {
-		$expected = array('blah','info');
-		$data = $this->_getTestTableStructure();
-		$this->_fixturesManager->buildFixtureTable($data,'blah');
-		$this->_fixturesManager->buildFixtureTable($data,'info');
-		$result = $this->_fixturesManager->_listFixturesTables();
-		$this->assertEquals(2,count($result));
-		$this->assertSame($expected,$result);
-		$wasDeleted = $this->_fixturesManager->deleteFixturesTable();
-		$this->assertTrue($wasDeleted);
-	}
-	
-	/**
-	 * We want to be able to make sure that our param is an array
-	 * 
-	 */
-	function testDeleteFixturesTableThrowsExceptionIsNotAnArray() {
-		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->deleteFixturesTable();
 	}
 
 	/**
@@ -646,6 +615,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 *       a DB checker, will skip until we implement that.
 	 */
 	function testDeleteFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
+		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->deleteFixturesTable();
 	}
 	
@@ -665,13 +635,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		$wasDeleted = $this->_fixturesManager->deleteFixturesTable();
 		$this->assertTrue($wasDeleted);
 	}
-	
-	/**
-	 * Really need to make sure that we are able to delete tables
-	 * that we have created (especially when using a real DB).
-	 * 
-	 */
-	
+
     /**
      * What happens when we try to insert an invalid insert query?
      * cool we get an error from Zend_Db_Statement.
@@ -689,5 +653,35 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		$this->assertContains('INSERT INTO',$result);
 	}
 	
+	/**
+	 * We want to make sure that if our parameter is not an array
+	 * we want to throw an exception.
+	 *
+	 */
+	function testBuildInsertQueryThrowsExceptionIfParamNotArray() {
+		$data = '';
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->_buildInsertQuery($data);
+	}
 	
+	/**
+	 * BuildInsertQuery will need a help method, which will loop through
+	 *  the params turning it into a standard insert code.
+	 *
+	 */
+	function testConvertInsertQueryThrowsExceptionIfParamNotAnArray() {
+		$insertData = '';
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->_constructInsertQuery($insertData);
+	}
+	
+	/**
+	 * Makes sure that if nothing is wrong, we return true.
+	 *
+	 */
+	function testConstructInsertQueryReturnsTrue() {
+		$data = $this->_getSingleAppleFixtureDataStructure();
+		$result = $this->_fixturesManager->_constructInsertQuery($data);
+		$this->assertTrue($result);
+	}
 }
