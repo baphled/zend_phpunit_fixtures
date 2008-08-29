@@ -73,6 +73,29 @@ class FixturesManager {
 		$this->_db = Zend_Registry::get('db');
 	}
     
+
+	/**
+	 * Loops through our datatypes and generate our SQL as well
+	 * go along.
+	 *
+	 * @access private
+	 * @param  Array $dataType
+	 * @return String
+	 * 
+	 */
+    private function _checkDataTypes($dataType) {
+        foreach ($dataType as $key=>$value) {
+            $data .= $this->_checkDataTypeValues($key,$value);
+            $data .= $this->_checkDataTypeValuesLength($key,$value);
+            $data .= $this->_checkDataTypeValueNull($key,$value);
+            $data .= $this->_checkDataTypeDefault($key,$value);
+            if($key === 'key') {
+                $data .= ' PRIMARY KEY AUTO_INCREMENT';
+            }
+        }
+        return $data;
+    }
+	
 	/**
 	 * Checks if our datatype is a length value
 	 *
@@ -177,25 +200,30 @@ class FixturesManager {
     }
     
     /*
+     * Build our Insert SQL query for us.
+     * 
      * @access private
-     * @todo Finish implementation
+     * @return String
+     * 
+     * @todo   Finish implementation
+     * 
      */
     function _buildInsertQuery($insertData) {
-    	return 'INSERT INTO';
+    	if(!is_array($insertData)) {
+    		throw new ErrorException('Insert data must be in array format.');
+    	}
+    	$sql = 'INSERT INTO';
+    	return $sql;
     }
     
     /**
      * Used to actually execute our dynamically
      * made SQL which creates an instance of our
-     * db for us.
+     * DB for us.
      *
      * @access private
      * @param String $query
      * @return bool
-     * 
-     * @todo Because Zend feel exceptions are pointless
-     *       in sections, Statement.php doesn't throw error
-     *       when we pass it an illegally form query, wudda???
      * 
      */
     function _runFixtureQuery($query) {
@@ -211,20 +239,12 @@ class FixturesManager {
     	}
     	return false;
     }
-   
-    /**
-     * Checks to see if a fixture table actually exists.
-     *
-     * @access private
-     * @param String $tableName
-     * @return Bool
-     * 
-     */
-    function _tableExists($tableName) {
-    	if(null === $tableName || $tableName === '') {
-    		throw new ErrorException('Table name must be a string');
+    
+    function _constructInsertQuery($insertDataType) {
+    	if(!is_array($insertDataType)) {
+    		throw new ErrorException('ErrorException');
     	}
-    	return false;
+    	return true;
     }
     
 	/**
@@ -255,15 +275,7 @@ class FixturesManager {
             	throw new ErrorException('Datatype must have a length');
             }
             $data = '';
-            foreach ($dataType as $key=>$value) {
-            	$data .= $this->_checkDataTypeValues($key,$value);
-            	$data .= $this->_checkDataTypeValuesLength($key,$value);
-            	$data .= $this->_checkDataTypeValueNull($key,$value);
-            	$data .= $this->_checkDataTypeDefault($key,$value);
-                if($key === 'key') {
-                    $data .= ' PRIMARY KEY AUTO_INCREMENT';
-                }
-            }
+            $data = $this->_checkDataTypes($dataType);
             $query .= $field .$data .', ';
         }
         // remove the trailing ', ' and replace with ');'
@@ -315,7 +327,7 @@ class FixturesManager {
 		}
 		catch(Exception $e) {
 			echo $e->getMessage();
-			return false;
 		}
+		return false;
 	}
 }
