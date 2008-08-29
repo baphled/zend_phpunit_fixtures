@@ -650,7 +650,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testBuildInsertQueryReturnsInsertInto() {
 		$insertData = $this->_getAppleFixtureDataStructure();
 		$result = $this->_fixturesManager->_buildInsertQuery($insertData);
-		$this->assertContains('INSERT INTO',$result);
+		$this->assertFalse($result);
 	}
 	
 	/**
@@ -676,12 +676,18 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * Makes sure that if nothing is wrong, we return true.
+	 * Makes sure that if nothing is wrong, we return a string with 'INSERT INTO'.
 	 *
 	 */
 	function testConstructInsertQueryReturnsTrue() {
 		$data = $this->_getSingleAppleFixtureDataStructure();
 		$result = $this->_fixturesManager->_constructInsertQuery($data);
-		$this->assertTrue($result);
+		$this->assertContains('INSERT INTO', $result);
+	}
+	
+	function testConstructInsertQueryContainsEnclosingBrackets() {
+		$data = $this->_getSingleAppleFixtureDataStructure();
+		$result = $this->_fixturesManager->_constructInsertQuery($data);
+		$this->assertContains('(',$result);
 	}
 }

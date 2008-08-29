@@ -21,6 +21,7 @@
  * used by our unit test, we will remove once it has been put in SVN.
  * Added functionality to loop through our fixtures DB and remove each
  * table.
+ * Removed listTable method.
  * 
  * Date: 27/08/2008
  * Added implementation to execute our dynamically built query.
@@ -72,7 +73,6 @@ class FixturesManager {
 		TestConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 	}
-    
 
 	/**
 	 * Loops through our datatypes and generate our SQL as well
@@ -111,18 +111,7 @@ class FixturesManager {
         }
         return $data;
     }
-    
-    /**
-     * Just a simple wrapper to gather an array of current
-     * tables within our DB.
-     *
-     * @access private
-     * @return Array
-     */
-    function _listFixturesTables() {
-    	return $this->_db->listTables();
-    }
-    
+
     /**
      * Determines whether our data type have 
      * a is allowed a null value.
@@ -198,6 +187,21 @@ class FixturesManager {
         }
         return $data;
     }
+
+    /**
+     * Constructs insertion query.
+     *
+     * @access  private
+     * @param   Array $insertDataType
+     * @return  String
+     * 
+     */    
+    function _constructInsertQuery($insertDataType) {
+        if(!is_array($insertDataType)) {
+            throw new ErrorException('ErrorException');
+        }
+        return 'INSERT INTO';
+    }
     
     /*
      * Build our Insert SQL query for us.
@@ -212,8 +216,7 @@ class FixturesManager {
     	if(!is_array($insertData)) {
     		throw new ErrorException('Insert data must be in array format.');
     	}
-    	$sql = 'INSERT INTO';
-    	return $sql;
+    	return FALSE;
     }
     
     /**
@@ -239,14 +242,7 @@ class FixturesManager {
     	}
     	return false;
     }
-    
-    function _constructInsertQuery($insertDataType) {
-    	if(!is_array($insertDataType)) {
-    		throw new ErrorException('ErrorException');
-    	}
-    	return true;
-    }
-    
+
 	/**
 	 * Converts a Datatype array into SQL.
 	 * We only are only creating these one at a time
