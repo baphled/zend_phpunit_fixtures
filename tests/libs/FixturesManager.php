@@ -9,9 +9,24 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package
+ * @package TestSuite
+ * @subpackage FixturesManager
  *
- * Date: 20/08/08
+ * Date: 28/08/2008
+ * Refactored _makeDBTable to _runFixtureQuery, as the name is more
+ * appropriate.
+ * Improved execution of query, we can now catch error and exec
+ * queries with no errors.
+ * Implemented private function listTables, which is actually only
+ * used by our unit test, we will remove once it has been put in SVN.
+ * Added functionality to loop through our fixtures DB and remove each
+ * table.
+ * 
+ * Date: 27/08/2008
+ * Added implementation to execute our dynamically built query.
+ * We get an error when trying to exec our query, need to look into.
+ * 
+ * Date: 20/08/2008
  * Improved implementations, can now create SQL queries via
  * fixture arrays, will add an example of how to create these
  * arrays later.
@@ -29,9 +44,9 @@
  * have a decent idea of how things should be.
  * 
  * @todo Look into creating fixtures on the fly.
- * @todo Have noticed that because we only check that the query has
- *       a CREATE TABLE string, this can be circumvented producing
- *       a zend related error, need to fix.
+ * @todo Refactor class so that '_' prefixed functions are actually
+ *       false.
+ * @todo Refactor convertDataTypes, is way too big.
  * 
  */
 
@@ -42,15 +57,30 @@ class FixturesManager {
 
     /**
      * Zend DB, used to connect to our DB
+     * @access private
     */
     private $_db;
     
+    /**
+     * Initialises our DB connection for us.
+     *
+     * @access public
+     * @param String $env
+     */
 	public function __construct($env='development') {
 		TestConfigSettings::setUpConfig($env);
 		TestConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 	}
     
+	/**
+	 * Checks if our datatype is a length value
+	 *
+	 * @access private
+	 * @param String $key
+	 * @param String $value
+	 * @return String
+	 */
     private function _checkDataTypeValuesLength($key,$value) {
         $data = '';
         if($key === 'length') {
@@ -60,9 +90,21 @@ class FixturesManager {
     }
     
     /**
+     * Just a simple wrapper to gather an array of current
+     * tables within our DB.
+     *
+     * @access private
+     * @return Array
+     */
+    function _listFixturesTables() {
+    	return $this->_db->listTables();
+    }
+    
+    /**
      * Determines whether our data type have 
      * a is allowed a null value.
      *
+     * @access  private
      * @param   String  $key
      * @param   String  $value
      * @return  String  $data
@@ -84,6 +126,7 @@ class FixturesManager {
 	/**
 	 * Checks out data type and returns the correct data type.
 	 *
+	 * @access private
 	 * @param  String  $key            
 	 * @param  String  $value          the value of our type.
 	 * @return String  $typeSegment    Returns a the SQL equalient to our type.
@@ -109,10 +152,18 @@ class FixturesManager {
         }
         return $typeSegment;
     }
-    
 	
+    /**
+     * Checks that our datatype has a default value,
+     * if it does we need to set the appropriate SQL string.
+     *
+     * @access private
+     * @param String $key
+     * @param String $value
+     * @return String
+     */
     private function _checkDataTypeDefault($key,$value) {
-        $data = '';
+        $data = null;
         if($key === 'default') {
             $data = ' DEFAULT ';
             if($value === '') {
@@ -121,10 +172,14 @@ class FixturesManager {
             else {
                $data .= '"' .$value .'"';
             }
-            return $data;
         }
+        return $data;
     }
     
+    /*
+     * @access private
+     * @todo Finish implementation
+     */
     function _buildInsertQuery($insertData) {
     	return 'INSERT INTO';
     }
@@ -134,6 +189,7 @@ class FixturesManager {
      * made SQL which creates an instance of our
      * db for us.
      *
+     * @access private
      * @param String $query
      * @return bool
      * 
@@ -142,24 +198,41 @@ class FixturesManager {
      *       when we pass it an illegally form query, wudda???
      * 
      */
-    function _makeDBTable($query) {
+    function _runFixtureQuery($query) {
     	if(!eregi(' \(',$query)) {
     		throw new ErrorException('Illegal query.');
     	}
-        $stmt = new Zend_Db_Statement_Mysqli($this->_db,$query);
-       	if($stmt->execute()) {
-            return true;
-        }
-    	else {
-           throw new PDOException('Unable to execute query');  
-        }
+    	try {
+    		$this->_db->getConnection()->exec($query);
+    		return true;
+    	}
+    	catch(Exception $e) {
+    		throw new PDOException($e->getMessage());
+    	}
+    	return false;
     }
    
+    /**
+     * Checks to see if a fixture table actually exists.
+     *
+     * @access private
+     * @param String $tableName
+     * @return Bool
+     * 
+     */
+    function _tableExists($tableName) {
+    	if(null === $tableName || $tableName === '') {
+    		throw new ErrorException('Table name must be a string');
+    	}
+    	return false;
+    }
+    
 	/**
 	 * Converts a Datatype array into SQL.
 	 * We only are only creating these one at a time
 	 * so we need to make sure we only have 1 array.
 	 *
+	 * @access public
 	 * @param Array    $dataType
 	 * @return String Portion of SQL, which will be used to construct query.
 	 * 
@@ -201,6 +274,7 @@ class FixturesManager {
 	/**
 	 * Builds our fixtures DB table
 	 *
+	 * @access public
 	 * @param Array $dataType
 	 * @param String $tableName
 	 * @return Bool
@@ -212,10 +286,36 @@ class FixturesManager {
 		}
 		try {
 		  $query = $this->convertDataType($dataType,$tableName);
+		  $this->_runFixtureQuery($query);
 		}
 		catch(ErrorException $e) {
+			echo $e->getMessage();
 			return false;
 		}
 		 return true;
+	}
+	
+	/**
+	 * Deletes all our fixtures tables.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	function deleteFixturesTable() {
+		$fixtures = $this->_db->listTables();
+		if(count($fixtures) === 0) {
+			throw new ErrorException('No fixture tables to drop.');
+		}
+		try {
+			foreach ($fixtures as $fixture) {
+                $sql = 'DROP TABLE ' .$fixture;
+                $this->_db->getConnection()->exec($sql);		
+			}
+			return true;
+		}
+		catch(Exception $e) {
+			echo $e->getMessage();
+			return false;
+		}
 	}
 }
