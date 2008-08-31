@@ -15,7 +15,7 @@
  * @subpackage TestSuite
  *
  * Date: 31/08/2008
- * Put together tests to implement SQL insert queries, via our test data
+ * Put together tests to implement SQL insertion queries, via our test data
  * array. Can now build tables and insert data so will now work on cleaning
  * up and making more fluid.
  * 
