@@ -14,12 +14,17 @@
  * @package FixturesManager
  * @subpackage TestSuite
  *
- * Date: 29/07/2008
+ * Date: 31/08/2008
+ * Put together tests to implement SQL insert queries, via our test data
+ * array. Can now build tables and insert data so will now work on cleaning
+ * up and making more fluid.
+ * 
+ * Date: 29/08/2008
  * 5th session, working on refactoring and implementing fixtures insertion method.
  * Also cleaning up test case, removing uneeded tests, refactoring and also will try
  * to cover uncovered code.
  * 
- * Date: 28/07/2008
+ * Date: 28/08/2008
  * 4th session, introduced real interacting with _makeDBTable (now _runFixtureQuery)
  * to determine where our error was coming from, is now solved.
  * As mentioned have refactor _makeDBTable to a more meaningful name (_runFixtureQuery).
@@ -29,7 +34,7 @@
  * Have added tests to loop through a list of our DB tables & delete each
  * one. We will use this to automatically cleanup our fixture tables.
  * 
- * Date: 27/07/2008
+ * Date: 27/08/2008
  * 3rd session, refactoring tests to _makeDBTable, as it will be private
  * and is now linking to the DB.
  * Zend_DB_Statement does not throw exception if a query is illegal
@@ -644,27 +649,6 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
      */
 	
 	/**
-	 * Our buildInsertQuery method needs to contain INSERT INTO
-	 * 
-	 */
-	function testBuildInsertQueryReturnsInsertInto() {
-		$insertData = $this->_getAppleFixtureDataStructure();
-		$result = $this->_fixturesManager->_buildInsertQuery($insertData);
-		$this->assertFalse($result);
-	}
-	
-	/**
-	 * We want to make sure that if our parameter is not an array
-	 * we want to throw an exception.
-	 *
-	 */
-	function testBuildInsertQueryThrowsExceptionIfParamNotArray() {
-		$data = '';
-		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_buildInsertQuery($data);
-	}
-	
-	/**
 	 * BuildInsertQuery will need a help method, which will loop through
 	 *  the params turning it into a standard insert code.
 	 *
@@ -672,7 +656,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testConvertInsertQueryThrowsExceptionIfParamNotAnArray() {
 		$insertData = '';
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_constructInsertQuery($insertData);
+		$this->_fixturesManager->_constructInsertQuery($insertData,'coffee');
 	}
 	
 	/**
@@ -681,13 +665,61 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testConstructInsertQueryReturnsTrue() {
 		$data = $this->_getSingleAppleFixtureDataStructure();
-		$result = $this->_fixturesManager->_constructInsertQuery($data);
+		$result = $this->_fixturesManager->_constructInsertQuery($data,'snooker');
 		$this->assertContains('INSERT INTO', $result);
 	}
 	
+	/**
+	 * Looping through the test data is pretty simple so we
+	 * are just going to test that we are returned a string
+	 * containing 'VALUES ('. From there we can determine the
+	 * rest of the functionality and make a big step.
+	 *
+	 */
 	function testConstructInsertQueryContainsEnclosingBrackets() {
 		$data = $this->_getSingleAppleFixtureDataStructure();
-		$result = $this->_fixturesManager->_constructInsertQuery($data);
-		$this->assertContains('(',$result);
+		$result = $this->_fixturesManager->_constructInsertQuery($data,'pool');
+		$this->assertContains('VALUES (',$result);
+	}
+	
+	/**
+	 * Now our big step was taken, we need to make sure that our implementation
+	 * works as expected, this isn't the best method but it will give us
+	 * a quick response, will need to stub out once convfirmed.
+	 * 
+	 */
+	function testConstructInsertQuerySuccessfullyInsertsQueryAsExpected() {
+		$tableName = 'apples';
+		$dataType = $this->_getTestAppleTableStructure();
+        $this->_fixturesManager->buildFixtureTable($dataType,$tableName);
+		$testData = $this->_getSingleAppleFixtureDataStructure();
+		$query = $this->_fixturesManager->_constructInsertQuery($testData,$tableName);
+		$result = $this->_fixturesManager->_runFixtureQuery($query);
+		$this->assertTrue($result);
+		$this->_fixturesManager->deleteFixturesTable();       // our test passes, so we clean up. (comment out to varify table contents)
+	}
+	
+	/**
+	 * We missed this whilst refactoring, we need to make sure that the 
+	 * tablename is a string & not empty.
+	 * 
+	 */
+	function testConstructInsertQueryThrowsExceptionIfTableNameIsNotAString() {
+		$testData = $this->_getSingleAppleFixtureDataStructure();
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->_constructInsertQuery($testData,array());
+	}
+	
+	/**
+	 * The same goes for empty string
+	 * 
+	 * @todo Needs refactoring, is a pain we cant test two exceptions in
+	 * one test unit.
+	 * 
+	 */
+	function testConstructInsertQueryThrowsExceptionIfTableNameIsEmpty() {
+		$testData = $this->_getSingleAppleFixtureDataStructure();
+        $this->setExpectedException('ErrorException');
+        $this->_fixturesManager->_constructInsertQuery($testData,'');
 	}
 }

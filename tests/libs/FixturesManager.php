@@ -46,7 +46,7 @@
  * 
  * @todo Look into creating fixtures on the fly.
  * @todo Refactor class so that '_' prefixed functions are actually
- *       false.
+ *       private.
  * @todo Refactor convertDataTypes, is way too big.
  * 
  */
@@ -144,6 +144,7 @@ class FixturesManager {
 	 * @return String  $typeSegment    Returns a the SQL equalient to our type.
 	 * 
 	 * @todo Check the we only have a type, if we dont throw an exception.
+	 * @todo Needs looking at way too many if clauses.
 	 * 
 	 */
     private function _checkDataTypeValues($key,$value) {
@@ -188,37 +189,54 @@ class FixturesManager {
         return $data;
     }
 
+
+    private function _validateDataType($dataType) {
+    if(!isset($dataType['length']) 
+                && $dataType['type'] !== 'date'
+                && $dataType['type'] !== 'datetime'
+            ) {
+                throw new ErrorException('Invalid data type.');
+            }
+    }
+    
+    private function _validateTestDataAndTableName($insertDataType,$tableName) {
+     if(!is_array($insertDataType)) {
+            throw new ErrorException('Test data must be in array format.');
+        }
+        if(!is_string($tableName) || empty($tableName)) {
+            throw new ErrorException('Table name must be a string.');
+        }
+    }
+    
     /**
      * Constructs insertion query.
      *
      * @access  private
      * @param   Array $insertDataType
+     * @param   String  $tableName
      * @return  String
      * 
+     * @todo Finish implementation
+     * 
      */    
-    function _constructInsertQuery($insertDataType) {
-        if(!is_array($insertDataType)) {
-            throw new ErrorException('ErrorException');
+    function _constructInsertQuery($insertTestData,$tableName) {
+        $this->_validateTestDataAndTableName($insertTestData,$tableName);
+        $stmt = 'INSERT INTO ' .$tableName;
+        $insert = '(';
+        $values = 'VALUES ( ';
+        foreach($insertTestData as $key=>$value) {
+        	$insert .= $key .', ';
+        	if(is_string($value)) {
+        		$value = '"' .$value .'"';
+        	}
+        	$values .=  $value .', ';
         }
-        return 'INSERT INTO';
+        $stmt .= eregi_replace(', $',') ',$insert);
+        $stmt .= eregi_replace(', $',');',$values);
+
+        return $stmt;
     }
-    
-    /*
-     * Build our Insert SQL query for us.
-     * 
-     * @access private
-     * @return String
-     * 
-     * @todo   Finish implementation
-     * 
-     */
-    function _buildInsertQuery($insertData) {
-    	if(!is_array($insertData)) {
-    		throw new ErrorException('Insert data must be in array format.');
-    	}
-    	return FALSE;
-    }
-    
+
     /**
      * Used to actually execute our dynamically
      * made SQL which creates an instance of our
@@ -230,7 +248,7 @@ class FixturesManager {
      * 
      */
     function _runFixtureQuery($query) {
-    	if(!eregi(' \(',$query)) {
+    	if(!eregi(' \(',$query)) {             // @todo smells need better verification
     		throw new ErrorException('Illegal query.');
     	}
     	try {
@@ -264,12 +282,7 @@ class FixturesManager {
         }
         $query = '';
 	   foreach($dataTypeInfo as $field=>$dataType) {
-            if(!isset($dataType['length']) 
-                && $dataType['type'] !== 'date'
-                && $dataType['type'] !== 'datetime'
-            ) {
-            	throw new ErrorException('Datatype must have a length');
-            }
+            $this->_validateDataType($dataType);
             $data = '';
             $data = $this->_checkDataTypes($dataType);
             $query .= $field .$data .', ';
