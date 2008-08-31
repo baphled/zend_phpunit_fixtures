@@ -13,6 +13,8 @@
  * Started basic test cases for implementing out fixture class,
  * which will allow us to subclass it giving us the ability to
  * preset specific details (table, fields & test data namely).
+ * Complete test units to implement the get test data functionality
+ * of the system.
  * 
  */
 
@@ -96,6 +98,26 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->assertClassHasAttribute('_table','PHPUnit_Fixture');
 	}
 	
+   /**
+     * If we have no fixtures we need to know. We'll create a method
+     * that will return the number of fixtures within our class.
+     * 
+     */
+    function testTestDataCountReturnsZeroIfNoFixturesArePresent() {
+        $result = $this->_fixture->testDataCount();
+        $this->assertEquals(0,$result);
+    }
+    
+    /**
+     * Now we'll actually check that we have a array & if we do
+     * we want to count it, otherwise we have zero.
+     * 
+     */
+    function testTestDataCountReturnsTheExpectedNumberOfResults() {
+        $result = $this->_testFix->testDataCount();
+        $this->assertEquals(7,$result);
+    }
+    
 	/**
 	 * We'll need to retrieve our fixtures at some point, as we already
 	 * have a test fixture already defined we'll use that to determine
@@ -161,25 +183,12 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->setExpectedException('ErrorException');
 		$this->_testFix->getTestData($key,$value);
 	}
-	/**
-	 * If we have no fixtures we need to know. We'll create a method
-	 * that will return the number of fixtures within our class.
-	 * 
-	 */
-	function testTestDataCountReturnsZeroIfNoFixturesArePresent() {
-		$result = $this->_fixture->testDataCount();
-		$this->assertEquals(0,$result);
-	}
 	
 	/**
-	 * Now we'll actually check that we have a array & if we do
-	 * we want to count it, otherwise we have zero.
+	 * Went on abit of a tangent there but retrieving test data
+	 * seemed like functionality needed to implement first.
 	 * 
 	 */
-	function testTestDataCountReturnsTheExpectedNumberOfResults() {
-		$result = $this->_testFix->testDataCount();
-		$this->assertEquals(7,$result);
-	}
 	
 	/**
 	 * Now we need to see if we can actually add test data to our
@@ -189,5 +198,30 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 * format as what we are inputting.
 	 * 
 	 */
+	function testAddTestDataCanSubmitTestDataToFixture() {
+		$testData = $this->_testFix->_testData[0];
+		$result = $this->_basicFix->addTestData($testData);
+		$this->assertTrue($result);
+		$expected = $this->_basicFix->getTestData(); 
+		$this->assertSame($expected,$testData);
+	}
 
+	/**
+	 * Now we want to be able to add multiples as well
+	 * 
+	 */
+	function testAddTestDataIsAbleToAddMultiplesOfTestData() {
+		$actual[] = $this->_testFix->_testData[0];
+		$actual[] = $this->_testFix->_testData[2];
+		$this->_basicFix->addTestData($actual);
+		$expected = $this->_basicFix->getTestData();
+		$this->assertSame($expected,$actual);
+	}
+	
+	/**
+	 * 
+	 * We should really test that the test data we are adding is
+	 * of the same structure as the rest of predefined data.
+	 * 
+	 */
 }
