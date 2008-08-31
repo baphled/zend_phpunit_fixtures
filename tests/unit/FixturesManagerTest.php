@@ -54,10 +54,10 @@
 
 set_include_path ( '.' . PATH_SEPARATOR .realpath(dirname(__FILE__) .'/../libs/') . PATH_SEPARATOR. dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR .dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR. dirname ( __FILE__ ) . '/../../application/default/models/' . PATH_SEPARATOR . get_include_path () );
 
+require_once '../libs/FixturesManager.php';
+
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
-
-require_once '../libs/FixturesManager.php';
 
 class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	
@@ -102,7 +102,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	private function _getSingleAppleFixtureDataStructure() {
-		return array('id' => 1, 'apple_id' => 2, 'color' => 'Red', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26');
+		return array( array('id' => 1, 'apple_id' => 2, 'color' => 'Red', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'));
 	}
 	
 	private function _getAppleFixtureDataStructure() {
@@ -206,7 +206,19 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
         return $fields;
     }
 	
-	public function tearDown() {
+    /**
+     * Seeing as we are being naughty and lazy we needed to pull this
+     * out of our test units as its taking up too much space, not to
+     * mention more than likely go at some stage.
+     *
+     * @param String $table
+     */
+    private function _setUpTestTableStructure($table) {
+        $fixture = $this->_getTestAppleTableStructure();
+        $this->_fixturesManager->buildFixtureTable($fixture,$table);
+    }
+	
+    public function tearDown() {
 		$this->_fixturesManager = null;
 		parent::tearDown ();
 	}
@@ -685,17 +697,21 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	/**
 	 * Now our big step was taken, we need to make sure that our implementation
 	 * works as expected, this isn't the best method but it will give us
-	 * a quick response, will need to stub out once convfirmed.
+	 * a quick response, will need to stub out once confirmed.
+	 * It also helps us to realise how our insertion method will work
+	 * later.
 	 * 
 	 */
 	function testConstructInsertQuerySuccessfullyInsertsQueryAsExpected() {
-		$tableName = 'apples';
+		$tableName = 'apple';
 		$dataType = $this->_getTestAppleTableStructure();
         $this->_fixturesManager->buildFixtureTable($dataType,$tableName);
 		$testData = $this->_getSingleAppleFixtureDataStructure();
-		$query = $this->_fixturesManager->_constructInsertQuery($testData,$tableName);
-		$result = $this->_fixturesManager->_runFixtureQuery($query);
-		$this->assertTrue($result);
+		foreach($testData as $data) {
+			$query = $this->_fixturesManager->_constructInsertQuery($data,$tableName);
+	        $result = $this->_fixturesManager->_runFixtureQuery($query);
+	        $this->assertTrue($result);
+		}
 		$this->_fixturesManager->deleteFixturesTable();       // our test passes, so we clean up. (comment out to varify table contents)
 	}
 	
@@ -722,4 +738,78 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
         $this->setExpectedException('ErrorException');
         $this->_fixturesManager->_constructInsertQuery($testData,'');
 	}
+	
+	/**
+	 * We want to make sure that we throw exceptions if our test data
+	 * is not in an array format. From here we know we need to reimplement
+     * functionality, so we'll refactor.
+	 *
+	 */
+	function testInsertTestDataThrowsErrorIfTestDataIsNotAnArray() {
+		$testData = '';
+		$table = 'tea';
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->insertTestData($testData,$table);
+	}
+	
+	/**
+	 * We also want to make sure that we throw an exception if our
+	 * table name is empty. This is already covered, but just to be
+	 * on the safe side.
+	 *
+	 */
+	function testInsertTestDataThrowsErrorIfTableNameIsEmpty() {
+        $testData = '';
+        $table = '';
+        $this->setExpectedException('ErrorException');
+        $this->_fixturesManager->insertTestData($testData,$table);
+    }
+     
+    /**
+     * We need to create a accessor method that allows us to insert
+     * test data into our table.
+     * 
+     */
+    function testInsertTestDataIsAbleToInsertASingleEntry() {
+    	$table = 'apples';
+        $this->_setUpTestTableStructure($table);
+        $testData = $this->_getSingleAppleFixtureDataStructure();
+        $result = $this->_fixturesManager->insertTestData($testData,$table);
+        $this->assertTrue($result);
+        $this->_fixturesManager->deleteFixturesTable();
+    }
+    
+    /**
+     * Now we want to make sure that we can insert multiple
+     * entries of test data. This will help us to put together
+     * test structures with as little effort as possible.
+     *
+     */
+    function testInsertTestDataIsAbleToInsertMultipleEntries() {
+    	$table = 'pears';
+        $this->_setUpTestTableStructure($table);
+        $testData = $this->_getAppleFixtureDataStructure();
+        $result = $this->_fixturesManager->insertTestData($testData,$table);
+        $this->assertTrue($result);
+        $this->_fixturesManager->deleteFixturesTable();
+    }
+    
+    /**
+     * We should get an exception if our SQL turns out invalid
+     * i.e. the table names do not correspond.
+     * 
+     */
+    function testInsertTestDataThrowsExceptionWhenTableDoesNotExist() {
+    	$this->setExpectedException('PDOException');
+        $testData = $this->_getAppleFixtureDataStructure();
+        $this->_fixturesManager->insertTestData($testData,'plum');
+    	$this->_fixturesManager->deleteFixturesTable();
+    }
+    
+    /**
+     * So we are pretty much covered now, all we really need to do
+     * now is some refactoring and a little more verification.
+     * 
+     */
+
 }

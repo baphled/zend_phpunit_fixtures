@@ -12,6 +12,17 @@
  * @package TestSuite
  * @subpackage FixturesManager
  *
+ * Date: 31/08/2008
+ * Finished constructInsertQuery & refactored so that it can handle
+ * multiple entries.
+ * Refactored constructInsertQuery and move validation out
+ * to validateTestDataAndTableName, which will throw an error
+ * if the datatype is not in an array or the name is not a valid
+ * string.
+ * Introduced buildFixtureTable, which is an accessor method for
+ * constructInsertQuery, basically iterating over the test data
+ * inserting it into our fixtures table.
+ * 
  * Date: 28/08/2008
  * Refactored _makeDBTable to _runFixtureQuery, as the name is more
  * appropriate.
@@ -317,6 +328,30 @@ class FixturesManager {
 	}
 	
 	/**
+	 * Insert test data into a fixtures table, ready for testing.
+	 *
+	 * @param Array $testData
+	 * @param String $table
+	 * @return Bool
+	 */
+	function insertTestData($testData,$table) {
+		$this->_validateTestDataAndTableName($testData,$table);
+		try {
+			foreach($testData as $data) {
+                $query = $this->_constructInsertQuery($data,$table);
+                $this->_runFixtureQuery($query);				
+			}
+		}
+		catch(PDOException $e) {
+			throw new PDOException($e->getMessage());
+		}
+		catch(Exception $e) {
+			throw new ErrorException($e->getMessage());
+		}
+		
+		return true;
+	}
+	/**
 	 * Deletes all our fixtures tables.
 	 *
 	 * @access public
@@ -329,7 +364,7 @@ class FixturesManager {
 		}
 		try {
 			foreach ($fixtures as $fixture) {
-                $sql = 'DROP TABLE ' .$fixture;
+                $sql = 'DROP TABLE ' .$fixture;         // smells
                 $this->_db->getConnection()->exec($sql);		
 			}
 			return true;
