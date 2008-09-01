@@ -18,9 +18,10 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/default/models/' . PATH_SEPARATOR . get_include_path () );
+set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/default/models/' . PATH_SEPARATOR . get_include_path () );
 
 require_once '../fixtures/TestFixture.php';
+
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
@@ -53,26 +54,6 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	
 	function testConstructor() {
 		$this->assertNotNull($this->_fixture);
-	}
-	
-	/**
-	 * Now our class must have testData in array format
-	 * 
-	 */
-	function testAddTestDataThrowsExceptionIfTestDataIsNotAnArray() {
-		$testData = '';
-		$this->setExpectedException('ErrorException');
-		$this->_fixture->addTestData($testData);
-	}
-	
-	/**
-	 * If we set our test data up successfully we should get a response
-	 * 
-	 */
-	function testFixtureAddTestDataReturnsTrueOnSuccess() {
-		$testData = $this->_testFix->_testData;
-		$result = $this->_fixture->addTestData($testData);
-		$this->assertTrue($result);
 	}
 	
 	/**
@@ -189,7 +170,26 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 * seemed like functionality needed to implement first.
 	 * 
 	 */
-	
+	  
+    /**
+     * Now our class must have testData in array format
+     * 
+     */
+    function testAddTestDataThrowsExceptionIfTestDataIsNotAnArray() {
+        $testData = '';
+        $this->setExpectedException('ErrorException');
+        $this->_fixture->addTestData($testData);
+    }
+    
+    /**
+     * If we set our test data up successfully we should get a response
+     * 
+     */
+    function testFixtureAddTestDataReturnsTrueOnSuccess() {
+        $testData = $this->_testFix->_testData[0];
+        $result = $this->_basicFix->addTestData($testData);
+        $this->assertTrue($result);
+    }
 	/**
 	 * Now we need to see if we can actually add test data to our
 	 * fixture, we'll use BasicFixture here so we can use a clean
@@ -216,6 +216,18 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->_basicFix->addTestData($actual);
 		$expected = $this->_basicFix->getTestData();
 		$this->assertSame($expected,$actual);
+		
+	}
+	
+	/**
+	 * We want to make sure that we return false by default when
+	 * using validateTestData
+	 * 
+	 */
+	function testValidateTestDataReturnsTrueAsDefault() {
+		$testData[] = $this->_testix->_testData[0];
+		$result = $this->_basicFix->validateTestData($testData);
+		$this->assertTrue($result);
 	}
 	
 	/**
@@ -224,4 +236,26 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 * of the same structure as the rest of predefined data.
 	 * 
 	 */
+	function testAddTestDataThrowsExceptionsIfAddingTestDataOfVaryingStructure() {
+		$testData[] = $this->_testFix->_testData[0];
+		$this->setExpectedException('ErrorException');
+		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
+		$this->_basicFix->addTestData($testData);
+		$this->_basicFix->validateTestData($invalidData);
+	}
+	
+	/**
+	 * Now we need to check that if our invalid test data is submitted via
+	 * addTestData, we need to throw an exception. ValidateTestData, should
+	 * ideally be callable from within addTestData, so that we can automatically
+	 * handle validations within our addition routine.
+	 * 
+	 */
+	function testAddTestThrowsExceptionsIfTestDataDoesNotMatchPreExistingTestDataStructure() {
+		$testData[] = $this->_testFix->_testData[0];
+		$this->setExpectedException('ErrorException');
+		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
+		$this->_basicFix->addTestData($testData);
+		$this->_basicFix->addTestData($invalidData);
+	}
 }
