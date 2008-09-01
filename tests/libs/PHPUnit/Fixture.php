@@ -15,6 +15,10 @@
  * Added functionality to allow us to add test data to our fixture, we are 
  * also able to validate this data, to determine whether we are adding
  * test data with the same data structure.
+ * Added functionality that allows us to determine whether a piece of test
+ * data has already be inputted into our fixture. Will come in handy, when
+ * a fixture class has predefined test data values & we want to create additional
+ * ones on the fly.
  * 
  * Date: 31/08/2008
  * Created basic implementation from test case, which allows us to count
@@ -49,9 +53,29 @@ class PHPUnit_Fixture {
 	public $_testData = null;
 	
 	/**
+	 * Determines whether our test data already exists
+	 *
+	 * @access public
+	 * @param Array $testData
+	 * @return bool
+	 * 
+	 */
+	function testDataExists($testData) {
+		if($this->testDataCount() > 0 ) {
+			for($i=0;$i<$this->testDataCount();$i++) {
+				if($this->_testData[$i] == $testData[$i]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
 	 * Validates that our test data is of the same structure
 	 * as pre-existing data.
 	 *
+	 * @access public
 	 * @param Array $testData
 	 * @return bool
 	 * 
@@ -70,7 +94,6 @@ class PHPUnit_Fixture {
 		}
 		return false;
 	}
-	
 	
 	/**
 	 * Sets our test data to our fixture.
