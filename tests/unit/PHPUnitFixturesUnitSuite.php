@@ -1,5 +1,8 @@
 <?php
 /**
+ * Simple test suite, allowsing us to test our Fixtures specific
+ * test cases.
+ * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
