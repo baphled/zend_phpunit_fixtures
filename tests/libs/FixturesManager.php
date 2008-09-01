@@ -154,8 +154,8 @@ class FixturesManager {
 	 * @param  String  $value          the value of our type.
 	 * @return String  $typeSegment    Returns a the SQL equalient to our type.
 	 * 
-	 * @todo Check the we only have a type, if we dont throw an exception.
-	 * @todo Needs looking at way too many if clauses.
+	 * @todo Check that if we have a type & it doesnt match, throw an exception.
+	 * @todo Needs looking at, way too many if clauses.
 	 * 
 	 */
     private function _checkDataTypeValues($key,$value) {
@@ -201,15 +201,33 @@ class FixturesManager {
     }
 
 
+    /**
+     * Checks that is we have a certain type, we must
+     * also have a length, if we don't we throw an
+     * exception
+     *
+     * @access private
+     * @param Array $dataType
+     * 
+     */
     private function _validateDataType($dataType) {
-    if(!isset($dataType['length']) 
-                && $dataType['type'] !== 'date'
-                && $dataType['type'] !== 'datetime'
-            ) {
-                throw new ErrorException('Invalid data type.');
-            }
+        if(!isset($dataType['length']) 
+            && $dataType['type'] !== 'date'
+            && $dataType['type'] !== 'datetime') {
+            throw new ErrorException('Invalid data type.');
+        }
     }
     
+    /**
+     * Checks that our datatype is an array and that our table
+     * is a valid string, if this is not the case we need to throw
+     * an exception 
+     *
+     * @access private
+     * @param Array $insertDataType
+     * @param String $tableName
+     * 
+     */
     private function _validateTestDataAndTableName($insertDataType,$tableName) {
      if(!is_array($insertDataType)) {
             throw new ErrorException('Test data must be in array format.');
@@ -226,8 +244,6 @@ class FixturesManager {
      * @param   Array $insertDataType
      * @param   String  $tableName
      * @return  String
-     * 
-     * @todo Finish implementation
      * 
      */    
     function _constructInsertQuery($insertTestData,$tableName) {
@@ -351,6 +367,7 @@ class FixturesManager {
 		
 		return true;
 	}
+	
 	/**
 	 * Deletes all our fixtures tables.
 	 *
