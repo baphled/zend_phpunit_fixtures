@@ -95,6 +95,7 @@ class FixturesManager {
 	 * 
 	 */
     private function _checkDataTypes($dataType) {
+    	$data = '';
         foreach ($dataType as $key=>$value) {
             $data .= $this->_checkDataTypeValues($key,$value);
             $data .= $this->_checkDataTypeValuesLength($key,$value);
@@ -229,7 +230,7 @@ class FixturesManager {
      * 
      */
     private function _validateTestDataAndTableName($insertDataType,$tableName) {
-     if(!is_array($insertDataType)) {
+        if(!is_array($insertDataType)) {
             throw new ErrorException('Test data must be in array format.');
         }
         if(!is_string($tableName) || empty($tableName)) {
