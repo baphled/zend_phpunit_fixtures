@@ -18,9 +18,9 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/default/models/' . PATH_SEPARATOR . get_include_path () );
+set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../fixtures/' ) . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/default/models/' . PATH_SEPARATOR . get_include_path () );
 
-require_once '../fixtures/TestFixture.php';
+require_once 'TestFixture.php';
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
@@ -105,6 +105,12 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 * a few things.
 	 * 
 	 */
+    
+    /**
+     * Here we want to test that if we try to get test data from
+     * an fixture with no actual data, we get false.
+     *
+     */
 	function testGetTestDataReturnsFalseIfNoTestDataPresent() {
 		$result = $this->_basicFix->getTestData();
 		$this->assertFalse($result);
@@ -144,7 +150,7 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * Now what about return a specific test data
+	 * Now what about returning a specific test data
 	 * 
 	 */
 	function testGetTestDataReturnsExpectedSingleResult() {
@@ -258,4 +264,26 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->_basicFix->addTestData($testData);
 		$this->_basicFix->addTestData($invalidData);
 	}
+	
+	/**
+	 * Now we can add test data to our fixture class, we want to throw
+	 * exceptions if when an entry is already submitted.
+	 * 
+	 */
+	function testAddTestReturnsTrueIfTestDataIsAlreadyPresent() {
+		$testData[] = $this->_testFix->_testData[0];
+		$result = $this->_testFix->testDataExists($testData);
+		$this->assertTrue($result);
+	}
+	
+	/**
+	 * If testDataExists finds no test data we want to return false.
+	 * 
+	 */
+	function testTestDataExistsFalseIfNoTestDataIsPresent() {
+		$testData[] = $this->_basicFix->_testData[0];
+		$result = $this->_basicFix->testDataExists($testData);
+		$this->assertFalse($result);
+	}
+	
 }
