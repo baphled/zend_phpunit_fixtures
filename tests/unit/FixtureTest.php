@@ -231,7 +231,8 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testValidateTestDataReturnsTrueAsDefault() {
-		$testData[] = $this->_testix->_testData[0];
+		$testData = array();
+		$testData[] = $this->_testFix->_testData[0];
 		$result = $this->_basicFix->validateTestData($testData);
 		$this->assertTrue($result);
 	}
@@ -285,5 +286,6 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$result = $this->_basicFix->testDataExists($testData);
 		$this->assertFalse($result);
 	}
+	
 	
 }
