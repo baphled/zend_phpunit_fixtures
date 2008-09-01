@@ -40,16 +40,6 @@ class Module_PHPUnit_Framework_TestCase  extends PHPUnit_Framework_TestCase {
 	 */
 	private $_config;
     
-	/**
-	 * gets our DB parameters from our configuration file.
-	 * 
-	 * @todo refactor, can remove the param and use $this->_config
-	 * 
-	 */
-    protected function _getDBParams($config) {
-        return TestConfigSettings::getDBParams($config);
-    }
-    
     /**
      * sets up the DB adapter, using TestConfigSettings
      */
@@ -86,4 +76,3 @@ class Module_PHPUnit_Framework_TestCase  extends PHPUnit_Framework_TestCase {
     	parent::tearDown();
     }
 }
- ?>
