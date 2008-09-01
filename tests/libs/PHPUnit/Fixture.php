@@ -11,6 +11,16 @@
  * @copyright 2008
  * @package TestSuite
  *
+ * Date: 01/09/2008
+ * Added functionality to allow us to add test data to our fixture, we are 
+ * also able to validate this data, to determine whether we are adding
+ * test data with the same data structure.
+ * 
+ * Date: 31/08/2008
+ * Created basic implementation from test case, which allows us to count
+ * the amount of test data present, aswell as retrieve, specific test data
+ * & a whole of list of test data which can be used for testing.
+ * 
  * @todo Implement functionality to allows users to specify an already
  *       setup table.
  * 
@@ -22,35 +32,86 @@ class PHPUnit_Fixture {
 	 *
 	 * @var String
 	 */
-	public $_table;
+	public $_table = null;
 	
     /**
      * Stores the fixtures table structure
      *
      * @var Array
      */
-    public $_fields;
+    public $_fields = array();
     
 	/**
 	 * Stores the fixtures test data.
 	 *
 	 * @var Array
 	 */
-	public $_testData;
+	public $_testData = null;
+	
+	/**
+	 * Validates that our test data is of the same structure
+	 * as pre-existing data.
+	 *
+	 * @param Array $testData
+	 * @return bool
+	 * 
+	 */
+	function validateTestData($testData) {
+		$data = $this->getTestData('id',1);
+		if(null === $this->_testData) {
+			return true;
+		}
+		else {
+			foreach ($testData as $key=>$value) {
+				if(!array_key_exists($key, $data)){
+				 throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
+				}
+			}
+		}
+		return false;
+	}
+	
 	
 	/**
 	 * Sets our test data to our fixture.
 	 *
-	 * @param unknown_type $testData
-	 * @return unknown
+	 * @access public
+	 * @param Array $testData
+	 * @return bool
+	 * 
 	 */
 	function addTestData($testData) {
 		if(!is_array($testData)) {
 			throw new ErrorException('Test data must be in an array format.');
+		} 
+		foreach ($testData as $data) {
+			if(is_array($data)) {
+				try {
+					$this->validateTestData($data);
+    				$this->_testData[] = $data;
+				}
+				catch(ErrorException $e) {
+					throw new ErrorException($e->getMessage());
+				}
+			}
+			else {
+				$this->_testData = $testData;
+				break;
+			}
 		}
 		return true;
 	}
 	
+	/**
+	 * Gets our test data for use, if parameters are not passed
+	 * we will retrieve all test data stored in this object, otherwise
+	 * we will return the specific test data in question.
+	 *
+	 * @param String $key
+	 * @param String $value
+	 * @return Array
+	 * 
+	 */
 	function getTestData($key='',$value='') {
 		if(!is_string($key)) {
 			throw new ErrorException('Test data id must be a string.');
@@ -78,7 +139,9 @@ class PHPUnit_Fixture {
 	 * the number of test data we have within
 	 * the fixture.
 	 *
+	 * @access public
 	 * @return Int
+	 * 
 	 */
 	function testDataCount() {
 		$result = 0;
@@ -88,5 +151,3 @@ class PHPUnit_Fixture {
 		return $result;
 	}
 }
-
-?>
