@@ -9,7 +9,18 @@
  * @package 
  * @subpackage TestSuite
  *
- * Date: Aug 31, 2008
+ * Date: 01/09/2008
+ * Created tests cases to implement drop & build fixture table,
+ * both of which will be need to create our db tables.
+ * Initially we focussed on build, until we came across a stumbling
+ * block which was the fact that old test db data was being left
+ * behind by our tests, so we needed to factor in FixturesManagers
+ * deleteFixturesTable until we implemented Fixture's wrapper version.
+ * Which is now being used. This situation is far from ideal, though
+ * it should how to implement the system, it is cumbersome and sloppy.
+ * We should really introduce stubs to handle this test functionality.
+ * 
+ * Date: 31/08/2008
  * Started basic test cases for implementing out fixture class,
  * which will allow us to subclass it giving us the ability to
  * preset specific details (table, fields & test data namely).
@@ -249,6 +260,7 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
 		$this->_basicFix->validateTestData($invalidData);
+		$this->assertSame($this->_basicFix->getTestData(),$testData);
 	}
 	
 	/**
@@ -264,6 +276,7 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
 		$this->_basicFix->addTestData($invalidData);
+		$this->assertSame($this->_basicFix->getTestData(),$testData);
 	}
 	
 	/**
@@ -287,5 +300,105 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->assertFalse($result);
 	}
 	
+	/**
+	 * Now we can add test data to our fixtures, we want to be able
+	 * to create a fixture table, this will mainly be done, by FixturesManager
+	 * but we will create an accessor class here also for flexiblity.
+	 * 
+	 */
 	
+	/**
+	 * If we the default return value must be false, we will only return
+	 * true if we have successfully built our fixture table.
+	 *
+	 * @todo Need to refactor and replace deleteFixturesTable with Fixture's
+	 *       implementation, once it is done.
+	 * 
+	 */
+	function testBuildFixtureTableReturnsTrueIfBuildFixtureTableSucceeds() {
+		$result = $this->_testFix->buildFixtureTable();
+		$this->assertTrue($result);
+		$this->_testFix->dropFixtureTable();
+	}
+	
+	/**
+	 * If our fixture does not have a table name set we need to handle it.
+	 * 
+	 */
+	function testBuildFixtureTableThrowsExceptionIfTableNameIsNotSet() {
+		$this->_basicFix->_testData = $this->_testFix->_testData[0];
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->buildFixtureTable();
+	}
+	/**
+	 * What happens if our fixture doesnt have a table name or testdata set?
+	 * We know that FixtureManager handles this pretty well so we will use
+	 * its internal voodoo to deal with exceptions and simply catch them.
+	 */
+	
+	/**
+	 * So we want to make sure that an exception is thrown if our fixture
+	 * doesnt have any test fields.
+	 *
+	 */
+	function testBuildFixtureTableReturnsFalseIfTestFieldsIsNotSet() {
+		$this->_basicFix->_table = 'blah';
+		$this->_basicFix->_testData = $this->_testFix->_testData[0];
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->buildFixtureTable();
+	}
+	
+	/**
+	 * Now we need to be able to actually build our fixture table, this
+	 * will be done by actually calling FixturesManagers method.
+	 * 
+	 */
+	function testBuildFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
+		$result = $this->_testFix->buildFixtureTable();
+		$this->assertTrue($result);
+        $this->_testFix->dropFixtureTable();
+	}
+	
+	/**
+	 * Silly oversight, because we're using a real db & not cleaning our its results
+	 * each test we need to create a drop method to remove all our fixture data.
+	 * This'll be just a simple wrapper method that will use FixtureManager to remove
+	 * the table.
+	 * 
+	 */
+	function testDropFixtureTableReturnsFalseOnFailure() {
+		$result = $this->_testFix->dropFixtureTable();
+		$this->assertFalse($result);
+	}
+	
+	/**
+	 * Now we want to check that our drop method returns true
+	 * if we actually drop a table.
+	 * Very naughty but we'll use testFix to actually build
+	 * our table & then drop it.
+	 * 
+	 */
+	function testDropFixtureTableReturnsTrueOnSuccess() {
+		$this->_testFix->buildFixtureTable();
+		$result = $this->_testFix->dropFixtureTable();
+        $this->assertTrue($result);
+	}
+	
+	/**
+	 * Ok, now we have implemented dropFixtureTable, we will use
+	 * it to keep our tests clean, ideally this will be used within
+	 * the tearDown() method.
+	 * 
+	 */
+	
+	/**
+	 * We now want to be able to insert data into our testing table,
+	 * we'll use testFix again & a help function which will build our
+	 * table for us. This seems nessary for initial exploratory testing. 
+	 * 
+	 */
+	function testPopulateFixturesReturnsFalseByDefault() {
+		$result = $this->_testFix->populateFixtures();
+		$this->assertFalse($result);
+	}
 }
