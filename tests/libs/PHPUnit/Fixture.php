@@ -1,6 +1,6 @@
 <?php
 /**
- * Fixture
+ * PHPUnit_Fixture
  * 
  * Parent Fixture class, used to handle our actual fixtures,
  * allowing us to pull specific bits of data, auto-generate
@@ -19,12 +19,18 @@
  * data has already be inputted into our fixture. Will come in handy, when
  * a fixture class has predefined test data values & we want to create additional
  * ones on the fly.
+ * Added functionality to build actual db tables using our fixtures object,
+ * have also implemented a wrapper function to allow us to delete our test
+ * tables.
  * 
  * Date: 31/08/2008
  * Created basic implementation from test case, which allows us to count
  * the amount of test data present, aswell as retrieve, specific test data
  * & a whole of list of test data which can be used for testing.
  * 
+ * @todo Turn all property with a '_' prefix into private properties.
+ * @todo Add functionality to automatically generate test data, Which
+ *       be a whole new test case.
  * @todo Implement functionality to allows users to specify an already
  *       setup table.
  * 
@@ -52,6 +58,18 @@ class PHPUnit_Fixture {
 	 */
 	public $_testData = null;
 	
+	/**
+	 * Stores our fixture manager, used
+	 * to handle the meat of fixture interactions
+	 *
+	 * @access private
+	 * @var FixtureManager
+	 */
+	private $_fixMan;
+	
+	function __construct() {
+		$this->_fixMan = new FixturesManager();
+	}
 	/**
 	 * Determines whether our test data already exists
 	 *
@@ -130,10 +148,12 @@ class PHPUnit_Fixture {
 	 * we will retrieve all test data stored in this object, otherwise
 	 * we will return the specific test data in question.
 	 *
+	 * @access public
 	 * @param String $key
 	 * @param String $value
 	 * @return Array
 	 * 
+	 * @todo Refactor method, if clause on 165 needs lookin @.
 	 */
 	function getTestData($key='',$value='') {
 		if(!is_string($key)) {
@@ -142,7 +162,7 @@ class PHPUnit_Fixture {
 		if(!empty($key) && empty($value)) {
 			throw new ErrorException('Must supply a value when submitting a key');
 		}
-		if($this->testDataCount() != 0) {
+		if($this->testDataCount() != 0) {                 // smells, cant this be put in a private function.
 			if(!empty($key) && !empty($value)) {
 				foreach($this->_testData as $data) {
 					if($data[$key] === $value) {
@@ -156,6 +176,7 @@ class PHPUnit_Fixture {
 		}
 		return false;
 	}
+	
 	
 	/**
 	 * Basic method, allowsing us to determine
@@ -172,5 +193,59 @@ class PHPUnit_Fixture {
 			$result = count($this->_testData);
 		}
 		return $result;
+	}
+	
+	/*
+	 * Wrapper functions
+	 */
+	
+	/**
+	 * Wrapper function used to build our fixture tables.
+	 *
+	 * @access public
+	 * @return bool
+	 * 
+	 */
+	function buildFixtureTable() {
+		if(empty($this->_table)) {
+			throw new ErrorException('Fixtures table name must be entered.');
+		}
+		if(0 === count($this->_fields)) {
+			throw new ErrorException('No table fields present.');
+		}
+		try {
+			$result = $this->_fixMan->buildFixtureTable($this->_fields,$this->_table);
+			if(true === $result) {
+			     return true;
+			}
+		}
+		catch (ErrorException $e) {
+			throw new ErrorException($e->getMessage());
+		}
+		return false;
+	}
+	
+	/**
+	 * Another wrapper function, this time used for deleting
+	 * our test tables.
+	 *
+	 * @access public
+	 * @return bool
+	 * 
+	 * @todo   The implementation of this and build look scarily simular,
+     *         we need to refactor.
+     * 
+	 */
+	function dropFixtureTable() {
+		try {
+			$result = $this->_fixMan->deleteFixturesTable();
+			if(true === $result) {
+				return true;
+			}
+		}
+		catch (ErrorException $e) {
+			echo $e->getMessage();
+		}
+		return false;
 	}
 }
