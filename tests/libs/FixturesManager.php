@@ -55,6 +55,8 @@
  * to improve tests for creating schema out of our array but
  * have a decent idea of how things should be.
  * 
+ * @todo Don't like the fact that the DB related functionality
+ *       is mingled in here, it should really be refactored.
  * @todo Look into creating fixtures on the fly.
  * @todo Refactor class so that '_' prefixed functions are actually
  *       private.
