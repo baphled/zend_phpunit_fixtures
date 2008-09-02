@@ -367,8 +367,24 @@ class FixturesManager {
 		catch(Exception $e) {
 			throw new ErrorException($e->getMessage());
 		}
-		
 		return true;
+	}
+	
+	/**
+	 * Determines whether the fixture 
+	 * actually exists with our test db.
+	 *
+	 * @param String $tableName
+	 * @return bool
+	 */
+	function fixtureTableExists($tableName) {
+		if(empty($tableName)) {
+			throw new ErrorException('Table name can not be empty');
+		}
+		if(in_array($tableName,$this->_db->listTables())) {
+			return true;
+		}
+		return false;
 	}
 	
 	/**
