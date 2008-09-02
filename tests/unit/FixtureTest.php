@@ -330,6 +330,17 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->setExpectedException('ErrorException');
 		$this->_basicFix->buildFixtureTable();
 	}
+	
+	/**
+	 * If we are not able to build our fixtures table we need to return
+	 * false.
+	 * 
+	 */
+	function testBuildFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
+		$this->_basicFix->_fields = $this->_testFix->_fields;
+		$result = $this->_basicFix->buildFixtureTable();
+		$this->assertFalse($result);
+	}
 	/**
 	 * What happens if our fixture doesnt have a table name or testdata set?
 	 * We know that FixtureManager handles this pretty well so we will use
@@ -341,7 +352,7 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 * doesnt have any test fields.
 	 *
 	 */
-	function testBuildFixtureTableReturnsFalseIfTestFieldsIsNotSet() {
+	function testBuildFixtureTableThrowsExceptionIfTestFieldsIsNotSet() {
 		$this->_basicFix->_table = 'blah';
 		$this->_basicFix->_testData = $this->_testFix->_testData[0];
 		$this->setExpectedException('ErrorException');
@@ -392,13 +403,33 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	
 	/**
-	 * We now want to be able to insert data into our testing table,
-	 * we'll use testFix again & a help function which will build our
-	 * table for us. This seems nessary for initial exploratory testing. 
+	 * First off if we haven't built the fixture table, we need to throw
+	 * an error.
 	 * 
 	 */
-	function testPopulateFixturesReturnsFalseByDefault() {
+	function testPopulateFixturesThrowsExceptionIfTableNameIsEmpty() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->populateFixtures();
+	}
+	
+	/**
+	 * If we dont have a fixtures table, we need to throw an
+	 * exception.
+	 */
+	function testPopulateFixturesThrowsExceptionIfTableIsNotBuilt() {
+		$this->setExpectedException('ErrorException');
+		$this->_testFix->populateFixtures();
+	}
+	
+	/**
+	 * Now if our fixture table is present we need can insert out
+	 * test data.
+	 * 
+	 */
+	function testPopulateFixturesReturnsTrueIfTestDataIsSuccessfullyInserted() {
+		$this->_testFix->buildFixtureTable();
 		$result = $this->_testFix->populateFixtures();
-		$this->assertFalse($result);
+		$this->assertTrue($result);
+		$this->_testFix->dropFixtureTable();
 	}
 }
