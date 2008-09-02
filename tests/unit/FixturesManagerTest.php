@@ -6,7 +6,8 @@
  * Used to work with the fixtures we'll need to run
  * our test cases.
  * 
- * To get running you will need to configure settings.ini.
+ * To get running you will need to configure settings.ini with corresponding
+ * DB credentials.
  * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
@@ -20,6 +21,8 @@
  * we do not want to try to insert test data into a non-existent table. This will
  * be used by PHPUnit_Fixture to decide whether to insert test data into a table
  * or not.
+ * Still refactoring out test on private methods, if done right we can still
+ * keep our code coverage, which is 96% atm. Will concerntrate on _constructInsertQuery
  * 
  * Date: 31/08/2008
  * Put together tests to implement SQL insertion queries, via our test data
@@ -66,6 +69,16 @@ require_once 'FixturesManager.php';
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
+class FixturesManWrapper extends FixturesManager {
+	function runFixtureQuery($query) {
+		$result = $this->_runFixtureQuery($query);
+		if($result) {
+			return true;
+		}
+		return false;
+	}
+}
+
 class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	
 	private $_fixturesManager;
@@ -85,10 +98,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		 *       run and what to return.
 		 * 
 		 */
-		$this->_stub = $this->getMock('FixturesManager',array('_runFixtureQuery','buildFixtureTable'));
-        $this->_stub->expects($this->any())
-                    ->method('_runFixtureQuery')
-                    ->will($this->returnValue(TRUE));
+		$this->_stub = $this->getMock('FixturesManager',array('buildFixtureTable'));
         $this->_stub->expects($this->any())
                     ->method('buildFixtureTable')
                     ->will($this->returnValue(TRUE));
@@ -98,8 +108,18 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		$this->_setUpConfig ();
 		parent::setUp ();
 		$this->_fixturesManager = new FixturesManager();
+		$this->_fixWrap = new FixturesManWrapper();
 	}
 	
+    public function tearDown() {
+        $this->_fixturesManager = null;
+        $this->_fixMan = null;
+        parent::tearDown ();
+    }
+    
+	/*
+	 * Test data starts here.
+	 */
 	private function _getGenericQuery() {
 		return 'CREATE TABLE blah (id INT(10) PRIMARY KEY AUTO_INCREMENT, parent_id INT(10) NULL, model VARCHAR(255) DEFAULT "", alias VARCHAR(255) DEFAULT "", lft INT(10) NULL, rght INT(10) NULL);';
 	}
@@ -136,6 +156,10 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
             'modified' => array('type' => 'datetime', 'null' => FALSE)
         );
         return $fields;
+    }
+    
+    private function _getDataTypeWithNoDefinedType() {
+    	return array('date' => array('tipe' => 'date', 'null' => FALSE));
     }
     
     private function _getDateDataType() {
@@ -212,7 +236,14 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
         );
         return $fields;
     }
+    
+    /*
+     * Test data finishes here.
+     */
 	
+    /*
+     * Helper functions start here.
+     */
     /**
      * Seeing as we are being naughty and lazy we needed to pull this
      * out of our test units as its taking up too much space, not to
@@ -225,11 +256,13 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
         $this->_fixturesManager->buildFixtureTable($fixture,$table);
     }
 	
-    public function tearDown() {
-		$this->_fixturesManager = null;
-		parent::tearDown ();
-	}
-	
+    /*
+     * Helper functions finish here.
+     */
+
+    /*
+     * Test units
+     */
 	function testConstructor() {
 		$this->assertNotNull($this->_fixturesManager);
 	}
@@ -237,7 +270,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	/**
 	 * This test is purely used to help work out the
 	 * implementation of the fixtures fields array,
-	 * which I've borrowed from phpcake.
+	 * which I've stole from phpcake.
 	 * 
 	 */
 	function testFixtureDataHasDataTypes() {
@@ -245,6 +278,18 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		foreach ($fields as $field) {
 			$this->assertArrayHasKey('type',$field);	
 		}
+	}
+	
+	/**
+	 * Really do not know how I missed this test. We need to make
+	 * sure that each field has a type, if it doesn't we need to
+	 * throw an error as the 
+	 *
+	 */
+	function testConvertDataTypeThrowsExceptionIfNoTypeIfDefine() {
+		$fields = $this->_getDataTypeWithNoDefinedType();
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->convertDataType($fields);
 	}
 	
 	/**
@@ -600,7 +645,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testRunFixtureQueryReturnsFalseOnFailure() {
 		$query = 'CREATE TABLE SFSFSDsdsd;';
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_runFixtureQuery($query);
+		$this->_fixWrap->runFixtureQuery($query);
 	}
 	
 	/**
@@ -610,27 +655,15 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testRunFixtureQueryThrowsExceptionIfPassedANonCreateTableQuery() {
 		$query = 'sfdsfa';
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_runFixtureQuery($query);
+		$this->_fixWrap->runFixtureQuery($query);
 	}
 	
 	function testRunFixtureQueryThrowsExceptionIfPassedAnUnexecutableQuery() {
 		$query = 'CREATE TABLE (id serial);';
 		$this->setExpectedException('PDOException');
-		$this->_fixturesManager->_runFixtureQuery($query);
+		$this->_fixWrap->runFixtureQuery($query);
 	}
 	
-	/**
-	 * We now need to see what happens when we pass a legal query.
-	 * 
-	 * We have stubbed as direct access will execute a SQL command.
-	 * 
-	 */
-	function testRunFixtureQueryReturnsTrueOnSuccessUsingStubs() {
-		$query = $this->_getGenericQuery();            
-		$result = $this->_stub->_runFixtureQuery($query); // @todo atm always returns true, need to expand on.
-		$this->assertTrue($result);
-	}
-
 	/**
 	 * Now we want to loop through our array and check if each
 	 * fixture table exists. If it doesn't throw error.
@@ -654,7 +687,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 */
 	function testDeleteDBTableCanDeleteAnActualTable() {
 		$query = $this->_getGenericQuery();
-		$result = $this->_fixturesManager->_runFixtureQuery($query);
+		$result = $this->_fixWrap->runFixtureQuery($query);
 		$this->assertTrue($result);
 		$wasDeleted = $this->_fixturesManager->deleteFixturesTable();
 		$this->assertTrue($wasDeleted);
@@ -701,27 +734,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 		$result = $this->_fixturesManager->_constructInsertQuery($data,'pool');
 		$this->assertContains('VALUES (',$result);
 	}
-	
-	/**
-	 * Now our big step was taken, we need to make sure that our implementation
-	 * works as expected, this isn't the best method but it will give us
-	 * a quick response, will need to stub out once confirmed.
-	 * It also helps us to realise how our insertion method will work
-	 * later.
-	 * 
-	 */
-	function testConstructInsertQuerySuccessfullyInsertsQueryAsExpected() {
-		$tableName = 'apple';
-		$dataType = $this->_getTestAppleTableStructure();
-        $this->_fixturesManager->buildFixtureTable($dataType,$tableName);
-		$testData = $this->_getSingleAppleFixtureDataStructure();
-		foreach($testData as $data) {
-			$query = $this->_fixturesManager->_constructInsertQuery($data,$tableName);
-	        $result = $this->_fixturesManager->_runFixtureQuery($query);
-	        $this->assertTrue($result);
-		}
-		$this->_fixturesManager->deleteFixturesTable();       // our test passes, so we clean up. (comment out to varify table contents)
-	}
+
 	
 	/**
 	 * We missed this whilst refactoring, we need to make sure that the 
@@ -731,7 +744,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsNotAString() {
 		$testData = $this->_getSingleAppleFixtureDataStructure();
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_constructInsertQuery($testData,array());
+		$this->_fixturesManager->buildFixtureTable($testData,array());
 	}
 	
 	/**
@@ -744,7 +757,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsEmpty() {
 		$testData = $this->_getSingleAppleFixtureDataStructure();
         $this->setExpectedException('ErrorException');
-        $this->_fixturesManager->_constructInsertQuery($testData,'');
+        $this->_fixturesManager->buildFixtureTable($testData,'');
 	}
 	
 	/**
@@ -861,5 +874,4 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
     	$this->_fixturesManager->deleteFixturesTable();
     	$this->assertTrue($result);
     }
-
 }
