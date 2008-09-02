@@ -3,11 +3,21 @@
 /**
  * DataTypeChecker
  *  
+ * Helps to check our fixure DB table data types, this can help us
+ * not only input data into a DB but also emulate an DB response.
+ * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package
+ * @package TestSuite
  *
+ * Date: 02/09/2008
+ * Built class on realisation that functionality for FixturesManager
+ * did not need to be there as they are more data related.
+ * Refactored _validateDataType into class & renamed to checkDataType.
+ * Refactored _validateTestDataAndTableName into class & renamed to
+ * checkTestDataAndTableName.
+ * 
  */
 
 require_once 'Zend/Loader.php';
@@ -16,9 +26,28 @@ Zend_Loader::registerAutoload ();
 class DataTypeChecker {
 	
     /**
-     * Checks out data type and returns the correct data type.
+     * Checks that our datatype is an array and that our table
+     * is a valid string, if this is not the case we need to throw
+     * an exception 
      *
      * @access private
+     * @param Array $insertDataType
+     * @param String $tableName
+     * 
+     */
+    static function checkTestDataAndTableName($insertDataType,$tableName) {
+        if(!is_array($insertDataType)) {
+            throw new ErrorException('Test data must be in array format.');
+        }
+        if(!is_string($tableName) || empty($tableName)) {
+            throw new ErrorException('Table name must be a string.');
+        }
+    }
+    
+    /**
+     * Checks out data type and returns the correct data type.
+     *
+     * @access static
      * @param  String  $key            
      * @param  String  $value          the value of our type.
      * @return String  $typeSegment    Returns a the SQL equalient to our type.
@@ -29,7 +58,7 @@ class DataTypeChecker {
      */
     static function checkDataTypeValues($key,$value) {
         $typeSegment = '';
-        if($key === 'type') {
+        if($key === 'type') {               // smells, need to refactor
             if($value === 'string') {
                 $typeSegment = ' VARCHAR';
             }
@@ -49,7 +78,7 @@ class DataTypeChecker {
     /**
      * Checks if our datatype is a length value
      *
-     * @access private
+     * @access static
      * @param String $key
      * @param String $value
      * @return String
@@ -66,7 +95,7 @@ class DataTypeChecker {
      * Determines whether our data type have 
      * a is allowed a null value.
      *
-     * @access  private
+     * @access  static
      * @param   String  $key
      * @param   String  $value
      * @return  String  $data
@@ -85,11 +114,12 @@ class DataTypeChecker {
         return $data;
     }
     
-/**
+    
+    /**
      * Checks that our datatype has a default value,
      * if it does we need to set the appropriate SQL string.
      *
-     * @access private
+     * @access static
      * @param String $key
      * @param String $value
      * @return String
@@ -109,9 +139,28 @@ class DataTypeChecker {
     }
     
     /**
+     * Checks that is we have a certain type, we must
+     * also have a length, if we don't we throw an
+     * exception.
+     *
+     * @access static
+     * @param Array $dataType
+     * 
+     */
+    static function checkDataType($dataType) {
+        if(!array_key_exists('length',$dataType) 
+            && !array_search('date',$dataType)
+            && !array_search('datetime',$dataType)
+            || !array_key_exists('type',$dataType)) {
+            throw new ErrorException('Invalid data type.');
+        }
+    }
+    
+    /**
      * Checks to see if we have a primary key set, if we do
      * we need to create the corresponding SQL.
      *
+     * @access static
      * @param Array $key
      * @return bool
      * 
