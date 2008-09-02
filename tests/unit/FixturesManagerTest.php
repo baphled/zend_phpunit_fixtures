@@ -14,6 +14,13 @@
  * @package FixturesManager
  * @subpackage TestSuite
  *
+ * Date: 02/09/2008
+ * Added test cases to help implement our fixture table exists method, which
+ * will tell us if a table already exists within our DB, will be critical as
+ * we do not want to try to insert test data into a non-existent table. This will
+ * be used by PHPUnit_Fixture to decide whether to insert test data into a table
+ * or not.
+ * 
  * Date: 31/08/2008
  * Put together tests to implement SQL insertion queries, via our test data
  * array. Can now build tables and insert data so will now work on cleaning
@@ -811,5 +818,47 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
      * now is some refactoring and a little more verification.
      * 
      */
+    
+    /**
+     * Need to add a method to determine whether a table fixture has
+     * been entered or not.
+     * 
+     */
+    function testFixtureTableExistsReturnsFalseIfNoTableExists() {
+    	$result = $this->_fixturesManager->fixtureTableExists('apples');
+    	$this->assertFalse($result);
+    }
+    
+    /**
+     * If we have no tables present within the database we need to throw
+     * an exception.
+     * 
+     */
+    function testFixtureTableExistsThrowsExceptionIfNotTablesNameIsEmpty() {
+    	$this->setExpectedException('ErrorException');
+    	$this->_fixturesManager->fixtureTableExists('');
+    }
+    
+    /**
+     * What happens if the table name is not a string?
+     * 
+     */
+    function testFixtureTableExistsThrowsExceptionIfTableNameIsNotAString() {
+    	$this->setExpectedException('ErrorException');
+    	$this->_fixturesManager->fixtureTableExists(array());
+    }
+    
+    /**
+     * Must return true if the table is found, we'll need to actually
+     * create a table for this table to have some value.
+     * 
+     */
+    function testFixtureTableExistsReturnsTrueIfTableDoesExist() {
+    	$table = 'apples';
+        $this->_setUpTestTableStructure($table);
+    	$result = $this->_fixturesManager->fixtureTableExists($table);
+    	$this->_fixturesManager->deleteFixturesTable();
+    	$this->assertTrue($result);
+    }
 
 }
