@@ -90,6 +90,10 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->assertClassHasAttribute('_table','PHPUnit_Fixture');
 	}
 	
+    function testPHPUnitFixtureHasFixtureManagerProperty() {
+        $this->assertClassHasAttribute('_fixMan','PHPUnit_Fixture');
+    }
+	
    /**
      * If we have no fixtures we need to know. We'll create a method
      * that will return the number of fixtures within our class.
@@ -228,6 +232,7 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestDataIsAbleToAddMultiplesOfTestData() {
+		$actual = array();
 		$actual[] = $this->_testFix->_testData[0];
 		$actual[] = $this->_testFix->_testData[2];
 		$this->_basicFix->addTestData($actual);
@@ -431,5 +436,10 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		$result = $this->_testFix->populateFixtures();
 		$this->assertTrue($result);
 		$this->_testFix->dropFixtureTable();
+	}
+	
+	function testAutoGenerateTestDataReturnsFalseByDefault() {
+		$result = $this->_testFix->autoGenerateTestData();
+		$this->assertFalse($result);
 	}
 }
