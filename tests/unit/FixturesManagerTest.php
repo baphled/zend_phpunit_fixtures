@@ -664,6 +664,7 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
      * What happens when we try to insert an invalid insert query?
      * cool we get an error from Zend_Db_Statement.
      * Fatal error: Call to undefined method PDOStatement::result_metadata() in /usr/share/php/Zend/Db/Statement/Mysqli.php on line 221
+     * This was because we were using the wrong type of of command.
      * 
      */
 	
