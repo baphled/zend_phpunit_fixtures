@@ -12,6 +12,13 @@
  * @package TestSuite
  * @subpackage FixturesManager
  *
+ * Date: 02/09/2008
+ * Refactored _validateDataType, we were getting errors when checking
+ * that a data type had lengths on arrays with none. We are now able
+ * to check that we actually do & suppress the error by using array_search.
+ * Refactored checkDataType functions into DataTypeChecker, which will now
+ * deal with all our datatype checking.
+ * 
  * Date: 31/08/2008
  * Finished constructInsertQuery & refactored so that it can handle
  * multiple entries.
@@ -99,110 +106,14 @@ class FixturesManager {
     private function _checkDataTypes($dataType) {
     	$data = '';
         foreach ($dataType as $key=>$value) {
-            $data .= $this->_checkDataTypeValues($key,$value);
-            $data .= $this->_checkDataTypeValuesLength($key,$value);
-            $data .= $this->_checkDataTypeValueNull($key,$value);
-            $data .= $this->_checkDataTypeDefault($key,$value);
-            if($key === 'key') {
-                $data .= ' PRIMARY KEY AUTO_INCREMENT';
-            }
+            $data .= DataTypeChecker::checkDataTypeValues($key,$value);
+            $data .= DataTypeChecker::checkDataTypeValuesLength($key,$value);
+            $data .= DataTypeChecker::checkDataTypeValueNull($key,$value);
+            $data .= DataTypeChecker::checkDataTypeDefault($key,$value);
+            $data .= DataTypeChecker::checkDataTypePrimaryKey($key);
         }
         return $data;
     }
-	
-	/**
-	 * Checks if our datatype is a length value
-	 *
-	 * @access private
-	 * @param String $key
-	 * @param String $value
-	 * @return String
-	 */
-    private function _checkDataTypeValuesLength($key,$value) {
-        $data = '';
-        if($key === 'length') {
-            $data .= '(' .$value .')';
-        }
-        return $data;
-    }
-
-    /**
-     * Determines whether our data type have 
-     * a is allowed a null value.
-     *
-     * @access  private
-     * @param   String  $key
-     * @param   String  $value
-     * @return  String  $data
-     * 
-     */
-    private function _checkDataTypeValueNull($key,$value) {
-    	$data = '';
-        if($key === 'null') {
-            if(TRUE === $value) {
-                $data .= ' NULL';
-            }
-            elseif(FALSE === $value) {
-                $data .= ' NOT NULL';
-            }
-        }
-        return $data;
-    }
-    
-	/**
-	 * Checks out data type and returns the correct data type.
-	 *
-	 * @access private
-	 * @param  String  $key            
-	 * @param  String  $value          the value of our type.
-	 * @return String  $typeSegment    Returns a the SQL equalient to our type.
-	 * 
-	 * @todo Check that if we have a type & it doesnt match, throw an exception.
-	 * @todo Needs looking at, way too many if clauses.
-	 * 
-	 */
-    private function _checkDataTypeValues($key,$value) {
-        $typeSegment = '';
-        if($key === 'type') {
-            if($value === 'string') {
-                $typeSegment = ' VARCHAR';
-            }
-            if($value === 'integer') {
-                $typeSegment = ' INT';
-            }
-            if($value === 'date') {
-            	$typeSegment = ' DATE';
-            }
-            if($value === 'datetime') {
-            	$typeSegment = ' DATETIME';
-            }
-        }
-        return $typeSegment;
-    }
-	
-    /**
-     * Checks that our datatype has a default value,
-     * if it does we need to set the appropriate SQL string.
-     *
-     * @access private
-     * @param String $key
-     * @param String $value
-     * @return String
-     */
-    private function _checkDataTypeDefault($key,$value) {
-        $data = null;
-        if($key === 'default') {
-            $data = ' DEFAULT ';
-            if($value === '') {
-               $data .= '""'; 
-            }
-            else {
-               $data .= '"' .$value .'"';
-            }
-        }
-        return $data;
-    }
-
 
     /**
      * Checks that is we have a certain type, we must
@@ -214,9 +125,9 @@ class FixturesManager {
      * 
      */
     private function _validateDataType($dataType) {
-        if(!isset($dataType['length']) 
-            && $dataType['type'] !== 'date'
-            && $dataType['type'] !== 'datetime') {
+        if(!array_key_exists('length',$dataType) 
+            && !array_search('date',$dataType)
+            && !array_search('datetime',$dataType)) {
             throw new ErrorException('Invalid data type.');
         }
     }
