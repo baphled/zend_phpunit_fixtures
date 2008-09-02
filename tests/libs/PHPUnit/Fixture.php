@@ -207,20 +207,17 @@ class PHPUnit_Fixture {
 	 * 
 	 */
 	function buildFixtureTable() {
-		if(empty($this->_table)) {
-			throw new ErrorException('Fixtures table name must be entered.');
-		}
 		if(0 === count($this->_fields)) {
 			throw new ErrorException('No table fields present.');
 		}
 		try {
 			$result = $this->_fixMan->buildFixtureTable($this->_fields,$this->_table);
-			if(true === $result) {
-			     return true;
-			}
+	        if(true === $result) {
+	             return true;
+	        }			
 		}
-		catch (ErrorException $e) {
-			throw new ErrorException($e->getMessage());
+		catch(ErrorException $e) {
+			echo $e->getMessage();
 		}
 		return false;
 	}
@@ -244,6 +241,22 @@ class PHPUnit_Fixture {
 			}
 		}
 		catch (ErrorException $e) {
+			echo $e->getMessage();
+		}
+		return false;
+	}
+	
+	function populateFixtures() {
+		if(!$this->_fixMan->fixtureTableExists($this->_table)) {
+			throw new ErrorException('Fixtures table is not present.');
+		}
+		try {
+			$result = $this->_fixMan->insertTestData($this->_testData,$this->_table);
+			if(true === $result) {
+				return true;
+			}
+		}
+		catch(Exception $e) {
 			echo $e->getMessage();
 		}
 		return false;
