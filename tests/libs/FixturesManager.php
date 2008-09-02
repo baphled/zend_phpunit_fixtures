@@ -1,5 +1,4 @@
 <?php
-
 /**
  * FixturesManager
  * Handles our fixtures during testing. This feature allows us
@@ -18,6 +17,10 @@
  * to check that we actually do & suppress the error by using array_search.
  * Refactored checkDataType functions into DataTypeChecker, which will now
  * deal with all our datatype checking.
+ * Improved validateDataType to throw an exception if a type is not defined,
+ * this functionality seems more at home in DataTypeChecker, so we'll refactor
+ * it into there shortly.
+ * Removed _validateDataType and refactored into DataTypeChecker.
  * 
  * Date: 31/08/2008
  * Finished constructInsertQuery & refactored so that it can handle
@@ -29,6 +32,10 @@
  * Introduced buildFixtureTable, which is an accessor method for
  * constructInsertQuery, basically iterating over the test data
  * inserting it into our fixtures table.
+ * Refactored validateTestDataAndTableName and placed within
+ * DataTypeChecker, also renamed to checkTestDataAndTableName.
+ * Refactored insertTestData, now uses parseTestData, which parses
+ * our test data and inserts each on into our selected test table.
  * 
  * Date: 28/08/2008
  * Refactored _makeDBTable to _runFixtureQuery, as the name is more
@@ -116,39 +123,42 @@ class FixturesManager {
     }
 
     /**
-     * Checks that is we have a certain type, we must
-     * also have a length, if we don't we throw an
-     * exception
+     * Used to actually execute our dynamically
+     * made SQL which creates an instance of our
+     * DB for us.
      *
-     * @access private
-     * @param Array $dataType
+     * @access protected
+     * @param String $query
+     * @return bool
      * 
      */
-    private function _validateDataType($dataType) {
-        if(!array_key_exists('length',$dataType) 
-            && !array_search('date',$dataType)
-            && !array_search('datetime',$dataType)) {
-            throw new ErrorException('Invalid data type.');
+    protected function _runFixtureQuery($query) {
+        if(!eregi(' \(',$query)) {             // @todo smells need better verification
+            throw new ErrorException('Illegal query.');
         }
+        try {
+            $this->_db->getConnection()->exec($query);
+            return true;
+        }
+        catch(Exception $e) {
+            throw new PDOException($e->getMessage());
+        }
+        return false;
     }
     
     /**
-     * Checks that our datatype is an array and that our table
-     * is a valid string, if this is not the case we need to throw
-     * an exception 
+     * Parses through our test data constructing the nessary SQL
+     * which is run, giving us our populated test DB.
      *
-     * @access private
-     * @param Array $insertDataType
-     * @param String $tableName
-     * 
+     * @param Array $testData
+     * @param String $table
      */
-    private function _validateTestDataAndTableName($insertDataType,$tableName) {
-        if(!is_array($insertDataType)) {
-            throw new ErrorException('Test data must be in array format.');
-        }
-        if(!is_string($tableName) || empty($tableName)) {
-            throw new ErrorException('Table name must be a string.');
-        }
+    private function _parseTestData($testData,$table) {
+       DataTypeChecker::checkTestDataAndTableName($testData,$table);
+       foreach($testData as $data) {
+            $query = $this->_constructInsertQuery($data,$table);
+            $this->_runFixtureQuery($query);                
+       }
     }
     
     /**
@@ -161,14 +171,14 @@ class FixturesManager {
      * 
      */    
     function _constructInsertQuery($insertTestData,$tableName) {
-        $this->_validateTestDataAndTableName($insertTestData,$tableName);
+        DataTypeChecker::checkTestDataAndTableName($insertTestData,$tableName);
         $stmt = 'INSERT INTO ' .$tableName;
         $insert = '(';
         $values = 'VALUES ( ';
         foreach($insertTestData as $key=>$value) {
         	$insert .= $key .', ';
         	if(is_string($value)) {
-        		$value = '"' .$value .'"';
+        		$value = $this->_db->quote($value);
         	}
         	$values .=  $value .', ';
         }
@@ -176,30 +186,6 @@ class FixturesManager {
         $stmt .= eregi_replace(', $',');',$values);
 
         return $stmt;
-    }
-
-    /**
-     * Used to actually execute our dynamically
-     * made SQL which creates an instance of our
-     * DB for us.
-     *
-     * @access private
-     * @param String $query
-     * @return bool
-     * 
-     */
-    function _runFixtureQuery($query) {
-    	if(!eregi(' \(',$query)) {             // @todo smells need better verification
-    		throw new ErrorException('Illegal query.');
-    	}
-    	try {
-    		$this->_db->getConnection()->exec($query);
-    		return true;
-    	}
-    	catch(Exception $e) {
-    		throw new PDOException($e->getMessage());
-    	}
-    	return false;
     }
 
 	/**
@@ -223,7 +209,7 @@ class FixturesManager {
         }
         $query = '';
 	   foreach($dataTypeInfo as $field=>$dataType) {
-            $this->_validateDataType($dataType);
+            DataTypeChecker::checkDataType($dataType);
             $data = '';
             $data = $this->_checkDataTypes($dataType);
             $query .= $field .$data .', ';
@@ -258,19 +244,18 @@ class FixturesManager {
 	}
 	
 	/**
-	 * Insert test data into a fixtures table, ready for testing.
+	 * Accessor method for inserting test data into a test DB table.
+	 * Will parse through each of our test data inserting them into
+	 * the selected test table.
 	 *
 	 * @param Array $testData
 	 * @param String $table
 	 * @return Bool
+	 * 
 	 */
 	function insertTestData($testData,$table) {
-		$this->_validateTestDataAndTableName($testData,$table);
 		try {
-			foreach($testData as $data) {
-                $query = $this->_constructInsertQuery($data,$table);
-                $this->_runFixtureQuery($query);				
-			}
+			$this->_parseTestData($testData,$table);
 		}
 		catch(PDOException $e) {
 			throw new PDOException($e->getMessage());
