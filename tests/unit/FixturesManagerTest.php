@@ -12,9 +12,14 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package FixturesManager
+ * @package PHPUnit_FixturesManager
  * @subpackage TestSuite
  *
+ * $LastChangedBy$
+ * Date: 03/09/2008
+ * Refactored test to use PHPUnit_Framework_TestCase, as we are not using any
+ * Zend components directly.
+ * 
  * Date: 02/09/2008
  * Added test cases to help implement our fixture table exists method, which
  * will tell us if a table already exists within our DB, will be critical as
@@ -62,7 +67,8 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR .realpath(dirname(__FILE__) .'/../libs/') . PATH_SEPARATOR. dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR .dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR. dirname ( __FILE__ ) . '/../../application/default/models/' . PATH_SEPARATOR . get_include_path () );
+set_include_path ( '.' . PATH_SEPARATOR .realpath(dirname(__FILE__) .'/../libs/') 
+                       . PATH_SEPARATOR . get_include_path () );
 
 require_once 'FixturesManager.php';
 
@@ -79,7 +85,7 @@ class FixturesManWrapper extends FixturesManager {
 	}
 }
 
-class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
+class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	
 	private $_fixturesManager;
 	
@@ -105,7 +111,6 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	public function setUp() {
-		$this->_setUpConfig ();
 		parent::setUp ();
 		$this->_fixturesManager = new FixturesManager();
 		$this->_fixWrap = new FixturesManWrapper();
