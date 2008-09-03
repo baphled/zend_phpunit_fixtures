@@ -148,10 +148,14 @@ class DataTypeChecker {
      * 
      */
     static function checkDataType($dataType) {
-        if(!array_key_exists('length',$dataType) 
-            && !array_search('date',$dataType)
-            && !array_search('datetime',$dataType)
-            || !array_key_exists('type',$dataType)) {
+    	if(array_key_exists('type', $dataType)) {
+	    	if($dataType['type'] === 'date' || $dataType['type'] === 'datetime') {         // throws notices, when type key not present 
+	        	if(array_key_exists('length',$dataType)) {
+	        		throw new ErrorException('Invalid data format.');
+	        	}
+	        }
+    	}
+        else {
             throw new ErrorException('Invalid data type.');
         }
     }
