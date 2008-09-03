@@ -275,7 +275,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
 		$this->_basicFix->validateTestData($invalidData);
-		$this->assertSame($this->_basicFix->getTestData(),$testData);
 	}
 	
 	/**
@@ -291,7 +290,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
 		$this->_basicFix->addTestData($invalidData);
-		$this->assertSame($this->_basicFix->getTestData(),$testData);
 	}
 	
 	/**
