@@ -8,9 +8,10 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package TestSuite
- * @subpackage FixturesManager
+ * @subpackage TestSuite
+ * @package FixturesManager
  *
+ * $LastChangedBy$
  * Date: 02/09/2008
  * Refactored _validateDataType, we were getting errors when checking
  * that a data type had lengths on arrays with none. We are now able

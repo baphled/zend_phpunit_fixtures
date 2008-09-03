@@ -8,8 +8,11 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package TestSuite
+ * @subpackage TestSuite
  *
+ * $LastChangedBy$
+ * 01/09/2008
+ * Created to test our fixture(Manager) classes
  */
 
 require_once 'Zend/Loader.php';

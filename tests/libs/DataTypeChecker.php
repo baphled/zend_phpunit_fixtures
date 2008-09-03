@@ -7,11 +7,11 @@
  * not only input data into a DB but also emulate an DB response.
  * 
  * @author Yomi (baphled) Akindayini 2008
- * @LastChangedBy $LastChangedBy$
  * @version $Id$
  * @copyright 2008
  * @package TestSuite
  *
+ * $LastChangedBy$
  * Date: 02/09/2008
  * Built class on realisation that functionality for FixturesManager
  * did not need to be there as they are more data related.
