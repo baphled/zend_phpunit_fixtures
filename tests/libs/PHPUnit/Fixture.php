@@ -11,6 +11,10 @@
  * @copyright 2008
  * @package TestSuite
  *
+ * Date: 02/09/2008
+ * Implemented functionality to generate, parse and determine each
+ * properties data type.
+ * 
  * Date: 01/09/2008
  * Added functionality to allow us to add test data to our fixture, we are 
  * also able to validate this data, to determine whether we are adding
@@ -22,15 +26,16 @@
  * Added functionality to build actual db tables using our fixtures object,
  * have also implemented a wrapper function to allow us to delete our test
  * tables.
- * 
+ * Implemented functionality to generateFixtureTestData & _parseTestData, both
+ * of which are used to generate our test data and store it in our _testData
+ * property.
+ *  
  * Date: 31/08/2008
  * Created basic implementation from test case, which allows us to count
  * the amount of test data present, aswell as retrieve, specific test data
  * & a whole of list of test data which can be used for testing.
  * 
  * @todo Turn all property with a '_' prefix into private properties.
- * @todo Add functionality to automatically generate test data, Which
- *       be a whole new test case.
  * @todo Implement functionality to allows users to specify an already
  *       setup table.
  * 
@@ -272,39 +277,130 @@ class PHPUnit_Fixture {
 		return false;
 	}
 	
-	function _parseFixtureSchema($field, $values) {
-	   foreach ($values as $key=>$value) {
-            if('integer' === $value && 'id' !== $key) {
-            	$this->_result[$field] = rand();
+	/**
+	 * Checks that our data type is an integer
+	 *
+	 * @param Array $dataType
+	 * @param int $field
+	 */
+	private function _dataTypeIsAnInt($dataType,$field) {
+	   if('integer' === $dataType) {
+            if($field !== 'id') {
+                $this->_result[$field] = rand();
             }
-            elseif('string' === $value) {
-                $this->_result[$field] = 'my string';
-            }
-            elseif('date' === $value) {
-                $this->_result[$field] = date('d-m-Y');
-            }
-            elseif('datetime' === $value) {
-                $this->_result[$field] = date('d-m-Y h:i:s');
+            else {
+                $this->_result[$field] = 0;         // @todo get last int from test data id value
             }
         }
 	}
+
+	/**
+	 * Checks that our a string, if so we generate test data.
+	 *
+	 * @param Array $dataType
+	 * @param int $field
+	 */
+	private function _dataTypeIsAString($dataType,$field) {
+	   if('string' === $dataType) {
+           $this->_result[$field] = 'my string';
+       }
+	}
 	
-	function _generateFixtureTestData() {
+	/**
+	 * Checks to see if our data type is a date, if it is,
+	 * we generate the current date.
+	 *
+	 * @param Array $dataType
+	 * @param int $field
+	 */
+	private function _dataTypeIsADate($dataType,$field) {
+	   if('date' === $dataType) {
+            $this->_result[$field] = date('d-m-Y');
+	   }
+	}
+	
+	/**
+	 * Checks to see if we have a datetype type, if we do
+	 * we generate the current date & time.
+	 *
+	 * @param Array $dateType
+	 * @param int $field
+	 */
+	private function _dataTypeIsDateTime($dateType,$field) {
+	   if('datetime' === $dateType) {
+            $this->_result[$field] = date('h:i:s d-m-Y');
+       }	
+	}
+	
+	/**
+	 * 
+	 * Parses a fixture field array, building test
+	 * data as it goes. Is the main work horse behind
+	 * generate fixture test data, which is used to generate
+	 * our return our completed test data. 
+	 *
+	 * @param String $field
+	 * @param Array $values
+	 */
+	function _parseFixtureSchema($field, $values) {
+	   foreach ($values as $value) {
+            $this->_dataTypeIsAnInt($value,$field);
+            $this->_dataTypeIsAString($value,$field);
+            $this->_dataTypeIsADate($value,$field);
+            $this->_dataTypeIsDateTime($value,$field);
+        }
+	}
+	
+	/**
+	 * Generates our fixture test data, we need this so we can
+     * loop through our fields array, to ascertain the data type
+     * of each piece of test data.
+	 *
+	 * @param int $numOfTestData
+	 * @return Array
+	 */
+	function _generateFixtureTestData($numOfTestData) {
 		if(0 === count($this->_fields)) {
 			throw new ErrorException('Fields not defined, can not generate without it.');
 		}
+		if(!is_integer($numOfTestData)) {
+			throw new ErrorException('Must supply number of test data using an integer.');
+		}
 		$results = array();
 		$this->_result = array();
-		
-		foreach ($this->_fields as $field=>$values) {
-			DataTypeChecker::checkDataType($values);
-			$this->_parseFixtureSchema($field, $values);
+		for($i=0;$i<$numOfTestData;$i++) {
+			foreach ($this->_fields as $field=>$values) {
+				DataTypeChecker::checkDataType($values);
+				$this->_parseFixtureSchema($field, $values);
+			}
+			array_push($results,$this->_result);
 		}
-		array_push($results,$this->_result);
 		return $results;
 	}
 	
-	function autoGenerateTestData() {
+	/**
+	 * Automatically generates our test data.
+	 * 
+	 * Once it generates our data, it then passes it
+	 * to _addTestData to append to the _testData
+	 * property.
+	 *
+	 * @param int $numOfTestData
+	 * @return bool
+	 * 
+	 */
+	function autoGenerateTestData($numOfTestData=1) {
+		try {
+			$result = $this->_generateFixtureTestData($numOfTestData);
+			if(0 === count($result)) {
+				throw new ErrorException('Unable to generate test data.');
+			}
+			$this->addTestData($result);
+			return true;
+		}
+		catch(Exception $e) {
+			echo $e->getMessage();
+		}
 		return false;
 	}
 }
