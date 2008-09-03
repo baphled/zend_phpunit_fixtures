@@ -87,9 +87,16 @@ class PHPUnit_Fixture {
 	 */
 	private $_result = null;
 	
-	
+	/**
+	 * Sets an instance of FixturesManager &
+	 * setup the timezone ready for later.
+	 * 
+	 * @todo Really should put the TZ in a config file.
+	 *
+	 */
 	function __construct() {
 		$this->_fixMan = new FixturesManager();
+		date_default_timezone_set('Europe/London');
 	}
 	
 	/**
@@ -151,7 +158,7 @@ class PHPUnit_Fixture {
      */
     private function _dataTypeIsADate($dataType,$field) {
        if('date' === $dataType) {
-            $this->_result[$field] = date('d-m-Y');
+            $this->_result[$field] = date('Ymd');
        }
     }
     
@@ -165,7 +172,7 @@ class PHPUnit_Fixture {
      */
     private function _dataTypeIsDateTime($dateType,$field) {
        if('datetime' === $dateType) {
-            $this->_result[$field] = date('h:i:s d-m-Y');
+            $this->_result[$field] = date(DATE_RFC822);
        }    
     }
     
