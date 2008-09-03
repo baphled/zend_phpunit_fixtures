@@ -9,6 +9,9 @@
  * @package 
  * @subpackage TestSuite
  *
+ * Date: 03/09/2008
+ * Introduced tests for generating test data on the fly, we still need
+ * to improve on but is more aless finished.
  * Date: 01/09/2008
  * Created tests cases to implement drop & build fixture table,
  * both of which will be need to create our db tables.
@@ -53,12 +56,14 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 		parent::setUp ();
 		$this->_fixture = new PHPUnit_Fixture();
 		$this->_testFix = new TestFixture();
+		$this->_invalidFieldFixture = new InvalidFieldTypeFixture();
 		$this->_basicFix = new BasicFixture();
 	}
 	
 	public function tearDown() {
 		$this->_fixture = null;
 		$this->_testFix = null;
+		$this->_invalidFieldFixture = null;
 		$this->_basicFix = null;
 		parent::tearDown ();
 	}
@@ -441,5 +446,60 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	function testAutoGenerateTestDataReturnsFalseByDefault() {
 		$result = $this->_testFix->autoGenerateTestData();
 		$this->assertFalse($result);
+	}
+	
+	function testcreateTestDataReturnsArrayOnSuccess() {
+		$result = $this->_testFix->_generateFixtureTestData();
+		$this->assertType('array',$result);
+	}
+	
+	/**
+	 * If the fixture doesnt have any field properties, we need to throw an exception.
+	 *
+	 */
+	function testGenerateFixtureTestDataThrowsExceptionIfFixtureDoesNotHaveAFieldProperty() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->_generateFixtureTestData();
+	}
+
+	/**
+	 * Now we want to make sure if we have an invalid _fields property
+	 * we need to throw and error.
+	 *
+	 */
+	function testGenerateFixtureTestDataThrowsExceptionIfFieldsHasAnEntryWithNoType() {
+		$this->setExpectedException('ErrorException');
+		$this->_invalidFieldFixture->_generateFixtureTestData();
+	}
+	
+	/**
+	 * If we specify a type of date/datetime as well as a length, we must throw an exception.
+	 *
+	 */
+	function testGenerateFixtureTestDataThrowsExceptionIfDataTypeLengthSpecifiedWithDateAndDateTime() {
+		$this->_invalidFieldFixture->_fields = array('id' => array('type' => 'date', 'length' => '10', 'null' => FALSE));
+        $this->setExpectedException('ErrorException');
+		$this->_invalidFieldFixture->_generateFixtureTestData();
+	}
+	
+	/**
+	 * Now we want to be able to parse our fields data, 
+	 * creating an array that corresponds with the fixtures schema.
+	 * 
+	 */
+	function testGenerateFixtureTestDataReturnsResultsAsArray() {
+		$result = $this->_testFix->_generateFixtureTestData();
+		$this->assertType('array',$result);
+		$this->assertArrayHasKey('id',$result);
+	}
+	
+	/**
+	 * We need to make sure that our array is populated as expected, first we need a list
+	 * of keys & values
+	 */
+	function testParseFixturesSchemaReturnsStringOnSuccess() {
+		$fields = array('type' => 'datetime', 'null' => FALSE);
+		$result = $this->_testFix->_generateFixtureTestData('modified',$fields);
+		$this->assertNotNull($result);
 	}
 }
