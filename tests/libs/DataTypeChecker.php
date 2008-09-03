@@ -139,9 +139,8 @@ class DataTypeChecker {
     }
     
     /**
-     * Checks that is we have a certain type, we must
-     * also have a length, if we don't we throw an
-     * exception.
+     * Makes sure that date & datetime properties do not come
+     * with lengths
      *
      * @access static
      * @param Array $dataType
@@ -156,7 +155,7 @@ class DataTypeChecker {
 	        }
     	}
         else {
-            throw new ErrorException('Invalid data type.');
+            throw new ErrorException('Must supply a valid data type.');
         }
     }
     
