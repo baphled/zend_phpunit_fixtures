@@ -281,6 +281,16 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * Throw and exception is a date/datetime type is set with a length
+	 * 
+	 */
+	function testCheckDataTypeThrowsExceptionIfDateOrDateTimeSpecifiedWithLength() {
+		$fields = array( 'id' => array( 'type' => 'date', 'length' => '10'));
+		$this->setExpectedException('ErrorException');
+		$this->_fixturesManager->convertDataType($fields);
+	}
+	
+	/**
 	 * Really do not know how I missed this test. We need to make
 	 * sure that each field has a type, if it doesn't we need to
 	 * throw an error as the 
@@ -310,8 +320,9 @@ class FixturesManagerTest extends Module_PHPUnit_Framework_TestCase {
 	 * to an string
 	 */
 	function testDoesBuildQueryReturnAString() {
+		$table = 'blah';
 		$fields = $this->_getTestTableStructure();
-		$result = $this->_fixturesManager->convertDataType($fields,'blah');
+		$result = $this->_fixturesManager->convertDataType($fields,$table);
 		$this->assertType('string',$result); 
 	}
 	
