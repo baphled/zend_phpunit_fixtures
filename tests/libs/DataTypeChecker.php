@@ -7,7 +7,7 @@
  * not only input data into a DB but also emulate an DB response.
  * 
  * @author Yomi (baphled) Akindayini 2008
- * @LastChangeBy $LastChangeBy$
+ * @LastChangedBy $LastChangedBy$
  * @version $Id$
  * @copyright 2008
  * @package TestSuite
