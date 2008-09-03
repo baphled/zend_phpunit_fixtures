@@ -67,9 +67,19 @@ class PHPUnit_Fixture {
 	 */
 	private $_fixMan;
 	
+	/**
+	 * Stores our test data results
+	 *
+	 * @access private
+	 * @var Array
+	 */
+	private $_result;
+	
+	
 	function __construct() {
 		$this->_fixMan = new FixturesManager();
 	}
+	
 	/**
 	 * Determines whether our test data already exists
 	 *
@@ -259,6 +269,42 @@ class PHPUnit_Fixture {
 		catch(Exception $e) {
 			echo $e->getMessage();
 		}
+		return false;
+	}
+	
+	function _parseFixtureSchema($field, $values) {
+	   foreach ($values as $key=>$value) {
+            if('integer' === $value && 'id' !== $key) {
+            	$this->_result[$field] = rand();
+            }
+            elseif('string' === $value) {
+                $this->_result[$field] = 'my string';
+            }
+            elseif('date' === $value) {
+                $this->_result[$field] = date('d-m-Y');
+            }
+            elseif('datetime' === $value) {
+                $this->_result[$field] = date('d-m-Y h:i:s');
+            }
+        }
+	}
+	
+	function _generateFixtureTestData() {
+		if(0 === count($this->_fields)) {
+			throw new ErrorException('Fields not defined, can not generate without it.');
+		}
+		$results = array();
+		$this->_result = array();
+		
+		foreach ($this->_fields as $field=>$values) {
+			DataTypeChecker::checkDataType($values);
+			$this->_parseFixtureSchema($field, $values);
+		}
+		array_push($results,$this->_result);
+		return $results;
+	}
+	
+	function autoGenerateTestData() {
 		return false;
 	}
 }
