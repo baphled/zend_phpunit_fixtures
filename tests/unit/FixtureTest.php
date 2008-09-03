@@ -6,12 +6,16 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package 
+ * @package PHPUnit_Fixture
  * @subpackage TestSuite
  *
+ * $LastChangedBy$
  * Date: 03/09/2008
  * Introduced tests for generating test data on the fly, we still need
  * to improve on but is more aless finished.
+ * Really no need to extend Module_PHPUnit_Framework_TestCase, as
+ * Fixture does not use the DB or Zend.
+ * 
  * Date: 01/09/2008
  * Created tests cases to implement drop & build fixture table,
  * both of which will be need to create our db tables.
@@ -32,7 +36,9 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../fixtures/' ) . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/default/models/' . PATH_SEPARATOR . get_include_path () );
+set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../fixtures/' ) 
+                       .PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) 
+                       .PATH_SEPARATOR . get_include_path () );
 
 require_once 'TestFixture.php';
 
@@ -41,7 +47,7 @@ Zend_Loader::registerAutoload ();
 
 class BasicFixture extends PHPUnit_Fixture {}
 
-class FixtureTest extends Module_PHPUnit_Framework_TestCase {
+class FixtureTest extends PHPUnit_Framework_TestCase {
 	
 	private $_fixtures;
 	
@@ -52,7 +58,6 @@ class FixtureTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	public function setUp() {
-		$this->_setUpConfig ();
 		parent::setUp ();
 		$this->_fixture = new PHPUnit_Fixture();
 		$this->_testFix = new TestFixture();
