@@ -11,9 +11,16 @@
  * @copyright 2008
  * @package TestSuite
  *
+ * $LastChangedBy$
  * Date: 02/09/2008
  * Implemented functionality to generate, parse and determine each
  * properties data type.
+ * Refactored the build and drop method to use _runFixtureMethodCall,
+ * which now deals with most of the work build & drop previously shared.
+ * Also did a little organising, improving on documentation & placing
+ * methods in a better order (private, protected, public). This order
+ * may need to be discussed as big files like this can be cumbersome
+ * to search through.
  * 
  * Date: 01/09/2008
  * Added functionality to allow us to add test data to our fixture, we are 
@@ -78,13 +85,156 @@ class PHPUnit_Fixture {
 	 * @access private
 	 * @var Array
 	 */
-	private $_result;
+	private $_result = null;
 	
 	
 	function __construct() {
 		$this->_fixMan = new FixturesManager();
 	}
 	
+	/**
+     * Verify that our test data is of a valid
+     * structure and submit it to our our _testData
+     * property.
+     *
+     * @access private
+     * @param Array $testData
+     */
+    private function _verifyTestData($testData) {
+       try {
+            $this->validateTestData($testData);
+            $this->_testData[] = $testData;
+       }
+       catch(ErrorException $e) {
+            throw new ErrorException($e->getMessage());
+       }
+    }
+	
+    /**
+     * Checks that our data type is an integer
+     *
+     * @access private
+     * @param Array $dataType
+     * @param int $field
+     */
+    private function _dataTypeIsAnInt($dataType,$field) {
+       if('integer' === $dataType) {
+            if($field !== 'id') {
+                $this->_result[$field] = rand();
+            }
+            else {
+                $this->_result[$field] = 0;         // @todo get last int from test data id value
+            }
+        }
+    }
+
+    /**
+     * Checks that our a string, if so we generate test data.
+     *
+     * @access private
+     * @param Array $dataType
+     * @param int $field
+     */
+    private function _dataTypeIsAString($dataType,$field) {
+       if('string' === $dataType) {
+           $this->_result[$field] = 'my string';
+       }
+    }
+    
+    /**
+     * Checks to see if our data type is a date, if it is,
+     * we generate the current date.
+     *
+     * @access private
+     * @param Array $dataType
+     * @param int $field
+     */
+    private function _dataTypeIsADate($dataType,$field) {
+       if('date' === $dataType) {
+            $this->_result[$field] = date('d-m-Y');
+       }
+    }
+    
+    /**
+     * Checks to see if we have a datetype type, if we do
+     * we generate the current date & time.
+     *
+     * @access private
+     * @param Array $dateType
+     * @param int $field
+     */
+    private function _dataTypeIsDateTime($dateType,$field) {
+       if('datetime' === $dateType) {
+            $this->_result[$field] = date('h:i:s d-m-Y');
+       }    
+    }
+    
+    /**
+     * 
+     * Parses a fixture field array, building test
+     * data as it goes. Is the main work horse behind
+     * generate fixture test data, which is used to generate
+     * our return our completed test data. 
+     *
+     * @access private
+     * @param String $field
+     * @param Array $values
+     */
+    private function _parseFixtureSchema($field, $values) {
+       foreach ($values as $value) {
+            $this->_dataTypeIsAnInt($value,$field);
+            $this->_dataTypeIsAString($value,$field);
+            $this->_dataTypeIsADate($value,$field);
+            $this->_dataTypeIsDateTime($value,$field);
+        }
+    }
+    
+    /**
+     * Does the checking for our method call.
+     *
+     * @access private
+     * @param String $call
+     * @return bool
+     * 
+     * @todo could be done better but this seems fine for the moment.
+     * 
+     */
+    private function _fixtureMethodCheck($call) {
+        if('drop' === $call) {
+            $result = $this->_fixMan->deleteFixturesTable();
+        }
+        if('build' === $call) {
+            $result = $this->_fixMan->buildFixtureTable($this->_fields,$this->_table);
+        }
+        return $result;
+    }
+    
+    /**
+     * Is used to run build & drop, seeing as both methods
+     * have practically the same functionality, it seems
+     * silly not to refactor them into this function.
+     *
+     * @access private
+     * @param string $calledBy
+     * @return unknown
+     * 
+     * @todo Write test to ascertain whether the string
+     *       build/drop & that it is actually a string.
+     * 
+     */
+    protected function _runFixtureMethod($calledBy) {
+        try {
+            $result = $this->_fixtureMethodCheck($calledBy);
+            if(true === $result) {
+                return true;
+            }
+        }
+        catch (ErrorException $e) {
+            echo $e->getMessage();
+        }
+        return false;
+    }
+    
 	/**
 	 * Determines whether our test data already exists
 	 *
@@ -93,7 +243,7 @@ class PHPUnit_Fixture {
 	 * @return bool
 	 * 
 	 */
-	function testDataExists($testData) {
+	public function testDataExists($testData) {
 		if($this->testDataCount() > 0 ) {
 			for($i=0;$i<$this->testDataCount();$i++) {
 				if($this->_testData[$i] == $testData[$i]) {
@@ -106,22 +256,24 @@ class PHPUnit_Fixture {
 	
 	/**
 	 * Validates that our test data is of the same structure
-	 * as pre-existing data.
+	 * as pre-existing data. We get the first data type from
+	 * our test data & store it for comparison, if the validating
+	 * datatype is not of the same structure we throw and exception.
 	 *
 	 * @access public
 	 * @param Array $testData
 	 * @return bool
 	 * 
 	 */
-	function validateTestData($testData) {
-		$data = $this->getTestData('id',1);
+	public function validateTestData($testData) {
 		if(null === $this->_testData) {
 			return true;
 		}
 		else {
+			$existingTestData = $this->getTestData('id',1);
 			foreach ($testData as $key=>$value) {
-				if(!array_key_exists($key, $data)){
-				 throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
+				if(!array_key_exists($key, $existingTestData)){
+				    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
 				}
 			}
 		}
@@ -136,19 +288,13 @@ class PHPUnit_Fixture {
 	 * @return bool
 	 * 
 	 */
-	function addTestData($testData) {
+	public function addTestData($testData) {
 		if(!is_array($testData)) {
 			throw new ErrorException('Test data must be in an array format.');
 		} 
 		foreach ($testData as $data) {
 			if(is_array($data)) {
-				try {
-					$this->validateTestData($data);
-    				$this->_testData[] = $data;
-				}
-				catch(ErrorException $e) {
-					throw new ErrorException($e->getMessage());
-				}
+				$this->_verifyTestData($data);
 			}
 			else {
 				$this->_testData = $testData;
@@ -170,7 +316,7 @@ class PHPUnit_Fixture {
 	 * 
 	 * @todo Refactor method, if clause on 165 needs lookin @.
 	 */
-	function getTestData($key='',$value='') {
+	public function getTestData($key='',$value='') {
 		if(!is_string($key)) {
 			throw new ErrorException('Test data id must be a string.');
 		}
@@ -202,7 +348,7 @@ class PHPUnit_Fixture {
 	 * @return Int
 	 * 
 	 */
-	function testDataCount() {
+	public function testDataCount() {
 		$result = 0;
 		if(isset($this->_testData)) {
 			$result = count($this->_testData);
@@ -221,20 +367,11 @@ class PHPUnit_Fixture {
 	 * @return bool
 	 * 
 	 */
-	function buildFixtureTable() {
+	public function buildFixtureTable() {		
 		if(0 === count($this->_fields)) {
 			throw new ErrorException('No table fields present.');
 		}
-		try {
-			$result = $this->_fixMan->buildFixtureTable($this->_fields,$this->_table);
-	        if(true === $result) {
-	             return true;
-	        }			
-		}
-		catch(ErrorException $e) {
-			echo $e->getMessage();
-		}
-		return false;
+		return $this->_runFixtureMethod('build');
 	}
 	
 	/**
@@ -243,25 +380,19 @@ class PHPUnit_Fixture {
 	 *
 	 * @access public
 	 * @return bool
-	 * 
-	 * @todo   The implementation of this and build look scarily simular,
-     *         we need to refactor.
      * 
 	 */
-	function dropFixtureTable() {
-		try {
-			$result = $this->_fixMan->deleteFixturesTable();
-			if(true === $result) {
-				return true;
-			}
-		}
-		catch (ErrorException $e) {
-			echo $e->getMessage();
-		}
-		return false;
+	public function dropFixtureTable() {
+		return $this->_runFixtureMethod('drop');
 	}
 	
-	function populateFixtures() {
+	/**
+	 * Populates our fixtures test table with our test data.
+	 *
+	 * @access public
+	 * @return bool
+	 */
+	public function populateFixtures() {
 		if(!$this->_fixMan->fixtureTableExists($this->_table)) {
 			throw new ErrorException('Fixtures table is not present.');
 		}
@@ -278,84 +409,11 @@ class PHPUnit_Fixture {
 	}
 	
 	/**
-	 * Checks that our data type is an integer
-	 *
-	 * @param Array $dataType
-	 * @param int $field
-	 */
-	private function _dataTypeIsAnInt($dataType,$field) {
-	   if('integer' === $dataType) {
-            if($field !== 'id') {
-                $this->_result[$field] = rand();
-            }
-            else {
-                $this->_result[$field] = 0;         // @todo get last int from test data id value
-            }
-        }
-	}
-
-	/**
-	 * Checks that our a string, if so we generate test data.
-	 *
-	 * @param Array $dataType
-	 * @param int $field
-	 */
-	private function _dataTypeIsAString($dataType,$field) {
-	   if('string' === $dataType) {
-           $this->_result[$field] = 'my string';
-       }
-	}
-	
-	/**
-	 * Checks to see if our data type is a date, if it is,
-	 * we generate the current date.
-	 *
-	 * @param Array $dataType
-	 * @param int $field
-	 */
-	private function _dataTypeIsADate($dataType,$field) {
-	   if('date' === $dataType) {
-            $this->_result[$field] = date('d-m-Y');
-	   }
-	}
-	
-	/**
-	 * Checks to see if we have a datetype type, if we do
-	 * we generate the current date & time.
-	 *
-	 * @param Array $dateType
-	 * @param int $field
-	 */
-	private function _dataTypeIsDateTime($dateType,$field) {
-	   if('datetime' === $dateType) {
-            $this->_result[$field] = date('h:i:s d-m-Y');
-       }	
-	}
-	
-	/**
-	 * 
-	 * Parses a fixture field array, building test
-	 * data as it goes. Is the main work horse behind
-	 * generate fixture test data, which is used to generate
-	 * our return our completed test data. 
-	 *
-	 * @param String $field
-	 * @param Array $values
-	 */
-	function _parseFixtureSchema($field, $values) {
-	   foreach ($values as $value) {
-            $this->_dataTypeIsAnInt($value,$field);
-            $this->_dataTypeIsAString($value,$field);
-            $this->_dataTypeIsADate($value,$field);
-            $this->_dataTypeIsDateTime($value,$field);
-        }
-	}
-	
-	/**
 	 * Generates our fixture test data, we need this so we can
      * loop through our fields array, to ascertain the data type
      * of each piece of test data.
 	 *
+	 * @access public
 	 * @param int $numOfTestData
 	 * @return Array
 	 */
@@ -385,11 +443,12 @@ class PHPUnit_Fixture {
 	 * to _addTestData to append to the _testData
 	 * property.
 	 *
+	 * @access private
 	 * @param int $numOfTestData
 	 * @return bool
 	 * 
 	 */
-	function autoGenerateTestData($numOfTestData=1) {
+	public function autoGenerateTestData($numOfTestData=1) {
 		try {
 			$result = $this->_generateFixtureTestData($numOfTestData);
 			if(0 === count($result)) {
