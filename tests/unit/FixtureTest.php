@@ -581,4 +581,23 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$result = $this->_basicFix->autoGenerateTestData();
 		$this->assertFalse($result);
 	}
+	
+	/**
+	 * Now we need to create an implementation that allows us to retrieve
+	 * an array of the fixture table fields.
+	 * 
+	 */
+	function testGetFixtureTableFieldsThrowsExceptionsIfNoFieldsAreDefined() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->getFixtureTableFields();
+	}
+	
+	/**
+	 * Now we need to test that we are able to return an array of our fixture fields
+	 *
+	 */
+	function testGetFixtureTableFieldsReturnsAnArrayOnSuccess() {
+		$result = $this->_testFix->getFixtureTableFields();
+		$this->assertType('array',$result);
+	}
 }
