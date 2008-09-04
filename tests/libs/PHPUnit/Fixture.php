@@ -330,7 +330,7 @@ class PHPUnit_Fixture {
 		if(!empty($key) && empty($value)) {
 			throw new ErrorException('Must supply a value when submitting a key');
 		}
-		if($this->testDataCount() != 0) {                 // smells, cant this be put in a private function.
+		if(0 !== $this->testDataCount()) {                 // smells, cant this be put in a private function.
 			if(!empty($key) && !empty($value)) {
 				foreach($this->_testData as $data) {
 					if($data[$key] === $value) {
@@ -345,6 +345,21 @@ class PHPUnit_Fixture {
 		return false;
 	}
 	
+	/**
+	 * Gets the fixture fields data in an array format.
+	 *
+	 * @access public
+	 * @return Array
+	 * 
+	 */
+	public function getFixtureTableFields() {
+		if(0 === count($this->_fields)) {
+			throw new ErrorException('No fixture fields present.');
+		}
+		else {
+			return $this->_fields;
+		}
+	}
 	
 	/**
 	 * Basic method, allowsing us to determine
