@@ -43,7 +43,7 @@
  * 4th session, introduced real interacting with _makeDBTable (now _runFixtureQuery)
  * to determine where our error was coming from, is now solved.
  * As mentioned have refactor _makeDBTable to a more meaningful name (_runFixtureQuery).
- * Stubbed out buildFixtureTable in testBuildFixtureTableReturnsTrue, so
+ * Stubbed out setupFixtureTable in testBuildFixtureTableReturnsTrue, so
  * that we don't access the DB directly, also did the same for
  * testMakeDBTableReturnsTrueOnSuccessUsingStubs for the same reason.
  * Have added tests to loop through a list of our DB tables & delete each
@@ -108,9 +108,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		 *       run and what to return.
 		 * 
 		 */
-		$this->_stub = $this->getMock('FixturesManager',array('buildFixtureTable'));
+		$this->_stub = $this->getMock('FixturesManager',array('setupFixtureTable'));
         $this->_stub->expects($this->any())
-                    ->method('buildFixtureTable')
+                    ->method('setupFixtureTable')
                     ->will($this->returnValue(TRUE));
 	}
 	

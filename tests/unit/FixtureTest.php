@@ -22,7 +22,7 @@
  * Initially we focussed on build, until we came across a stumbling
  * block which was the fact that old test db data was being left
  * behind by our tests, so we needed to factor in FixturesManagers
- * deleteFixturesTable until we implemented Fixture's wrapper version.
+ * dropFixtureTable until we implemented Fixture's wrapper version.
  * Which is now being used. This situation is far from ideal, though
  * it should how to implement the system, it is cumbersome and sloppy.
  * We should really introduce stubs to handle this test functionality.
@@ -324,7 +324,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * If we the default return value must be false, we will only return
 	 * true if we have successfully built our fixture table.
 	 *
-	 * @todo Need to refactor and replace deleteFixturesTable with Fixture's
+	 * @todo Need to refactor and replace dropFixtureTable with Fixture's
 	 *       implementation, once it is done.
 	 * 
 	 */
