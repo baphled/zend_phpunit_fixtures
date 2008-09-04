@@ -94,11 +94,11 @@ class PHPUnit_Fixture {
 	 * @todo Really should put the TZ in a config file.
 	 *
 	 */
-	function __construct() {
+	public function __construct() {
 		$this->_fixMan = new FixturesManager();
 		date_default_timezone_set('Europe/London');
 	}
-	
+
 	/**
      * Verify that our test data is of a valid
      * structure and submit it to our our _testData
@@ -196,26 +196,7 @@ class PHPUnit_Fixture {
         }
     }
     
-    /**
-     * Does the checking for our method call.
-     *
-     * @access private
-     * @param String $call
-     * @return bool
-     * 
-     * @todo could be done better but this seems fine for the moment.
-     * 
-     */
-    private function _fixtureMethodCheck($call) {
-        if('drop' === $call) {
-            $result = $this->_fixMan->dropFixtureTable();
-        }
-        if('setup' === $call) {
-            $result = $this->_fixMan->setupFixtureTable($this->_fields,$this->_table);
-        }
-        return $result;
-    }
-    
+ 
     /**
      * Is used to run build & drop, seeing as both methods
      * have practically the same functionality, it seems
@@ -242,24 +223,53 @@ class PHPUnit_Fixture {
         return false;
     }
     
-	/**
-	 * Determines whether our test data already exists
-	 *
-	 * @access public
-	 * @param Array $testData
-	 * @return bool
-	 * 
-	 */
-	public function testDataExists($testData) {
-		if($this->testDataCount() > 0 ) {
-			for($i=0;$i<$this->testDataCount();$i++) {
-				if($this->_testData[$i] == $testData[$i]) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    /**
+     * Does the checking for our method call
+     *
+     * @access private
+     * @param String $call
+     * @return bool
+     * 
+     * @todo could be done better but this seems fine for the moment.
+     * 
+     */
+    private function _fixtureMethodCheck($call) {
+        if('drop' === $call) {
+            $result = $this->_fixMan->dropFixtureTable();
+        }
+        if('setup' === $call) {
+            $result = $this->_fixMan->setupFixtureTable($this->_fields,$this->_table);
+        }
+        return $result;
+    }
+    
+    /**
+     * Generates our fixture test data, we need this so we can
+     * loop through our fields array, to ascertain the data type
+     * of each piece of test data.
+     *
+     * @access public
+     * @param int $numOfTestData
+     * @return Array
+     */
+    private function _generateFixtureTestData($numOfTestData) {
+        if(0 === count($this->_fields)) {
+            throw new ErrorException('Fields not defined, can not generate without it.');
+        }
+        if(!is_integer($numOfTestData)) {
+            throw new ErrorException('Must supply number of test data using an integer.');
+        }
+        $results = array();
+        $this->_result = array();
+        for($i=0;$i<$numOfTestData;$i++) {
+            foreach ($this->_fields as $field=>$values) {
+                DataTypeChecker::checkDataType($values);
+                $this->_parseFixtureSchema($field, $values);
+            }
+            array_push($results,$this->_result);
+        }
+        return $results;
+    }
 	
 	/**
 	 * Validates that our test data is of the same structure
@@ -409,56 +419,6 @@ class PHPUnit_Fixture {
 	}
 	
 	/**
-	 * Populates our fixtures test table with our test data.
-	 *
-	 * @access public
-	 * @return bool
-	 */
-	public function populateFixtures() {
-		if(!$this->_fixMan->fixtureTableExists($this->_table)) {
-			throw new ErrorException('Fixtures table is not present.');
-		}
-		try {
-			$result = $this->_fixMan->insertTestData($this->_testData,$this->_table);
-			if(true === $result) {
-				return true;
-			}
-		}
-		catch(Exception $e) {
-			echo $e->getMessage();
-		}
-		return false;
-	}
-	
-	/**
-	 * Generates our fixture test data, we need this so we can
-     * loop through our fields array, to ascertain the data type
-     * of each piece of test data.
-	 *
-	 * @access public
-	 * @param int $numOfTestData
-	 * @return Array
-	 */
-	function _generateFixtureTestData($numOfTestData) {
-		if(0 === count($this->_fields)) {
-			throw new ErrorException('Fields not defined, can not generate without it.');
-		}
-		if(!is_integer($numOfTestData)) {
-			throw new ErrorException('Must supply number of test data using an integer.');
-		}
-		$results = array();
-		$this->_result = array();
-		for($i=0;$i<$numOfTestData;$i++) {
-			foreach ($this->_fields as $field=>$values) {
-				DataTypeChecker::checkDataType($values);
-				$this->_parseFixtureSchema($field, $values);
-			}
-			array_push($results,$this->_result);
-		}
-		return $results;
-	}
-	
-	/**
 	 * Automatically generates our test data.
 	 * 
 	 * Once it generates our data, it then passes it
@@ -484,4 +444,41 @@ class PHPUnit_Fixture {
 		}
 		return false;
 	}
+	
+
+    /**
+     * Populates our fixtures test table with our test data.
+     *
+     * @access public
+     * @return bool
+     */
+    public function populateFixtures() {
+        if(!$this->_fixMan->fixtureTableExists($this->_table)) {
+            throw new ErrorException('Fixtures table is not present.');
+        }
+        $result = $this->_fixMan->insertTestData($this->_testData,$this->_table);
+        if(true === $result) {
+            return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Determines whether our test data already exists
+     *
+     * @access public
+     * @param Array $testData
+     * @return bool
+     * 
+     */
+    public function testDataExists($testData) {
+        if($this->testDataCount() > 0 ) {
+            for($i=0;$i<$this->testDataCount();$i++) {
+                if($this->_testData[$i] == $testData[$i]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -15,7 +15,8 @@
  * to improve on but is more aless finished.
  * Really no need to extend Module_PHPUnit_Framework_TestCase, as
  * Fixture does not use the DB or Zend.
- * 
+ * Improved code coverage and added tests for autoGenerateTestData
+ * which were previously covered by _generateFixtureTestData
  * Date: 01/09/2008
  * Created tests cases to implement drop & build fixture table,
  * both of which will be need to create our db tables.
@@ -445,7 +446,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($result);
 		$this->_testFix->dropFixtureTable();
 	}
-	
+
 	/**
 	 * We'll need this at some point to help us generate our 
 	 * actul test data & add it to the fixtures test data.
@@ -456,88 +457,14 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue($result);
 	}
 	
-	function testcreateTestDataReturnsArrayOnSuccess() {
-		$result = $this->_testFix->_generateFixtureTestData(1);
-		$this->assertType('array',$result);
-	}
-	
-	/**
-	 * If the fixture doesnt have any field properties, we need to throw an exception.
-	 *
-	 */
-	function testGenerateFixtureTestDataThrowsExceptionIfFixtureDoesNotHaveAFieldProperty() {
-		$this->setExpectedException('ErrorException');
-		$this->_basicFix->_generateFixtureTestData(1);
-	}
-
-	/**
-	 * Now we want to make sure if we have an invalid _fields property
-	 * we need to throw and error.
-	 *
-	 */
-	function testGenerateFixtureTestDataThrowsExceptionIfFieldsHasAnEntryWithNoType() {
-		$this->setExpectedException('ErrorException');
-		$this->_invalidFieldFixture->_generateFixtureTestData(1);
-	}
-	
-	/**
-	 * If we specify a type of date/datetime as well as a length, we must throw an exception.
-	 *
-	 */
-	function testGenerateFixtureTestDataThrowsExceptionIfDataTypeLengthSpecifiedWithDateAndDateTime() {
-		$this->_invalidFieldFixture->_fields = array('id' => array('type' => 'date', 'length' => '10', 'null' => FALSE));
-        $this->setExpectedException('ErrorException');
-		$this->_invalidFieldFixture->_generateFixtureTestData(1);
-	}
-	
 	/**
 	 * Now we want to be able to parse our fields data, 
 	 * creating an array that corresponds with the fixtures schema.
 	 * 
 	 */
-	function testGenerateFixtureTestDataReturnsResultsAsArrayAndIdIsNotAutoSet() {
-		$result = $this->_testFix->_generateFixtureTestData(1);
-		$this->assertType('array',$result);
-		$this->assertArrayHasKey('id',$result[0]);
-		$this->assertEquals(null,$result[0]['id']);
-		$this->assertEquals(7,count($result[0]));
-	}
-	
-	/**
-	 * Now we should really test that our test data array is actually populated
-	 * with real data. So we'll loop through our results to make sure that none
-	 * of the values are null.
-	 * 
-	 */
-	function testGenerateFixtureTestDataCorrectlyPopulatesTestDataResults() {
-		$result = $this->_testFix->_generateFixtureTestData(1);
-		$results = $result[0];
-		foreach($results as $key=>$testData) {
-			if('id' !== $key) {
-			     $this->assertNotNull($testData);
-			}
-			else {
-				$this->assertNull($testData);
-			}
-		}
-	}
-	
-	/**
-	 * Now we need to make sure that the ID is not set, as they will be done, once we have
-	 * generated all out fixture test data.
-	 * 
-	 */
-	function testGenerateFixtureTestDataOnlyRetrievesOneTestDataIfNoParamIsPassed() {
-		$result = $this->_testFix->_generateFixtureTestData(1);
-		$this->assertEquals(1,count($result));
-	}
-	
-	/**
-	 * Ok, now if we pass, a string as a param to _generateFixtureTestData
-	 */
-	function testGenerateFixtureTestDataThrowsExceptionIfParamIsNotAnInt() {
-		$this->setExpectedException('ErrorException');
-		$this->_testFix->_generateFixtureTestData('23');
+	function testAutoGenerateTestDataReturnsResultsAsArrayAndIdIsNotAutoSet() {
+		$this->_testFix->autoGenerateTestData(1);
+		$this->assertEquals(8,count($this->_testFix->_testData));
 	}
 	
 	/**
@@ -545,8 +472,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testGenerateFixtureTestDataReturnsExpectedNumberOfTestData() {
-		$result = $this->_testFix->_generateFixtureTestData(23);
-        $this->assertEquals(23,count($result));
+		$this->_testFix->autoGenerateTestData(23);
+        $this->assertEquals(30,count($this->_testFix->_testData));
 	}
 	
 	/**
@@ -604,4 +531,37 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$result = $this->_testFix->getFixtureTableFields();
 		$this->assertType('array',$result);
 	}
+	
+	/**
+	 * We refactored Fixture so that _generateTestData is now private, we need to cover
+	 * the tests that were previously used on _generateTestData
+	 *
+	 * The following will cause autoGenerateTestData to return false. 
+	 */
+	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfTestDataIsNotSet() {
+		$result = $this->_basicFix->autoGenerateTestData(1);
+		$this->assertFalse($result);
+	}
+	
+	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfFieldsHasAnEntryWithNoType() {
+		$result = $this->_invalidFieldFixture->autoGenerateTestData(1);
+		$this->assertFalse($result);
+	}
+
+function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfParamIsZero() {
+        $result = $this->_invalidFieldFixture->autoGenerateTestData(0);
+        $this->assertFalse($result);
+    }
+    
+	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfParamIsNotInt() {
+        $result = $this->_invalidFieldFixture->autoGenerateTestData('23');
+        $this->assertFalse($result);
+    }
+	
+	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfDataTypeLengthSpecifiedWithDateAndDateTime() {
+		$this->_invalidFieldFixture->_fields = array('id' => array('type' => 'date', 'length' => '10', 'null' => FALSE));
+		$result = $this->_invalidFieldFixture->autoGenerateTestData(1); 
+		$this->assertFalse($result);
+	}
+	
 }
