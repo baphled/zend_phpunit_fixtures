@@ -11,6 +11,7 @@
  */
 
 class Features extends FeatureModel {
+	
 	function addNewFeature($data){
 		if(!is_array($data)){
 			throw new ErrorException('Must be an array');
@@ -23,7 +24,22 @@ class Features extends FeatureModel {
 		}		
 		return $this->insert($data);
 	}
-
+	
+	function viewFeature($id){
+		$db = Zend_Registry::get('db');
+		$select = $this->select()
+					    ->from('features',array('id'))
+					    ->where('id = ?', $id);
+		$stmt = $db->query($select);
+		$result = $stmt->fetchAll();
+		if($result){
+			return $result;
+		}
+		else{
+			return false;
+		}
+	}
+	
 	function _featureExists($feature){
 		$db = Zend_Registry::get('db');
 		$select = $this->select()
@@ -55,4 +71,15 @@ class Features extends FeatureModel {
 			return false;
 		}
 	}
+	
+	function deleteFeature($id){
+		$db = Zend_Registry::get('db');
+		$where[] = "id = $id";
+		$result = $db->delete('features',$where);
+		if($result){
+			return true;		
+		}
+		return false;
+	}
+	
 }
