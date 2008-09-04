@@ -13,7 +13,11 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' . PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/features/models/' . PATH_SEPARATOR . get_include_path () );
+set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) 
+					   .PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../fixtures/' ) 
+					   .PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../library/' 
+					   .PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../application/features/models/' 
+					   .PATH_SEPARATOR . get_include_path () );
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
@@ -22,60 +26,31 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	
 	private $_feature;
 	
+	private function _initialiseCompleteFeature(){
+		$data = $this->_featureFixtures->getTestData('userid',1);
+		return $this->_feature->addNewFeature($data);	
+	}
+	
 	public function __construct() {			
 		$this->setName ( 'FeatureTest Case' );
+		$this->_featureFixtures = new FeatureFixture();
 		
 		$this->_fixtures = array(
-			'userFixture'	  => array(
-				'id'		  => 1,
-				'fname'		  => 'nadjaha',
-				'lname'		  => 'wohedally',
-				'position'	  => 'developer'
-			),
-			'noUserIDFeature' => array(
-				'title' 	  => 'second feature',
-				'description' => 'second feature'
-			),
-			'completeFeature' => array(
-				'userid'	  => 1,
-				'title' 	  => 'new feature',
-				'description' => 'To test a new feature'
-			),
-			'secondFeature' => array(
-				'userid'	  => 23,
-				'title' 	  => 'anuva feature',
-				'description' => 'feature description'
-			),
-			'anotherFeature'  => array(
-				'userid'	  => 1,
-				'title' 	  => 'second feature',
-				'description' => 'second feature'
-			),
-			'viewableFeature' => array(
-				'id'		  => 1,
-				'title' 	  => 'new feature',
-				'description' => 'To test a new feature'
-			)
-		);
+			'userFixture'	  => array('id'	=> 1,'fname' => 'nadjaha',	'lname' => 'wohedally','position' => 'developer'),
+			'noUserIDFeature' => array(	'title' => 'second feature','description' => 'second feature'));
 	}
 	
 	public function setUp() {
 		$this->_setUpConfig ();
 		parent::setUp ();
-		$this->_db = Zend_Registry::get('db');
-		$this->_db->query('drop table if exists features');
-		$this->_db->query(' CREATE TABLE features(
-							id int AUTO_INCREMENT PRIMARY KEY ,
-							userid int(10) NOT NULL,
-							title varchar( 255 ) NOT NULL ,
-							description varchar( 255 ) NOT NULL							
-						)');
+		$this->_featureFixtures->buildFixtureTable();
 		$this->_feature = new Features();
 	}
 	
 	public function tearDown() {
 		$this->_feature = null;
-		$this->_db->query('drop table features');
+		$this->_featureFixtures->dropFixtureTable();
+		$this->_featureFixtures = null;
 		parent::tearDown ();
 	}
 	
@@ -94,7 +69,6 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	
 	/**
 	 * return exception if the title is null
-	 *
 	*/
 	function testParamFeatureTitleNotNull() {
 		$data = array(
@@ -118,8 +92,7 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	 * test that addNew returns true on success
 	 */
 	function testAddNewFeatureReturnsTrueOnSuccess(){
-		$data = $this->_fixtures['completeFeature'];
-		$result = $this->_feature->addNewFeature($data);
+		$result = $this->_initialiseCompleteFeature();
 		$this->assertEquals(1,$result);
 	}
 	
@@ -132,15 +105,15 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	function testUserIdThrowExceptionIfNotNull(){
 		$id = null;
 		$this->setExpectedException('ErrorException');
-		$this->_feature->updateFeature($id,$this->_fixtures['completeFeature']);
+		$this->_feature->updateFeature($id,$this->_featureFixtures->getTestData('userid',1));
 		
 	}
 	
 	function testAddNewFeatureReturnsIntegerOnSuccess(){
-		$data1 = $this->_fixtures['completeFeature'];
-		$data2 = $this->_fixtures['secondFeature'];
+		$data1 = $this->_featureFixtures->getTestData('userid',1);
+		$data2 = $this->_featureFixtures->getTestData('userid',13);
 		$this->_feature->addNewFeature($data1);
-		$this->assertEquals(2,$this->_feature->addNewFeature($data2));
+		$this->assertEquals(3,$this->_feature->addNewFeature($data2));
 	}
 
 	/**
@@ -149,40 +122,52 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	 * 
 	*/
 	function testAddNewFeatureDoesNotAllowDuplicateData() {
-		$data = $this->_fixtures['completeFeature'];
-		$this->_feature->addNewFeature($data);
-		$feature = $this->_fixtures['anotherFeature'];
+		$this->_initialiseCompleteFeature();
+		$feature = $this->_featureFixtures->getTestData('userid',23);
 		$result = $this->_feature->_featureExists($feature);
 		$this->assertEquals(FALSE,$result);
 	}
 	
 	function testFeatureExistReturnsTrueOnFeatureDuplication(){
-		$data = $this->_fixtures['completeFeature'];
+		$data = $this->_featureFixtures->getTestData('userid',1);
 		$this->_feature->addNewFeature($data);
 		$result = $this->_feature->_featureExists($data);
 		$this->assertEquals(True,$result);
 	}
 	
 	function testUpdateFeaturesReturnTrueOnSuccess(){
-		$data = $this->_fixtures['completeFeature'];
+		$data = $this->_featureFixtures->getTestData('userid',1);
 		$this->_feature->addNewFeature($data);
-		$data1 = $this->_fixtures['secondFeature'];
-		$result = $this->_feature->updateFeature(1,$data1);
+		$data['title'] = 'shitty ting';
+		$result = $this->_feature->updateFeature(1,$data);
 		$this->assertTrue($result);
 	}
 	
 	function testUpdateFeaturesReturnFalseOnFailure(){
-		$data = $this->_fixtures['completeFeature'];
+		$data = $this->_featureFixtures->getTestData('userid',1);
 		$this->_feature->addNewFeature($data);
 		$result = $this->_feature->updateFeature(1,$data);
 		$this->assertFalse($result);		
 	}
 	
 	function testViewFeatureById(){
-		$data = $this->_fixtures['completeFeature'];
+		$data = $this->_featureFixtures->getTestData('userid',1);
 		$this->_feature->addNewFeature($data);
 		$result = $this->_feature->viewFeature(1);
 		$this->assertType('array', $result);
 	}
+	
+	function testDeleteFeatureReturnTrueOnSuccess(){
+		$data = $this->_featureFixtures->getTestData('userid',1);
+		$this->_feature->addNewFeature($data);
+		$result = $this->_feature->deleteFeature(1);
+		$this->assertTrue($result);
+	}
+	
+	function testDeleteFeatureReturnFalseOnFailure(){
+		$result = $this->_feature->deleteFeature(2);
+		$this->assertFalse($result);		
+	}
+	
 
 }
