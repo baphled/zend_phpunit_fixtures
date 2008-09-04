@@ -30,7 +30,7 @@
  * to validateTestDataAndTableName, which will throw an error
  * if the datatype is not in an array or the name is not a valid
  * string.
- * Introduced buildFixtureTable, which is an accessor method for
+ * Introduced setupFixtureTable, which is an accessor method for
  * constructInsertQuery, basically iterating over the test data
  * inserting it into our fixtures table.
  * Refactored validateTestDataAndTableName and placed within
@@ -228,12 +228,13 @@ class FixturesManager {
 	 * @param String $tableName
 	 * @return Bool
 	 */
-	public function buildFixtureTable($dataType,$tableName) {
+	public function setupFixtureTable($dataType,$tableName) {
 		$query = '';
 		if(empty($tableName)) {
 			throw new ErrorException('Table must have a name');
 		}
 		try {
+		  $this->dropFixtureTable();
 		  $query = $this->convertDataType($dataType,$tableName);
 		  $this->_runFixtureQuery($query);
 		}
@@ -290,7 +291,7 @@ class FixturesManager {
 	 * @access public
 	 * @return bool
 	 */
-	function deleteFixturesTable() {
+	function dropFixtureTable() {
 		$fixtures = $this->_db->listTables();
 		if(count($fixtures) === 0) {
 			throw new ErrorException('No fixture tables to drop.');
