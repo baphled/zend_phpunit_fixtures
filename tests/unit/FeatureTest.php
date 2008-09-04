@@ -43,12 +43,13 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	public function setUp() {
 		$this->_setUpConfig ();
 		parent::setUp ();
-		$this->_featureFixtures->buildFixtureTable();
+		$this->_featureFixtures->setupFixtureTable();
 		$this->_feature = new Features();
 	}
 	
 	public function tearDown() {
 		$this->_feature = null;
+		$this->_featureFixtures->dropFixtureTable();
 		$this->_featureFixtures = null;
 		parent::tearDown ();
 	}

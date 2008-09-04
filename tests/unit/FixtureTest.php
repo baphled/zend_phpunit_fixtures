@@ -328,8 +328,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 *       implementation, once it is done.
 	 * 
 	 */
-	function testBuildFixtureTableReturnsTrueIfBuildFixtureTableSucceeds() {
-		$result = $this->_testFix->buildFixtureTable();
+	function testSetupFixtureTableReturnsTrueIfSetupFixtureTableSucceeds() {
+		$result = $this->_testFix->setupFixtureTable();
 		$this->assertTrue($result);
 		$this->_testFix->dropFixtureTable();
 	}
@@ -338,10 +338,10 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * If our fixture does not have a table name set we need to handle it.
 	 * 
 	 */
-	function testBuildFixtureTableThrowsExceptionIfTableNameIsNotSet() {
+	function testSetupFixtureTableThrowsExceptionIfTableNameIsNotSet() {
 		$this->_basicFix->_testData = $this->_testFix->_testData[0];
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->buildFixtureTable();
+		$this->_basicFix->setupFixtureTable();
 	}
 	
 	/**
@@ -349,9 +349,9 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * false.
 	 * 
 	 */
-	function testBuildFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
+	function testSetupFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
 		$this->_basicFix->_fields = $this->_testFix->_fields;
-		$result = $this->_basicFix->buildFixtureTable();
+		$result = $this->_basicFix->setupFixtureTable();
 		$this->assertFalse($result);
 	}
 	/**
@@ -365,11 +365,11 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * doesnt have any test fields.
 	 *
 	 */
-	function testBuildFixtureTableThrowsExceptionIfTestFieldsIsNotSet() {
+	function testSetupFixtureTableThrowsExceptionIfTestFieldsIsNotSet() {
 		$this->_basicFix->_table = 'blah';
 		$this->_basicFix->_testData = $this->_testFix->_testData[0];
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->buildFixtureTable();
+		$this->_basicFix->setupFixtureTable();
 	}
 	
 	/**
@@ -377,8 +377,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * will be done by actually calling FixturesManagers method.
 	 * 
 	 */
-	function testBuildFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
-		$result = $this->_testFix->buildFixtureTable();
+	function testSetupFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
+		$result = $this->_testFix->setupFixtureTable();
 		$this->assertTrue($result);
         $this->_testFix->dropFixtureTable();
 	}
@@ -403,7 +403,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testDropFixtureTableReturnsTrueOnSuccess() {
-		$this->_testFix->buildFixtureTable();
+		$this->_testFix->setupFixtureTable();
 		$result = $this->_testFix->dropFixtureTable();
         $this->assertTrue($result);
 	}
@@ -440,7 +440,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testPopulateFixturesReturnsTrueIfTestDataIsSuccessfullyInserted() {
-		$this->_testFix->buildFixtureTable();
+		$this->_testFix->setupFixtureTable();
 		$result = $this->_testFix->populateFixtures();
 		$this->assertTrue($result);
 		$this->_testFix->dropFixtureTable();
@@ -499,9 +499,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$result = $this->_testFix->_generateFixtureTestData(1);
 		$this->assertType('array',$result);
 		$this->assertArrayHasKey('id',$result[0]);
-		$this->assertEquals(0,$result[0]['id']);
+		$this->assertEquals(null,$result[0]['id']);
 		$this->assertEquals(7,count($result[0]));
-		$this->assertType('integer',$result[0]['id']);
 	}
 	
 	/**
@@ -513,8 +512,13 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testGenerateFixtureTestDataCorrectlyPopulatesTestDataResults() {
 		$result = $this->_testFix->_generateFixtureTestData(1);
 		$results = $result[0];
-		foreach($results as $testData) {
-			$this->assertNotNull($testData);
+		foreach($results as $key=>$testData) {
+			if('id' !== $key) {
+			     $this->assertNotNull($testData);
+			}
+			else {
+				$this->assertNull($testData);
+			}
 		}
 	}
 	

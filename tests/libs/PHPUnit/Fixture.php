@@ -208,9 +208,9 @@ class PHPUnit_Fixture {
      */
     private function _fixtureMethodCheck($call) {
         if('drop' === $call) {
-            $result = $this->_fixMan->deleteFixturesTable();
+            $result = $this->_fixMan->dropFixtureTable();
         }
-        if('build' === $call) {
+        if('setup' === $call) {
             $result = $this->_fixMan->setupFixtureTable($this->_fields,$this->_table);
         }
         return $result;
@@ -389,11 +389,11 @@ class PHPUnit_Fixture {
 	 * @return bool
 	 * 
 	 */
-	public function buildFixtureTable() {		
+	public function setupFixtureTable() {		
 		if(0 === count($this->_fields)) {
 			throw new ErrorException('No table fields present.');
 		}
-		return $this->_runFixtureMethod('build');
+		return $this->_runFixtureMethod('setup');
 	}
 	
 	/**

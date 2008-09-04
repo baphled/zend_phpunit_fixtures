@@ -242,7 +242,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     private function _setUpTestTableStructure($table) {
         $fixture = $this->_testFixture->getFixtureTableFields();
-        $this->_fixturesManager->buildFixtureTable($fixture,$table);
+        $this->_fixturesManager->setupFixtureTable($fixture,$table);
     }
 	
     /*
@@ -590,9 +590,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * works as expected.
 	 * 
 	 */
-	function testBuildFixtureTableReturnsTrue() {
+	function testSetupFixtureTableReturnsTrue() {
 		$dataType = $this->_testFixture->getFixtureTableFields();
-		$result = $this->_stub->buildFixtureTable($dataType,'info');
+		$result = $this->_stub->setupFixtureTable($dataType,'info');
 		$this->assertTrue($result);
 	}
 	
@@ -600,11 +600,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * If table name is empty we need to throw an exception.
 	 *
 	 */
-	function testBuildFixtureTableThrowsExceptionOnEmptyTableName() {
+	function testSetupFixtureTableThrowsExceptionOnEmptyTableName() {
 		$tableName = '';
 		$dataType = $this->_testFixture->getFixtureTableFields();
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->buildFixtureTable($dataType,$tableName);
+		$this->_fixturesManager->setupFixtureTable($dataType,$tableName);
 	}
 	
 	/**
@@ -615,10 +615,10 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * our query
 	 * 
 	 */
-	function testBuildFixtureTableShouldReturnFalseIfDataTypeInvalidLength() {
+	function testSetupFixtureTableShouldReturnFalseIfDataTypeInvalidLength() {
 		$tableName = 'illegalTable';
 		$dataType = $this->_getIllegalDataTypeTestTableStructure();
-		$result = $this->_fixturesManager->buildFixtureTable($dataType,$tableName);
+		$result = $this->_fixturesManager->setupFixtureTable($dataType,$tableName);
 		$this->assertFalse($result);
 	}
 	
@@ -661,9 +661,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * @todo Realistically, this functionality would be down to
 	 *       a DB checker, will skip until we implement that.
 	 */
-	function testDeleteFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
+	function testDropFixtureTableFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->deleteFixturesTable();
+		$this->_fixturesManager->dropFixtureTable();
 	}
 	
 	/**
@@ -679,7 +679,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$query = $this->_getGenericQuery('blah');
 		$result = $this->_fixWrap->runFixtureQuery($query);
 		$this->assertTrue($result);
-		$wasDeleted = $this->_fixturesManager->deleteFixturesTable();
+		$wasDeleted = $this->_fixturesManager->dropFixtureTable();
 		$this->assertTrue($wasDeleted);
 	}
 
@@ -734,7 +734,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsNotAString() {
 		$testData = $this->_getSingleAppleFixtureDataStructure();
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->buildFixtureTable($testData,array());
+		$this->_fixturesManager->setupFixtureTable($testData,array());
 	}
 	
 	/**
@@ -747,7 +747,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsEmpty() {
 		$testData = $this->_getSingleAppleFixtureDataStructure();
         $this->setExpectedException('ErrorException');
-        $this->_fixturesManager->buildFixtureTable($testData,'');
+        $this->_fixturesManager->setupFixtureTable($testData,'');
 	}
 	
 	/**
@@ -787,7 +787,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $testData = $this->_getSingleAppleFixtureDataStructure();
         $result = $this->_fixturesManager->insertTestData($testData,$table);
         $this->assertTrue($result);
-        $this->_fixturesManager->deleteFixturesTable();
+        $this->_fixturesManager->dropFixtureTable();
     }
     
     /**
@@ -802,7 +802,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $testData = $this->_testFixture->getTestData();
         $result = $this->_fixturesManager->insertTestData($testData,$table);
         $this->assertTrue($result);
-        $this->_fixturesManager->deleteFixturesTable();
+        $this->_fixturesManager->dropFixtureTable();
     }
     
     /**
@@ -814,7 +814,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$this->setExpectedException('PDOException');
         $testData = $this->_testFixture->getTestData();
         $this->_fixturesManager->insertTestData($testData,'plum');
-    	$this->_fixturesManager->deleteFixturesTable();
+    	$this->_fixturesManager->dropFixtureTable();
     }
     
     /**
@@ -861,7 +861,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$table = 'apples';
         $this->_setUpTestTableStructure($table);
     	$result = $this->_fixturesManager->fixtureTableExists($table);
-    	$this->_fixturesManager->deleteFixturesTable();
+    	$this->_fixturesManager->dropFixtureTable();
     	$this->assertTrue($result);
     }
 }

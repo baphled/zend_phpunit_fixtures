@@ -12,6 +12,12 @@
  * @package FixturesManager
  *
  * $LastChangedBy$
+ * Date: 04/09/2008
+ * A large amount of refactoring has been done here, namely to improve
+ * performance and design, we introduced dropFixtureTable int our buildFixtureTable
+ * function earlier, which didn't help things much, though out DB based tests
+ * work, this leaves our other tests failing, so we have reintroduced the same
+ * method at the tearDown method of our class
  * Date: 02/09/2008
  * Refactored _validateDataType, we were getting errors when checking
  * that a data type had lengths on arrays with none. We are now able
@@ -234,15 +240,15 @@ class FixturesManager {
 			throw new ErrorException('Table must have a name');
 		}
 		try {
-		  $this->dropFixtureTable();
+		  //$this->dropFixtureTable();
 		  $query = $this->convertDataType($dataType,$tableName);
 		  $this->_runFixtureQuery($query);
+		  return true;
 		}
 		catch(ErrorException $e) {
 			echo $e->getMessage();
-			return false;
 		}
-		 return true;
+		 return false;
 	}
 	
 	/**
