@@ -49,7 +49,6 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	
 	public function tearDown() {
 		$this->_feature = null;
-		$this->_featureFixtures->dropFixtureTable();
 		$this->_featureFixtures = null;
 		parent::tearDown ();
 	}
@@ -169,5 +168,12 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->assertFalse($result);		
 	}
 	
+	function testAutoIncrement () {
+		$dummy = array('id' => null, 'userid' => 1,'title' => 'new feature','description' => 'To test a new feature');
+	
+		for ($i = 0; $i < 10; $i++) {
+			$this->_feature->addNewFeature($dummy);
+		}
+	}
 
 }
