@@ -130,7 +130,7 @@ class PHPUnit_Fixture {
                 $this->_result[$field] = rand();
             }
             else {
-                $this->_result[$field] = 0;         // @todo get last int from test data id value
+                $this->_result[$field] = NULL;         // @todo get last int from test data id value
             }
         }
     }
@@ -211,7 +211,7 @@ class PHPUnit_Fixture {
             $result = $this->_fixMan->deleteFixturesTable();
         }
         if('build' === $call) {
-            $result = $this->_fixMan->buildFixtureTable($this->_fields,$this->_table);
+            $result = $this->_fixMan->setupFixtureTable($this->_fields,$this->_table);
         }
         return $result;
     }
