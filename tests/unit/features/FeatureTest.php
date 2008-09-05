@@ -22,7 +22,7 @@ set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/..
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
-class FeatureTest extends Module_PHPUnit_Framework_TestCase {
+class FeatureTest extends PHPUnit_Framework_TestCase {
 	
 	private $_feature;
 	
@@ -41,7 +41,6 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 	}
 	
 	public function setUp() {
-		$this->_setUpConfig ();
 		parent::setUp ();
 		$this->_featureFixtures->dropFixtureTable();
 		$this->_featureFixtures->setupFixtureTable();
@@ -103,20 +102,20 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->_feature->addNewFeature($data);
 	}
 	
-	function testUserIdThrowExceptionIfNotNull(){
-		$id = null;
-		$this->setExpectedException('ErrorException');
-		$this->_feature->updateFeature($id,$this->_featureFixtures->getTestData('userid',1));
-		
-	}
-	
 	function testAddNewFeatureReturnsIntegerOnSuccess(){
 		$data1 = $this->_featureFixtures->getTestData('userid',1);
 		$data2 = $this->_featureFixtures->getTestData('userid',13);
 		$this->_feature->addNewFeature($data1);
 		$this->assertEquals(3,$this->_feature->addNewFeature($data2));
 	}
-
+	
+	function testViewFeatureById(){
+		$data = $this->_featureFixtures->getTestData('userid',1);
+		$this->_feature->addNewFeature($data);
+		$result = $this->_feature->viewFeature(1);
+		$this->assertType('array', $result);
+	}
+	
 	/**
 	 * Need to test that if we have duplicate data our function
 	 * returns false.
@@ -136,6 +135,13 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->assertEquals(True,$result);
 	}
 	
+	function testUserIdThrowExceptionIfNotNull(){
+		$id = null;
+		$this->setExpectedException('ErrorException');
+		$this->_feature->updateFeature($id,$this->_featureFixtures->getTestData('userid',1));
+		
+	}
+	
 	function testUpdateFeaturesReturnTrueOnSuccess(){
 		$data = $this->_featureFixtures->getTestData('userid',1);
 		$this->_feature->addNewFeature($data);
@@ -149,13 +155,6 @@ class FeatureTest extends Module_PHPUnit_Framework_TestCase {
 		$this->_feature->addNewFeature($data);
 		$result = $this->_feature->updateFeature(1,$data);
 		$this->assertFalse($result);		
-	}
-	
-	function testViewFeatureById(){
-		$data = $this->_featureFixtures->getTestData('userid',1);
-		$this->_feature->addNewFeature($data);
-		$result = $this->_feature->viewFeature(1);
-		$this->assertType('array', $result);
 	}
 	
 	function testDeleteFeatureReturnTrueOnSuccess(){

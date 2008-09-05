@@ -12,14 +12,14 @@
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
-class FeatureFixture extends PHPUnit_Fixture {
+class FunctionFixture extends PHPUnit_Fixture {
 	public $_table = 'functions';
 	
 	public $_fields = array(
-					 'id' => array('type' => 'integer', 'length'=>10, 'key' => 'primary'),
-					 'userid' => array('type' => 'integer', 'length'=>10, 'null', FALSE),
-					 'title' => array('type' =>'string', 'length' => 255, 'null', FALSE),
-					 'description' => array('type'=>'string','length'=>255, 'null', FALSE)
+					 'id' 	  		=> array('type' => 'integer', 'length'=>10, 'key' => 'primary'),
+					 'userid' 		=> array('type' => 'integer', 'length'=>10, 'null', FALSE),
+					 'title' 	   	=> array('type' =>'string', 'length' => 255, 'null', FALSE),
+					 'description' 	=> array('type'=>'string','length'=>255, 'null', FALSE)
 					  );
 	
 	public $_testData = array(
