@@ -10,7 +10,7 @@
  *  
  */
 
-class Features extends FuntionModel {
-	
+class Functions extends Zend_Db_Table_Abstract {
+	protected $_name = 'function';
 
 }
