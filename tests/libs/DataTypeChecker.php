@@ -179,4 +179,28 @@ class DataTypeChecker {
         }
         return $data;
     }
+    
+    static function checkFieldsType($dataType) {
+       DataTypeChecker::checkDataType($dataType);
+       if($dataType['type'] === 'integer' || $dataType['type'] ===  'string' ) {
+            if(!array_key_exists('length',$dataType)) {
+                throw new ErrorException('String & Integer must have a length specified.');
+            }
+       }
+       elseif($dataType['type'] === 'date' || $dataType['type'] ===  'datetime') {}
+       else {
+            throw new ErrorException('Invalid data type.');
+       }
+    }
+    
+    static function checkFieldsNullProperty($dataType) {
+       if(array_key_exists('null',$dataType)) {
+            if(!is_bool($dataType['null'])) {
+                throw new ErrorException('Null must be set to a boolean value.');
+            }
+            if(array_key_exists('default',$dataType)) {
+                throw new ErrorException('Can not use keyword default along with null.');
+            }
+       }
+    }
 }
