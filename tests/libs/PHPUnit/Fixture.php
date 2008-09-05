@@ -504,6 +504,6 @@ class PHPUnit_Fixture {
     	if(!array_key_exists($field,$this->_fields)) {
     		throw new ErrorException('Field id does not exist.');
     	}
-    	return $this->_fields[$field];
+    	return array($field => $this->_fields[$field]);
     }
 }
