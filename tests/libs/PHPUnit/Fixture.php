@@ -54,7 +54,7 @@ class PHPUnit_Fixture {
 	 *
 	 * @var String
 	 */
-	public $_table = null;
+	protected $_table = null;
 	
     /**
      * Stores the fixtures table structure
@@ -68,7 +68,7 @@ class PHPUnit_Fixture {
 	 *
 	 * @var Array
 	 */
-	public $_testData = null;
+	protected $_testData = null;
 	
 	/**
 	 * Stores our fixture manager, used
@@ -117,6 +117,19 @@ class PHPUnit_Fixture {
        }
     }
 	
+
+    /**
+     * Used to make sure that our data type fields are all valid.
+     * 
+     * @access private
+     * @param $dataType
+     * 
+     */
+    private function _validateDataTypeFields($dataType) {
+       DataTypeChecker::checkFieldsType($dataType);
+       DataTypeChecker::checkFieldsNullProperty($dataType);
+    }
+    
     /**
      * Checks that our data type is an integer
      *
@@ -347,6 +360,23 @@ class PHPUnit_Fixture {
 	}
 	
 	/**
+	 * Returns the fixtures table name.
+	 *
+	 * @return String
+	 * 
+	 */
+	function getTableName() {
+		return $this->_table;
+	}
+	
+	function setTableName($tableName) {
+		if(!is_string($tableName)) {
+			throw new ErrorException('Table name must be a string');
+		}
+		$this->_table = $tableName;
+		return true;
+	}
+	/**
 	 * Gets our test data for use, if parameters are not passed
 	 * we will retrieve all test data stored in this object, otherwise
 	 * we will return the specific test data in question.
@@ -419,6 +449,29 @@ class PHPUnit_Fixture {
 		return $this->_runFixtureMethod('setup');
 	}
 	
+	/**
+	 * Sets PHPUnit_Fixture's field property.
+	 *
+	 * @param Array $fields
+	 * @return bool
+	 */
+	function setFields(array $fields) {
+		if(0 === count($fields)) {
+			throw new ErrorException('Illegal field format.');
+		}
+		foreach ($fields as $name=>$data) {
+				if(!is_string($name)) {
+					throw new ErrorException('Field name must be a string.');
+				}
+				if(!is_array($data)) {
+					throw new ErrorException('Data must be in an associative array.');
+				}
+				$this->_validateDataTypeFields($data);
+		}
+		$this->_fields = $fields;
+		return true;
+	}
+
 	/**
 	 * Another wrapper function, this time used for deleting
 	 * our test tables.

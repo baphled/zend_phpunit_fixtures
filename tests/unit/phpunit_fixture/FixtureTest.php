@@ -166,27 +166,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * Now we want to make sure that that the test data we are getting
-	 * is what we expected.
-	 * 
-	 */
-	function testGetTestDataReturnsTheDataWeExpected() {
-		$expected = $this->_testFix->_testData;
-		$actual = $this->_testFix->getTestData();
-		$this->assertSame($expected,$actual);
-	}
-	
-	/**
-	 * Now what about returning a specific test data
-	 * 
-	 */
-	function testGetTestDataReturnsExpectedSingleResult() {
-		$expected = $this->_testFix->getTestData('id',1);
-		$actual = $this->_testFix->_testData[0];
-		$this->assertSame($expected,$actual);
-	}
-	
-	/**
 	 * We forgot to test that a value is specified, if a key
 	 * is, as both are need to retrieve a single test data.
 	 * 
@@ -219,7 +198,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testFixtureAddTestDataReturnsTrueOnSuccess() {
-        $testData = $this->_testFix->_testData[0];
+        $testData = $this->_testFix->getTestData('id',1);
         $result = $this->_basicFix->addTestData($testData);
         $this->assertTrue($result);
     }
@@ -232,7 +211,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestDataCanSubmitTestDataToFixture() {
-		$testData = $this->_testFix->_testData[0];
+		$testData = $this->_testFix->getTestData('id',1);
 		$result = $this->_basicFix->addTestData($testData);
 		$this->assertTrue($result);
 		$expected = $this->_basicFix->getTestData(); 
@@ -245,8 +224,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testAddTestDataIsAbleToAddMultiplesOfTestData() {
 		$actual = array();
-		$actual[] = $this->_testFix->_testData[0];
-		$actual[] = $this->_testFix->_testData[2];
+		$actual[] = $this->_testFix->getTestData('id',1);
+		$actual[] = $this->_testFix->getTestData('id',3);
 		$this->_basicFix->addTestData($actual);
 		$expected = $this->_basicFix->getTestData();
 		$this->assertSame($expected,$actual);
@@ -260,7 +239,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testValidateTestDataReturnsTrueAsDefault() {
 		$testData = array();
-		$testData[] = $this->_testFix->_testData[0];
+		$testData[] = $this->_testFix->getTestData('id',1);
 		$result = $this->_basicFix->validateTestData($testData);
 		$this->assertTrue($result);
 	}
@@ -272,7 +251,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestDataThrowsExceptionsIfAddingTestDataOfVaryingStructure() {
-		$testData[] = $this->_testFix->_testData[0];
+		$testData[] = $this->_testFix->getTestData('id',1);
 		$this->setExpectedException('ErrorException');
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
@@ -287,7 +266,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestThrowsExceptionsIfTestDataDoesNotMatchPreExistingTestDataStructure() {
-		$testData[] = $this->_testFix->_testData[0];
+		$testData[] = $this->_testFix->getTestData('id',1);
 		$this->setExpectedException('ErrorException');
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
@@ -300,7 +279,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestReturnsTrueIfTestDataIsAlreadyPresent() {
-		$testData[] = $this->_testFix->_testData[0];
+		$testData[] = $this->_testFix->getTestData('id',1);
 		$result = $this->_testFix->testDataExists($testData);
 		$this->assertTrue($result);
 	}
@@ -310,7 +289,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testTestDataExistsFalseIfNoTestDataIsPresent() {
-		$testData[] = $this->_basicFix->_testData[0];
+		$testData[] = $this->_basicFix->getTestData('id',1);
 		$result = $this->_basicFix->testDataExists($testData);
 		$this->assertFalse($result);
 	}
@@ -341,7 +320,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testSetupFixtureTableThrowsExceptionIfTableNameIsNotSet() {
-		$this->_basicFix->_testData = $this->_testFix->_testData[0];
+		$this->_basicFix->addTestData($this->_testFix->getTestData('id',1));
 		$this->setExpectedException('ErrorException');
 		$this->_basicFix->setupFixtureTable();
 	}
@@ -368,8 +347,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testSetupFixtureTableThrowsExceptionIfTestFieldsIsNotSet() {
-		$this->_basicFix->_table = 'blah';
-		$this->_basicFix->_testData = $this->_testFix->_testData[0];
+		$this->_basicFix->setTableName('blah');
+		$this->_basicFix->addTestData($this->_testFix->getTestData('id',1));
 		$this->setExpectedException('ErrorException');
 		$this->_basicFix->setupFixtureTable();
 	}
@@ -465,7 +444,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testAutoGenerateTestDataReturnsResultsAsArrayAndIdIsNotAutoSet() {
 		$this->_testFix->autoGenerateTestData(1);
-		$this->assertEquals(8,count($this->_testFix->_testData));
+		$this->assertEquals(8,count($this->_testFix->getTestData()));
 	}
 	
 	/**
@@ -474,7 +453,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testGenerateFixtureTestDataReturnsExpectedNumberOfTestData() {
 		$this->_testFix->autoGenerateTestData(23);
-        $this->assertEquals(30,count($this->_testFix->_testData));
+        $this->assertEquals(30,count($this->_testFix->getTestData()));
 	}
 	
 	/**
@@ -501,7 +480,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testAutoGenerateTestDataCanAddTenPiecesOfTestDataToTestFixture() {
 		$result = $this->_testFix->autoGenerateTestData(10);
 		$this->assertTrue($result);
-		$numTestData = count($this->_testFix->_testData);
+		$numTestData = count($this->_testFix->getTestData());
 		$this->assertEquals(17,$numTestData);
 	}
 	
@@ -600,17 +579,177 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testRetrieveSingleTestDataFieldReturnExpected() {
-		$fieldData = $this->_testFix->_fields['id'];
+		$fieldData = array('id'=>$this->_testFix->_fields['id']);
 		$result = $this->_testFix->getSingleDataTypeField('id');
 		$this->assertSame($fieldData,$result);
 	}
 	
 	/**
+	 * We really need some getters for our fixtures properties,
+	 * so far they have not been privatise but it would be a good
+	 * idea to do so now.
+	 * 
+	 */
+	function testGetTableNameReturnsString() {
+		$result = $this->_testFix->getTableName();
+		$this->assertType('string',$result);
+	}
+	
+	/**
+	 * Now we need to be able to set our fixture table.
+	 * Our setting will only allow a string.
+	 * 
+	 */
+	function testSetTableNameThrowsExceptionIfParamIsNotAString() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->setTableName(array());
+	}
+	
+	/**
+	 * Now we need to be able to actual set the name.
+	 * 
+	 */
+	function testSetTableNameReturnsTrueOnSucces() {
+		$result = $this->_basicFix->setTableName('coffee');
+		$this->assertTrue($result);
+	}
+	
+	/**
+	 * Now we want to make sure that the name has actually
+	 * been set.
+	 * 
+	 */
+	function testSetTableNameActuallySetsNameOnSucces() {
+		$table = 'tea';
+		$this->_basicFix->setTableName($table);
+		$this->assertEquals($this->_basicFix->getTableName(),$table);
+	}
+	
+	/**
+	 * Okay so after the last pass we refactored our testcase and
+	 * our class. _table is now private as it should be.
+	 */
+	
+	/**
+	 * Now we'll need to be able to set field data, to do this, we'll
+	 * need to make sure that the submitted array is of the correct format.
+	 * 
+	 */
+	function testSetTestDataFieldsThrowsExceptionIfParamIsNotAnArrayOfAnArray() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->setFields(array());
+	}
+	
+	/**
+	 * Each field must start with a string
+	 * 
+	 */
+	function testSetFieldsThrowExceptionIfFieldHasNoDataTypeName() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->setFields(array(array()));
+	}
+
+	function testSetFieldsThrowExceptionIfFieldsDataIsNotInArrayFormat() {
+		$this->setExpectedException('ErrorException');
+        $this->_basicFix->setFields(array('id' => ''));
+	}
+
+	function testSetFieldsThrowExceptionIfDataHasNotType() {
+		$this->setExpectedException('ErrorException');
+        $this->_basicFix->setFields(array('id' => array('tip' => 'top')));
+	}
+	
+	function testSetFieldsThrowExceptionIfDataHasTypeSetInTheWrongOrder() {
+		$this->setExpectedException('ErrorException');
+        $this->_basicFix->setFields(array('id' => array('tip' => 'type')));
+	}
+	
+	function testSetFieldsReturnsTrueIfTypeIsOfIntegerType() {
+		$result = $this->_basicFix->setFields(array('id' => array('type' => 'integer', 'length' => 10)));
+		$this->assertTrue($result);
+	}
+	
+    function testSetFieldsReturnsTrueIfTypeIsOfStringType() {
+        $result = $this->_basicFix->setFields(array('id' => array('type' => 'string', 'length' => 10)));
+        $this->assertTrue($result);
+    }
+    
+    function testSetFieldsReturnsTrueIfTypeIsOfDateType() {
+        $result = $this->_basicFix->setFields(array('id' => array('type' => 'date')));
+        $this->assertTrue($result);
+    }
+    
+    function testSetFieldsReturnsTrueIfTypeIsOfDateTimeType() {
+        $result = $this->_basicFix->setFields(array('id' => array('type' => 'datetime')));
+        $this->assertTrue($result);
+    }
+    
+    function testSetFieldsThrowExceptionIfLengthIsNotAnInt() {
+    	$this->setExpectedException('ErrorException');
+        $this->_basicFix->setFields(array('id' => array('type' => 'datetime', 'length' => '10')));
+    }
+    
+    function testSetFieldsThrowExceptionIfLengthSpecifiedWithDate() {
+    	$this->setExpectedException('ErrorException');
+    	$this->_basicFix->setFields(array('id' => array('type' => 'datetime', 'length' => 10)));
+    }
+    
+    function testSetFieldsThrowExceptionIfNullIsNotABool() {
+    	$this->setExpectedException('ErrorException');
+        $this->_basicFix->setFields(array('id' => array('type' => 'datetime', 'null' => 10)));
+    }
+    
+    /**
+     * We really shouldnt be able to set default & null on the same data type.
+     *
+     */
+    function testSetFieldsThrowExceptionIfNullIsAlongWithDefault() {
+    	$this->setExpectedException('ErrorException');
+        $this->_basicFix->setFields(array('id' => array('type' => 'string', 'length' => 10, 'null' => true, 'default' => '')));
+    }
+    
+    /*
+     * Be nice to be able to be able to verify if we have more than one primary key
+     * as it shouldnt be possible.
+     */
+    
+	function testSetFieldsThrowExceptionIfDataTypeIsNotOfTheCorrectType() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->setFields(array('id' => array('type' => 'type')));
+	}
+	
+    function testSetDataFieldsReturnsTrueOnSuccess() {
+        $result = $this->_basicFix->setFields($this->_testFix->getFixtureTableFields());
+        $this->assertTrue($result);
+    }
+    
+    /**
+     * Now we'll make sure that our new field data is actually set.
+     *  
+     */
+    function testSetDataFieldsActuallySetsOurFieldsProperty() {
+    	$expected = $this->_testFix->getFixtureTableFields();
+    	$result = $this->_basicFix->setFields($expected);
+    	$actual = $this->_basicFix->getFixtureTableFields();
+    	$this->assertTrue($result);
+    	$this->assertEquals($expected,$actual);
+    }
+	/**
+	 * There will be times when we want to clear our predefined
+	 * test data, possibly when we want to use the same structure
+	 * but don't wont any data present, for this we will need to 
+	 * unset the _testData property.
+	 * 
+	 */
+	
+	/**
 	 * Now if we need to be able to retrieve our testData with auto incremented id's, this will
 	 * be used to retrieve test data without actually having to insert the data into our test DB.
 	 */
-	function testRetrieveTestDataResultsIncrementsTestDataIDWhenReturned() {
+	function testRetrieveTestDataResultsReturnsArrayOnSuccess() {
 		$this->markTestIncomplete();
+		$result = $this->_testFix->retrieveTestDataResults();
+		$this->assertType('array',$result);
 	}
 	
 }

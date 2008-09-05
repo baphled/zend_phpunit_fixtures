@@ -133,21 +133,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	private function _getGenericQuery($table) {
 		return 'CREATE TABLE ' .$table .' (id INT(10) PRIMARY KEY AUTO_INCREMENT, apple_id INT(10) NULL, color VARCHAR(255) DEFAULT "", name VARCHAR(255) DEFAULT "", created DATETIME NOT NULL, date DATE NOT NULL, modified DATETIME NOT NULL);';
 	}
-	
-	private function _getPrimaryKeyDataType() {
-		return array('id' => array('type' => 'integer', 'length' => 11, 'key' => 'primary'));
-	}
     
     private function _getDataTypeWithNoDefinedType() {
     	return array('date' => array('tipe' => 'date', 'null' => FALSE));
-    }
-    
-    private function _getDateDataType() {
-        return array('date' => array('type' => 'date', 'null' => FALSE));
-    }
-    
-    private function _getDateTimeDataType() {
-    	return array('created' => array('type' => 'datetime', 'null' => FALSE));
     }
 	
 	private function _getTestTableStructureWithNoPrimKey() {
@@ -442,8 +430,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeCanParsePrimaryKeys() {
-    	$query = 'id INT(11) PRIMARY KEY AUTO_INCREMENT';
-        $dataType = $this->_getPrimaryKeyDataType();
+    	$query = 'id INT(10) PRIMARY KEY AUTO_INCREMENT';
+        $dataType = $this->_testFixture->getSingleDataTypeField('id');
         $result = $this->_fixturesManager->convertDataType($dataType);
         $this->assertContains($query,$result);
     }
@@ -466,7 +454,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertDataTypeReturnsExpectedQueryFromParsedDate() {
     	$query = 'CREATE TABLE pool (date DATE NOT NULL);';
     	$table = 'pool';
-    	$dataType = $this->_getDateDataType();
+    	$dataType = $this->_testFixture->getSingleDataTypeField('date');
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
@@ -478,7 +466,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertDataTypeCanParseDateTimeDataTypes() {
     	$query = 'CREATE TABLE snooker (created DATETIME NOT NULL);';
     	$table = 'snooker';
-    	$dataType = $this->_getDateTimeDataType();
+    	$dataType = $this->_testFixture->getSingleDataTypeField('created');
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
