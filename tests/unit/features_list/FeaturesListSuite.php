@@ -1,8 +1,8 @@
 <?php
 
 require_once 'PHPUnit/Framework/TestSuite.php';
-require_once 'tests/unit/features_list/FeatureTest.php';
-require_once 'tests/unit/features_list/FunctionsTest.php';
+require_once 'FeatureTest.php';
+require_once 'FunctionsTest.php';
 
 /**
  * Static test suite.
