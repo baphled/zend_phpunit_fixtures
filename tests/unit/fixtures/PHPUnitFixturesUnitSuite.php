@@ -12,7 +12,7 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR .realpath(dirname(__FILE__) .'/../libs/') 
+set_include_path ( '.' . PATH_SEPARATOR .realpath(dirname(__FILE__) .'../../libs/') 
                        .PATH_SEPARATOR . get_include_path () );
 
 require_once 'Zend/Loader.php';

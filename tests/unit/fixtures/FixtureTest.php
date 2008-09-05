@@ -45,7 +45,7 @@ require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
 require_once 'PHPUnit/Framework/TestCase.php';
-require_once '../../libs/PHPUnit/Fixture.php';
+require_once 'PHPUnit/Fixture.php';
 
 class BasicFixture extends PHPUnit_Fixture {}
 

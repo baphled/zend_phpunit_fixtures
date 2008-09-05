@@ -491,6 +491,12 @@ class PHPUnit_Fixture {
         return false;
     }
     
+    /**
+     * Gets a single data type field from our fixture.
+     *
+     * @param String $field
+     * @return Array
+     */
     function getSingleDataTypeField($field) {
     	if(!is_string($field)) {
     		throw new ErrorException('Field name must be a string.');
