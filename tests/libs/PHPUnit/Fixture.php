@@ -130,7 +130,7 @@ class PHPUnit_Fixture {
                 $this->_result[$field] = rand();
             }
             else {
-                $this->_result[$field] = NULL;         // @todo get last int from test data id value
+                $this->_result[$field] = NULL;
             }
         }
     }
@@ -195,8 +195,33 @@ class PHPUnit_Fixture {
             $this->_dataTypeIsDateTime($value,$field);
         }
     }
+
     
  
+    /**
+     * Retrieves all our test data.
+     * 
+     * @access private
+     * @param String    $key
+     * @param Array     $value
+     * @return Array
+     */
+    private function _retrieveTestData($key,$value) {
+       if(0 !== $this->testDataCount()) {
+            if(!empty($key) && !empty($value)) {
+                foreach($this->_testData as $data) {
+                    if($data[$key] === $value) {
+                       return $data;
+                    }
+                }
+            }
+            else {
+                return $this->_testData;                
+            }
+        }
+        return false;
+    }
+    
     /**
      * Is used to run build & drop, seeing as both methods
      * have practically the same functionality, it seems
@@ -204,13 +229,13 @@ class PHPUnit_Fixture {
      *
      * @access private
      * @param string $calledBy
-     * @return unknown
+     * @return bool
      * 
      * @todo Write test to ascertain whether the string
      *       build/drop & that it is actually a string.
      * 
      */
-    protected function _runFixtureMethod($calledBy) {
+    private function _runFixtureMethod($calledBy) {
         try {
             $result = $this->_fixtureMethodCheck($calledBy);
             if(true === $result) {
@@ -331,7 +356,6 @@ class PHPUnit_Fixture {
 	 * @param String $value
 	 * @return Array
 	 * 
-	 * @todo Refactor method, if clause on 165 needs lookin @.
 	 */
 	public function getTestData($key='',$value='') {
 		if(!is_string($key)) {
@@ -340,19 +364,8 @@ class PHPUnit_Fixture {
 		if(!empty($key) && empty($value)) {
 			throw new ErrorException('Must supply a value when submitting a key');
 		}
-		if(0 !== $this->testDataCount()) {                 // smells, cant this be put in a private function.
-			if(!empty($key) && !empty($value)) {
-				foreach($this->_testData as $data) {
-					if($data[$key] === $value) {
-					   return $data;
-					}
-				}
-			}
-			else {
-                return $this->_testData;				
-			}
-		}
-		return false;
+		return $this->_retrieveTestData($key,$value);
+		
 	}
 	
 	/**
@@ -456,11 +469,7 @@ class PHPUnit_Fixture {
         if(!$this->_fixMan->fixtureTableExists($this->_table)) {
             throw new ErrorException('Fixtures table is not present.');
         }
-        $result = $this->_fixMan->insertTestData($this->_testData,$this->_table);
-        if(true === $result) {
-            return true;
-        }
-        return false;
+        return $this->_fixMan->insertTestData($this->_testData,$this->_table);
     }
     
     /**
@@ -480,5 +489,15 @@ class PHPUnit_Fixture {
             }
         }
         return false;
+    }
+    
+    function getSingleDataTypeField($field) {
+    	if(!is_string($field)) {
+    		throw new ErrorException('Field name must be a string.');
+    	}
+    	if(!array_key_exists($field,$this->_fields)) {
+    		throw new ErrorException('Field id does not exist.');
+    	}
+    	return $this->_fields[$field];
     }
 }

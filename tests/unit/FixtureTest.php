@@ -41,10 +41,11 @@ set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/..
                        .PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../libs/' ) 
                        .PATH_SEPARATOR . get_include_path () );
 
-require_once 'TestFixture.php';
-
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
+
+require_once 'PHPUnit/Framework/TestCase.php';
+require_once '../libs/PHPUnit/Fixture.php';
 
 class BasicFixture extends PHPUnit_Fixture {}
 
@@ -548,7 +549,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($result);
 	}
 
-function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfParamIsZero() {
+    function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfParamIsZero() {
         $result = $this->_invalidFieldFixture->autoGenerateTestData(0);
         $this->assertFalse($result);
     }
@@ -562,6 +563,54 @@ function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfParamIsZe
 		$this->_invalidFieldFixture->_fields = array('id' => array('type' => 'date', 'length' => '10', 'null' => FALSE));
 		$result = $this->_invalidFieldFixture->autoGenerateTestData(1); 
 		$this->assertFalse($result);
+	}
+	
+	/**
+	 * We want to be able to retrieve a single data type field, this will usually be used
+	 * to validate a piece of test data is of the correct type.
+	 */
+	
+	/**
+	 * Our field name parameter is a string so we need to make sure we make
+	 * sure it is.
+	 *
+	 */
+	function testRetrieveSingleTestDataFieldThrowsExceptionIfFieldNameIsNotAString() {
+		$this->setExpectedException('ErrorException');
+		$this->_testFix->getSingleDataTypeField(array());
+	}
+	
+	/**
+	 * Now we need to check that our field id is valid
+	 * 
+	 */
+	function testRetrieveSingleTestDataFieldThrowsExceptionIfFieldIsInvalid() {
+		$this->setExpectedException('ErrorException');
+		$this->_testFix->getSingleDataTypeField('bid');
+	}
+	/**
+	 * Now we need to make sure that we return an array
+	 * @todo create tests to implement data type verification.
+	 * 
+	 */
+	function testRetrieveSingleTestDataFieldReturnAnArrayOnSucces() {
+		$result = $this->_testFix->getSingleDataTypeField('id');
+		$this->assertType('array',$result);
+		var_dump($result);
+	}
+	
+	function testRetrieveSingleTestDataFieldReturnExpected() {
+		$fieldData = $this->_testFix->_fields['id'];
+		$result = $this->_testFix->getSingleDataTypeField('id');
+		$this->assertSame($fieldData,$result);
+	}
+	
+	/**
+	 * Now if we need to be able to retrieve our testData with auto incremented id's, this will
+	 * be used to retrieve test data without actually having to insert the data into our test DB.
+	 */
+	function testRetrieveTestDataResultsIncrementsTestDataIDWhenReturned() {
+		$this->markTestIncomplete();
 	}
 	
 }

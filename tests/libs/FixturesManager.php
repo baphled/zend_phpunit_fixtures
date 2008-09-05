@@ -17,7 +17,7 @@
  * performance and design, we introduced dropFixtureTable int our buildFixtureTable
  * function earlier, which didn't help things much, though out DB based tests
  * work, this leaves our other tests failing, so we have reintroduced the same
- * method at the tearDown method of our class
+ * method at the tearDown method of our class.
  * Date: 02/09/2008
  * Refactored _validateDataType, we were getting errors when checking
  * that a data type had lengths on arrays with none. We are now able
@@ -78,10 +78,8 @@
  * 
  * @todo Don't like the fact that the DB related functionality
  *       is mingled in here, it should really be refactored.
- * @todo Look into creating fixtures on the fly.
  * @todo Refactor class so that '_' prefixed functions are actually
  *       private.
- * @todo Refactor convertDataTypes, is way too big.
  * 
  */
 
@@ -145,12 +143,11 @@ class FixturesManager {
         }
         try {
             $this->_db->getConnection()->exec($query);
-            return true;
         }
         catch(Exception $e) {
             throw new PDOException($e->getMessage());
         }
-        return false;
+        return true;
     }
     
     /**
@@ -204,18 +201,16 @@ class FixturesManager {
 	 * @param Array    $dataType
 	 * @return String Portion of SQL, which will be used to construct query.
 	 * 
-	 * @todo Function is way to long need to refactor
+	 * @todo smells abit, probably needs a redesign.
 	 * 
 	 */
      public function convertDataType($dataTypeInfo,$tablename='default') {
 		if(!is_array($dataTypeInfo)) {
 			throw new ErrorException('DataType is invalid.');
 		}
-        else {
-          $stmt = 'CREATE TABLE ' .$tablename .' (';
-        }
+        $stmt = 'CREATE TABLE ' .$tablename .' (';
         $query = '';
-	   foreach($dataTypeInfo as $field=>$dataType) {
+	    foreach($dataTypeInfo as $field=>$dataType) {
             DataTypeChecker::checkDataType($dataType);
             $data = '';
             $data = $this->_checkDataTypes($dataType);

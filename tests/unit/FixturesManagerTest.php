@@ -19,6 +19,7 @@
  * Date: 03/09/2008
  * Refactored test to use PHPUnit_Framework_TestCase, as we are not using any
  * Zend components directly.
+ * Still working on refactoring class & test case.
  * 
  * Date: 02/09/2008
  * Added test cases to help implement our fixture table exists method, which
@@ -65,8 +66,7 @@
  * Started session, will implement basic functionality needed
  * to create the db and import the needed fixtures.
  * 
- * @todo Now this and Fixture is more aless complete, we can start using
- *       a subclassed Fixture for our testdata.
+ * @todo Now we have completed the basics PHPUnit_Fixture we can now use it for our test data.
  * 
  */
 
@@ -134,30 +134,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		return 'CREATE TABLE ' .$table .' (id INT(10) PRIMARY KEY AUTO_INCREMENT, apple_id INT(10) NULL, color VARCHAR(255) DEFAULT "", name VARCHAR(255) DEFAULT "", created DATETIME NOT NULL, date DATE NOT NULL, modified DATETIME NOT NULL);';
 	}
 	
-	private function _getAppleQuery() {
-		return 'CREATE TABLE apples (id INT(10) PRIMARY KEY AUTO_INCREMENT, apple_id INT(10) NULL, color VARCHAR(255) DEFAULT "", name VARCHAR(255) DEFAULT "", created DATETIME NOT NULL, date DATE NOT NULL, modified DATETIME NOT NULL);';
-	}
-	
 	private function _getPrimaryKeyDataType() {
 		return array('id' => array('type' => 'integer', 'length' => 11, 'key' => 'primary'));
 	}
-	
-	private function _getSingleAppleFixtureDataStructure() {
-		return array( array('id' => 1, 'apple_id' => 2, 'color' => 'Red', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'));
-	}
-	
-	private function _getTestAppleTableStructure() {
-        $fields = array(
-            'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
-            'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-            'color' => array('type' => 'string', 'length' => 255, 'default' => ''),
-            'name' => array('type' => 'string', 'length' => 255, 'default' => ''),
-            'created' => array('type' => 'datetime', 'null' => FALSE),
-            'date' => array('type' => 'date', 'null' => FALSE),
-            'modified' => array('type' => 'datetime', 'null' => FALSE)
-        );
-        return $fields;
-    }
     
     private function _getDataTypeWithNoDefinedType() {
     	return array('date' => array('tipe' => 'date', 'null' => FALSE));
@@ -512,8 +491,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeReturnsExpectedQueryString() {
     	$table = 'apples';
-    	$query = $this->_getAppleQuery();
-    	$dataType = $this->_getTestAppleTableStructure();
+    	$query = $this->_getGenericQuery($table);
+    	$dataType = $this->_testFixture->getFixtureTableFields();
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
@@ -658,8 +637,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * Now we want to loop through our array and check if each
 	 * fixture table exists. If it doesn't throw error.
 	 * 
-	 * @todo Realistically, this functionality would be down to
-	 *       a DB checker, will skip until we implement that.
+	 * @todo Realistically this functionality would be down to come kind of DB interface.
 	 */
 	function testDropFixtureTableFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
 		$this->setExpectedException('ErrorException');
@@ -703,11 +681,22 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
+	 * What if our table name is not a string?
+	 *
+	 */
+    function testConvertInsertQueryThrowsExceptionIfTableNameIsAnArray() {
+    	$table = array();
+        $insertData = $this->_testFixture->getTestData('id',1);
+        $this->setExpectedException('ErrorException');
+        $this->_fixturesManager->_constructInsertQuery($insertData,$table);
+    }
+    
+	/**
 	 * Makes sure that if nothing is wrong, we return a string with 'INSERT INTO'.
 	 *
 	 */
 	function testConstructInsertQueryReturnsTrue() {
-		$data = $this->_getSingleAppleFixtureDataStructure();
+		$data = $this->_testFixture->getTestData('id',1);
 		$result = $this->_fixturesManager->_constructInsertQuery($data,'snooker');
 		$this->assertContains('INSERT INTO', $result);
 	}
@@ -720,7 +709,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testConstructInsertQueryContainsEnclosingBrackets() {
-		$data = $this->_getSingleAppleFixtureDataStructure();
+		$data = $this->_testFixture->getTestData('id',1);
 		$result = $this->_fixturesManager->_constructInsertQuery($data,'pool');
 		$this->assertContains('VALUES (',$result);
 	}
@@ -732,7 +721,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsNotAString() {
-		$testData = $this->_getSingleAppleFixtureDataStructure();
+		$testData = $this->_testFixture->getTestData('id',1);
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->setupFixtureTable($testData,array());
 	}
@@ -740,12 +729,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * The same goes for empty string
 	 * 
-	 * @todo Needs refactoring, is a pain we cant test two exceptions in
-	 * one test unit.
-	 * 
 	 */
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsEmpty() {
-		$testData = $this->_getSingleAppleFixtureDataStructure();
+		$testData = $this->_testFixture->getTestData('id',1);
         $this->setExpectedException('ErrorException');
         $this->_fixturesManager->setupFixtureTable($testData,'');
 	}
@@ -784,7 +770,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testInsertTestDataIsAbleToInsertASingleEntry() {
     	$table = 'apples';
         $this->_setUpTestTableStructure($table);
-        $testData = $this->_getSingleAppleFixtureDataStructure();
+        $testData = $this->_testFixture->getTestData();
         $result = $this->_fixturesManager->insertTestData($testData,$table);
         $this->assertTrue($result);
         $this->_fixturesManager->dropFixtureTable();
