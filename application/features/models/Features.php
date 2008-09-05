@@ -10,7 +10,9 @@
  *  
  */
 
-class Features extends FeatureModel {
+class Features extends Zend_Db_Table_Abstract {
+	
+	protected $_name = 'features';
 	
 	function addNewFeature($data){
 		if(!is_array($data)){
