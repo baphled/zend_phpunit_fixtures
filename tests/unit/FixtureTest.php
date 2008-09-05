@@ -588,6 +588,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->setExpectedException('ErrorException');
 		$this->_testFix->getSingleDataTypeField('bid');
 	}
+	
 	/**
 	 * Now we need to make sure that we return an array
 	 * @todo create tests to implement data type verification.
@@ -596,7 +597,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testRetrieveSingleTestDataFieldReturnAnArrayOnSucces() {
 		$result = $this->_testFix->getSingleDataTypeField('id');
 		$this->assertType('array',$result);
-		var_dump($result);
 	}
 	
 	function testRetrieveSingleTestDataFieldReturnExpected() {
