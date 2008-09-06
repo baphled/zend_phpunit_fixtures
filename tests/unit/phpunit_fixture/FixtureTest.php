@@ -761,9 +761,25 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * be used to retrieve test data without actually having to insert the data into our test DB.
 	 */
 	function testRetrieveTestDataResultsReturnsArrayOnSuccess() {
-		$this->markTestIncomplete();
+		//$this->markTestIncomplete();
 		$result = $this->_testFix->retrieveTestDataResults();
 		$this->assertType('array',$result);
+	}
+	
+	/**
+	 * We need to make sure that if we have and null id's, that we
+	 * incrementally change them to an integer.
+	 * 
+	 */
+	function testRetrieveTestDataResultsReturnsArrayAndIdsAreNotNull() {
+		$this->_basicFix->setFields($this->_testFix->getFixtureTableFields());
+		$this->_basicFix->autoGenerateTestData(20);
+		$data = $this->_basicFix->retrieveTestDataResults();
+		for($i=0;$i<$this->_basicFix->testDataCount();$i++) {
+		  $this->assertNotNull($data[$i]['id']);
+		  $this->assertNotEquals(0,$data[$i]['id']);
+		  $this->assertEquals($i+1,$data[$i]['id']);
+		}
 	}
 	
 }
