@@ -24,7 +24,7 @@ class TestFixture extends PHPUnit_Fixture {
 	public $_fields = array(
             'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
             'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-            'color' => array('type' => 'string', 'length' => 255, 'default' => ''),
+            'color' => array('type' => 'string', 'length' => 255, 'default' => 'green'),
             'name' => array('type' => 'string', 'length' => 255, 'default' => ''),
             'created' => array('type' => 'datetime', 'null' => FALSE),
             'date' => array('type' => 'date', 'null' => FALSE),
