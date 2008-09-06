@@ -16,6 +16,13 @@
  * @subpackage TestSuite
  *
  * $LastChangedBy$
+ * Date: 06/09/2008
+ * Finished off major refactoring of test cases, have removed all test data setup methods
+ * as we are now using Fixture to deal with all of our test data.
+ * 
+ * Date: 04/09/2008
+ * Started major refactoring of test case.
+ * 
  * Date: 03/09/2008
  * Refactored test to use PHPUnit_Framework_TestCase, as we are not using any
  * Zend components directly.
@@ -119,6 +126,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$this->_fixturesManager = new FixturesManager();
 		$this->_fixWrap = new FixturesManWrapper();
 		$this->_testFixture = new TestFixture();
+		$this->_invalidFixture = new InvalidFieldTypeFixture();
 	}
 	
     public function tearDown() {
@@ -126,76 +134,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $this->_fixMan = null;
         parent::tearDown ();
     }
-    
-	/*
-	 * Test data starts here.
-	 */
-	private function _getGenericQuery($table) {
-		return 'CREATE TABLE ' .$table .' (id INT(10) PRIMARY KEY AUTO_INCREMENT, apple_id INT(10) NULL, color VARCHAR(255) DEFAULT "", name VARCHAR(255) DEFAULT "", created DATETIME NOT NULL, date DATE NOT NULL, modified DATETIME NOT NULL);';
-	}
-    
-    private function _getDataTypeWithNoDefinedType() {
-    	return array('date' => array('tipe' => 'date', 'null' => FALSE));
-    }
-	
-	private function _getTestTableStructureWithNoPrimKey() {
-        $fields = array(
-            'id' => array('type' => 'integer'),
-            'parent_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-            'model' => array('type' => 'string', 'length' => 255, 'default' => ''),
-            'alias' => array('type' => 'string', 'length' => 255, 'default' => ''),
-            'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
-            'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
-        );
-        return $fields;
-    }
-    
-    private function _getInvalidTestTableStructure() {
-            $fields = array(
-            'id' => array('type' => 'integer', 'key' => 'primary'),
-            'parent_id' => array('typed' => 'integer', 'length' => 10, 'null' => true),
-            'model' => array('type' => 'string', 'length' => 255, 'default' => ''),
-            'alias' => array('type' => 'string', 'default' => ''),
-            'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
-            'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
-        );
-        return $fields;
-    }
-    
-    private function _getIntegerDataType() {
-        $dataType = array('parent_id' => array('type' => 'integer', 'length' => 10, 'null' => true));
-        return $dataType;
-    }
-    
-    private function _getIntegerDataTypeWithNotNull() {
-        $dataType = array('parent_id' => array('type' => 'integer', 'length' => 10, 'null' => false));
-        return $dataType;
-    }
-    private function _getStringDataType() {
-    	$dataType = array( 'model' => array('type' => 'string', 'length' => 255, 'default' => ''));
-    	return $dataType;
-    }
-    
-    private function _getStringDataTypeWithDefault() {
-        $dataType = array( 'model' => array('type' => 'string', 'length' => 255, 'default' => 'sum text'));
-        return $dataType;
-    }
-    
-    private function _getIllegalDataTypeTestTableStructure() {
-            $fields = array(
-            'id' => array('type' => 'integer', 'key' => 'primary'),
-            'parent_id' => array('typed' => 'integer', 'length' => 10, 'null' => true),
-            'model' => array('type' => 'strong', 'length' => 255, 'default' => ''),
-            'alias' => array('type' => 'string', 'length' => 255, 'default' => ''),
-            'lft' => array('type' => 'integer', 'length' => 10, 'null' => true),
-            'rght' => array('type' => 'integer', 'length' => 10, 'null' => true)
-        );
-        return $fields;
-    }
-    
-    /*
-     * Test data finishes here.
-     */
 	
     /*
      * Helper functions start here.
@@ -212,6 +150,10 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $this->_fixturesManager->setupFixtureTable($fixture,$table);
     }
 	
+    private function _getGenericQuery($table) {
+        return 'CREATE TABLE ' .$table .' (id INT(10) PRIMARY KEY AUTO_INCREMENT, apple_id INT(10) NULL, color VARCHAR(255) DEFAULT "green", name VARCHAR(255) DEFAULT "", created DATETIME NOT NULL, date DATE NOT NULL, modified DATETIME NOT NULL);';
+    }
+    
     /*
      * Helper functions finish here.
      */
@@ -253,7 +195,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testConvertDataTypeThrowsExceptionIfNoTypeIfDefine() {
-		$fields = $this->_getDataTypeWithNoDefinedType();
+		$fields = $this->_invalidFixture->getSingleDataTypeField('parent_id');
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->convertDataType($fields);
 	}
@@ -264,7 +206,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *  
 	 */
 	function testFieldsArrayStoresCorrectDataType() {
-		$fields = $this->_getIllegalDataTypeTestTableStructure();
+		$fields = $this->_invalidFixture->getFixtureTableFields();
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->convertDataType($fields);
 	}
@@ -308,9 +250,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testStringDataTypesConvertedToVarchar() {
-		$dataType = $this->_getStringDataType();
+		$dataType = $this->_testFixture->getSingleDataTypeField('color');
 		$result = $this->_fixturesManager->convertDataType($dataType);
-		$this->assertContains('model',$result);
+		$this->assertContains('color',$result);
 	}
 	
 	/**
@@ -329,8 +271,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypesReturnsValueWithFieldName() {
-    	$name = 'model';
-    	$fields = $this->_getStringDataType();
+    	$name = 'apple_id';
+    	$fields = $this->_testFixture->getSingleDataTypeField('apple_id');
     	$result = $this->_fixturesManager->convertDataType($fields);
         $this->assertContains($name,$result);
     }
@@ -341,7 +283,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeConvertsStringToVarChar() {
-    	$dataType = $this->_getStringDataType();
+    	$dataType = $this->_testFixture->getSingleDataTypeField('color');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('VARCHAR(255)',$result);
     }
@@ -352,7 +294,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeHandlesDefaultValues() {
-    	$dataType = $this->_getStringDataType();
+    	$dataType = $this->_testFixture->getSingleDataTypeField('name');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('DEFAULT ""',$result);
     }
@@ -362,9 +304,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeHandlesAbleToSetDefaultDataOnStrings() {
-    	$dataType = $this->_getStringDataTypeWithDefault();
+    	$dataType = $this->_testFixture->getSingleDataTypeField('color');
     	$result = $this->_fixturesManager->convertDataType($dataType);
-    	$this->assertContains('DEFAULT "sum text"',$result);
+    	$this->assertContains('DEFAULT "green"',$result);
     	//echo $result;
     }
     
@@ -373,8 +315,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testWeGetTheQuerySegmentWeExpect() {
-    	$query = 'model VARCHAR(255) DEFAULT "sum text"';
-    	$dataType = $this->_getStringDataTypeWithDefault();
+    	$query = 'created DATETIME NOT NULL';
+    	$dataType = $this->_testFixture->getSingleDataTypeField('created');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
@@ -386,8 +328,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeConvertToIntegerToInt() {
-    	$dataType = $this->_getIntegerDataType();
-    	$query = 'parent_id INT(10)';
+    	$dataType = $this->_testFixture->getSingleDataTypeField('apple_id');
+    	$query = 'apple_id INT(10)';
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
@@ -397,8 +339,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeParseNullsInIntegerDataTypes() {
-    	$query = 'parent_id INT(10) NULL';
-    	$dataType = $this->_getIntegerDataType();
+    	$query = 'apple_id INT(10) NULL';
+    	$dataType = $this->_testFixture->getSingleDataTypeField('apple_id');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
@@ -407,8 +349,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * Ok now what about if we want to make our int data type not null>
      */
     function testConvertDataTypeParseNotNullInIntegerDataTypes() {
-    	$query = 'parent_id INT(10) NOT NULL';
-    	$dataType = $this->_getIntegerDataTypeWithNotNull();
+    	$query = 'apple_id INT(10) NULL';
+    	$dataType = $this->_testFixture->getSingleDataTypeField('apple_id');
         $result = $this->_fixturesManager->convertDataType($dataType);
         $this->assertContains($query,$result);
     }
@@ -532,7 +474,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeThrowsExceptionIfParamIsInvalid() {
-    	$dataType = $this->_getIllegalDataTypeTestTableStructure();
+    	$dataType = $this->_invalidFixture->getFixtureTableFields();
     	$this->setExpectedException('ErrorException');
     	$this->_fixturesManager->convertDataType($dataType);
     }
@@ -584,7 +526,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testSetupFixtureTableShouldReturnFalseIfDataTypeInvalidLength() {
 		$tableName = 'illegalTable';
-		$dataType = $this->_getIllegalDataTypeTestTableStructure();
+		$dataType = $this->_invalidFixture->getFixtureTableFields();
 		$result = $this->_fixturesManager->setupFixtureTable($dataType,$tableName);
 		$this->assertFalse($result);
 	}
