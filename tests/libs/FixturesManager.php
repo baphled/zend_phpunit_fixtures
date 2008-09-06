@@ -235,7 +235,6 @@ class FixturesManager {
 			throw new ErrorException('Table must have a name');
 		}
 		try {
-		  //$this->dropFixtureTable();
 		  $query = $this->convertDataType($dataType,$tableName);
 		  $this->_runFixtureQuery($query);
 		  return true;
