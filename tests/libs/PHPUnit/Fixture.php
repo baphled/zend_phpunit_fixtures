@@ -12,6 +12,13 @@
  * @package TestSuite
  *
  * $LastChangedBy$
+ * Date: 06/09/2008
+ * Improved validateDataType functionality, there as a hole in the
+ * implementation where, if the fixture had no previous data, it
+ * would fail, now rectified.
+ * Also implemented retrieveTestDataResults, a nice little function
+ * that allows us to retrieve our test data along with populated ids.
+ * 
  * Date: 02/09/2008
  * Implemented functionality to generate, parse and determine each
  * properties data type.
@@ -294,13 +301,14 @@ class PHPUnit_Fixture {
         if(0 === count($this->_fields)) {
             throw new ErrorException('Fields not defined, can not generate without it.');
         }
-        if(!is_integer($numOfTestData)) {
+        if(!is_int($numOfTestData)) {
             throw new ErrorException('Must supply number of test data using an integer.');
         }
         $results = array();
         $this->_result = array();
         for($i=0;$i<$numOfTestData;$i++) {
-            foreach ($this->_fields as $field=>$values) {
+        	$fields = $this->getFixtureTableFields();
+            foreach ($fields as $field=>$values) {
                 DataTypeChecker::checkDataType($values);
                 $this->_parseFixtureSchema($field, $values);
             }
@@ -326,6 +334,9 @@ class PHPUnit_Fixture {
 		}
 		else {
 			$existingTestData = $this->getTestData('id',1);
+			if(false === $existingTestData) {
+				return true;
+			}
 			foreach ($testData as $key=>$value) {
 				if(!array_key_exists($key, $existingTestData)){
 				    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
@@ -496,7 +507,7 @@ class PHPUnit_Fixture {
 	 * @return bool
 	 * 
 	 */
-	public function autoGenerateTestData($numOfTestData=1) {
+	public function autoGenerateTestData($numOfTestData=10) {
 		try {
 			$result = $this->_generateFixtureTestData($numOfTestData);
 			if(0 === count($result)) {
@@ -511,7 +522,6 @@ class PHPUnit_Fixture {
 		return false;
 	}
 	
-
     /**
      * Populates our fixtures test table with our test data.
      *
@@ -558,5 +568,18 @@ class PHPUnit_Fixture {
     		throw new ErrorException('Field id does not exist.');
     	}
     	return array($field => $this->_fields[$field]);
+    }
+    
+    /**
+     * Returns our results with a id auto incremented.
+     *
+     * @return Array
+     */
+    function retrieveTestDataResults() {
+    	$testData = $this->getTestData();
+    	for($i=0;$i<$this->testDataCount();$i++) {
+    		$testData[$i]['id'] = $i+1;
+    	}
+    	return $testData;
     }
 }
