@@ -340,7 +340,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testSetupFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
-		$this->_basicFix->_fields = $this->_testFix->_fields;
+		$this->_basicFix->setFields($this->_testFix->_fields);
 		$result = $this->_basicFix->setupFixtureTable();
 		$this->assertFalse($result);
 	}

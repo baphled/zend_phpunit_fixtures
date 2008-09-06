@@ -61,7 +61,7 @@ class PHPUnit_Fixture {
      *
      * @var Array
      */
-    public $_fields = array();
+    protected $_fields = array();
     
 	/**
 	 * Stores the fixtures test data.
