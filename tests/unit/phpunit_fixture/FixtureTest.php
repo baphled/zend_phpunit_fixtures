@@ -10,6 +10,14 @@
  * @subpackage TestSuite
  *
  * $LastChangedBy$
+ * 
+ * Date: 05/09/2008
+ * Created test cases for getting & setting fixture table name & fields, 
+ * we want to be able to get an individual data type field, we'll also
+ * need to be able to get the actual table name. The goal of these is
+ * to mak the interface smoother and hide our properties from general
+ * code.
+ * 
  * Date: 03/09/2008
  * Introduced tests for generating test data on the fly, we still need
  * to improve on but is more aless finished.
@@ -17,6 +25,7 @@
  * Fixture does not use the DB or Zend.
  * Improved code coverage and added tests for autoGenerateTestData
  * which were previously covered by _generateFixtureTestData
+ * 
  * Date: 01/09/2008
  * Created tests cases to implement drop & build fixture table,
  * both of which will be need to create our db tables.
@@ -672,6 +681,11 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
     function testSetFieldsReturnsTrueIfTypeIsOfStringType() {
         $result = $this->_basicFix->setFields(array('id' => array('type' => 'string', 'length' => 10)));
         $this->assertTrue($result);
+    }
+    
+    function testSetFieldsThrowsExceptionIfTypeIsStringWithNoLength() {
+    	$this->setExpectedException('ErrorException');
+        $this->_basicFix->setFields(array('id' => array('type' => 'string')));
     }
     
     function testSetFieldsReturnsTrueIfTypeIsOfDateType() {
