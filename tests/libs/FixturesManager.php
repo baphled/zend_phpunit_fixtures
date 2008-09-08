@@ -14,7 +14,7 @@
  * $LastChangedBy$
  * Date: 04/09/2008
  * A large amount of refactoring has been done here, namely to improve
- * performance and design, we introduced dropFixtureTable int our buildFixtureTable
+ * performance and design, we introduced dropTable int our buildFixtureTable
  * function earlier, which didn't help things much, though out DB based tests
  * work, this leaves our other tests failing, so we have reintroduced the same
  * method at the tearDown method of our class.
@@ -36,7 +36,7 @@
  * to validateTestDataAndTableName, which will throw an error
  * if the datatype is not in an array or the name is not a valid
  * string.
- * Introduced setupFixtureTable, which is an accessor method for
+ * Introduced setupTable, which is an accessor method for
  * constructInsertQuery, basically iterating over the test data
  * inserting it into our fixtures table.
  * Refactored validateTestDataAndTableName and placed within
@@ -229,7 +229,7 @@ class FixturesManager {
 	 * @param String $tableName
 	 * @return Bool
 	 */
-	public function setupFixtureTable($dataType,$tableName) {
+	public function setupTable($dataType,$tableName) {
 		$query = '';
 		if(empty($tableName)) {
 			throw new ErrorException('Table must have a name');
@@ -275,7 +275,7 @@ class FixturesManager {
 	 * @param String $tableName
 	 * @return bool
 	 */
-	function fixtureTableExists($tableName) {
+	function tableExists($tableName) {
 		if(empty($tableName)) {
 			throw new ErrorException('Table name can not be empty');
 		}
@@ -291,7 +291,7 @@ class FixturesManager {
 	 * @access public
 	 * @return bool
 	 */
-	function dropFixtureTable() {
+	function dropTable() {
 		$fixtures = $this->_db->listTables();
 		if(count($fixtures) === 0) {
 			throw new ErrorException('No fixture tables to drop.');

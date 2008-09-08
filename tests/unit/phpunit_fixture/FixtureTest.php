@@ -24,7 +24,7 @@
  * Really no need to extend Module_PHPUnit_Framework_TestCase, as
  * Fixture does not use the DB or Zend.
  * Improved code coverage and added tests for autoGenerateTestData
- * which were previously covered by _generateFixtureTestData
+ * which were previously covered by _generateTestData
  * 
  * Date: 01/09/2008
  * Created tests cases to implement drop & build fixture table,
@@ -32,7 +32,7 @@
  * Initially we focussed on build, until we came across a stumbling
  * block which was the fact that old test db data was being left
  * behind by our tests, so we needed to factor in FixturesManagers
- * dropFixtureTable until we implemented Fixture's wrapper version.
+ * dropTable until we implemented Fixture's wrapper version.
  * Which is now being used. This situation is far from ideal, though
  * it should how to implement the system, it is cumbersome and sloppy.
  * We should really introduce stubs to handle this test functionality.
@@ -314,14 +314,14 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * If we the default return value must be false, we will only return
 	 * true if we have successfully built our fixture table.
 	 *
-	 * @todo Need to refactor and replace dropFixtureTable with Fixture's
+	 * @todo Need to refactor and replace dropTable with Fixture's
 	 *       implementation, once it is done.
 	 * 
 	 */
 	function testSetupFixtureTableReturnsTrueIfSetupFixtureTableSucceeds() {
-		$result = $this->_testFix->setupFixtureTable();
+		$result = $this->_testFix->setupTable();
 		$this->assertTrue($result);
-		$this->_testFix->dropFixtureTable();
+		$this->_testFix->dropTable();
 	}
 	
 	/**
@@ -331,7 +331,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testSetupFixtureTableThrowsExceptionIfTableNameIsNotSet() {
 		$this->_basicFix->addTestData($this->_testFix->getTestData('id',1));
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->setupFixtureTable();
+		$this->_basicFix->setupTable();
 	}
 	
 	/**
@@ -341,7 +341,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testSetupFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
 		$this->_basicFix->setFields($this->_testFix->_fields);
-		$result = $this->_basicFix->setupFixtureTable();
+		$result = $this->_basicFix->setupTable();
 		$this->assertFalse($result);
 	}
 	/**
@@ -359,7 +359,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->_basicFix->setTableName('blah');
 		$this->_basicFix->addTestData($this->_testFix->getTestData('id',1));
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->setupFixtureTable();
+		$this->_basicFix->setupTable();
 	}
 	
 	/**
@@ -368,20 +368,19 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testSetupFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
-		$result = $this->_testFix->setupFixtureTable();
+		$result = $this->_testFix->setupTable();
 		$this->assertTrue($result);
-        $this->_testFix->dropFixtureTable();
+        $this->_testFix->dropTable();
 	}
 	
 	/**
-	 * Silly oversight, because we're using a real db & not cleaning our its results
 	 * each test we need to create a drop method to remove all our fixture data.
 	 * This'll be just a simple wrapper method that will use FixtureManager to remove
 	 * the table.
 	 * 
 	 */
 	function testDropFixtureTableReturnsFalseOnFailure() {
-		$result = $this->_testFix->dropFixtureTable();
+		$result = $this->_testFix->dropTable();
 		$this->assertFalse($result);
 	}
 	
@@ -393,13 +392,13 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testDropFixtureTableReturnsTrueOnSuccess() {
-		$this->_testFix->setupFixtureTable();
-		$result = $this->_testFix->dropFixtureTable();
+		$this->_testFix->setupTable();
+		$result = $this->_testFix->dropTable();
         $this->assertTrue($result);
 	}
 	
 	/**
-	 * Ok, now we have implemented dropFixtureTable, we will use
+	 * Ok, now we have implemented dropTable, we will use
 	 * it to keep our tests clean, ideally this will be used within
 	 * the tearDown() method.
 	 * 
@@ -410,18 +409,18 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * an error.
 	 * 
 	 */
-	function testPopulateFixturesThrowsExceptionIfTableNameIsEmpty() {
+	function testpopulateThrowsExceptionIfTableNameIsEmpty() {
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->populateFixtures();
+		$this->_basicFix->populate();
 	}
 	
 	/**
 	 * If we dont have a fixtures table, we need to throw an
 	 * exception.
 	 */
-	function testPopulateFixturesThrowsExceptionIfTableIsNotBuilt() {
+	function testpopulateThrowsExceptionIfTableIsNotBuilt() {
 		$this->setExpectedException('ErrorException');
-		$this->_testFix->populateFixtures();
+		$this->_testFix->populate();
 	}
 	
 	/**
@@ -429,11 +428,11 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * test data.
 	 * 
 	 */
-	function testPopulateFixturesReturnsTrueIfTestDataIsSuccessfullyInserted() {
-		$this->_testFix->setupFixtureTable();
-		$result = $this->_testFix->populateFixtures();
+	function testpopulateReturnsTrueIfTestDataIsSuccessfullyInserted() {
+		$this->_testFix->setupTable();
+		$result = $this->_testFix->populate();
 		$this->assertTrue($result);
-		$this->_testFix->dropFixtureTable();
+		$this->_testFix->dropTable();
 	}
 
 	/**
@@ -509,7 +508,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testGetFixtureTableFieldsThrowsExceptionsIfNoFieldsAreDefined() {
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->getFixtureTableFields();
+		$this->_basicFix->getTableFields();
 	}
 	
 	/**
@@ -517,7 +516,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testGetFixtureTableFieldsReturnsAnArrayOnSuccess() {
-		$result = $this->_testFix->getFixtureTableFields();
+		$result = $this->_testFix->getTableFields();
 		$this->assertType('array',$result);
 	}
 	
@@ -733,7 +732,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
     function testSetDataFieldsReturnsTrueOnSuccess() {
-        $result = $this->_basicFix->setFields($this->_testFix->getFixtureTableFields());
+        $result = $this->_basicFix->setFields($this->_testFix->getTableFields());
         $this->assertTrue($result);
     }
     
@@ -742,9 +741,9 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      *  
      */
     function testSetDataFieldsActuallySetsOurFieldsProperty() {
-    	$expected = $this->_testFix->getFixtureTableFields();
+    	$expected = $this->_testFix->getTableFields();
     	$result = $this->_basicFix->setFields($expected);
-    	$actual = $this->_basicFix->getFixtureTableFields();
+    	$actual = $this->_basicFix->getTableFields();
     	$this->assertTrue($result);
     	$this->assertEquals($expected,$actual);
     }
@@ -772,7 +771,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveTestDataResultsReturnsArrayAndIdsAreNotNull() {
-		$this->_basicFix->setFields($this->_testFix->getFixtureTableFields());
+		$this->_basicFix->setFields($this->_testFix->getTableFields());
 		$this->_basicFix->autoGenerateTestData(20);
 		$data = $this->_basicFix->retrieveTestDataResults();
 		for($i=0;$i<$this->_basicFix->testDataCount();$i++) {
@@ -782,4 +781,12 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		}
 	}
 	
+	/**
+	 * Now we want to make sure that we only increment id's that are null
+	 * 
+	 */
+	function testRetrieveTestDataIncrementsFromTheLastInputtedID() {
+		$this->markTestIncomplete();
+		$this->assertFalse();
+	}
 }
