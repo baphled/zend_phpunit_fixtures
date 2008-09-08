@@ -112,7 +112,7 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	function testViewFeatureById(){
 		$data = $this->_featureFixtures->getTestData('userid',1);
 		$this->_feature->addNewFeature($data);
-		$result = $this->_feature->viewFeature(1);
+		$result = $this->_feature->show(1);
 		$this->assertType('array', $result);
 	}
 	

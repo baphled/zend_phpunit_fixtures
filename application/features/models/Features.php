@@ -27,61 +27,29 @@ class Features extends Zend_Db_Table_Abstract {
 		return $this->insert($data);
 	}
 	
-	function viewFeature($id){
-		$db = Zend_Registry::get('db');
-		$select = $this->select()
-					    ->from('features',array('id'))
-					    ->where('id = ?', $id);
-		$stmt = $db->query($select);
-		$result = $stmt->fetchAll();
-		if($result){
-			return $result;
-		}
-		else{
-			return false;
-		}
+	function show($id){		
+		return $this->find($id)->toArray();
 	}
 	
 	function _featureExists($feature){
-		$db = Zend_Registry::get('db');
-		$select = $this->select()
-					    ->from('features',array('title'))
-					    ->where('title = ?', $feature['title']);
-		$stmt = $db->query($select);
-		$result = $stmt->fetchAll();
-		if(count($result)) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		$result = $this->fetchAll($this->select()->where('title = ?', $feature['title']));
+		return (count($result)) ? true : false;
 	}
 	
 	function updateFeature($id, $data){
-		$db = Zend_Registry::get('db');
-
 		if(null === $id || empty($id)){
 			throw new ErrorException('Id must not be empty');			
-		}	
-			
-		$where[] = "id = $id";
-		$result = $db->update('features',$data,$where);
-		if($result) {
-			return true;		
-		}
-		else {
-			return false;
-		}
+		}		
+		
+		$where = $this->getAdapter()->quoteInto('id = ?', $id);
+		$result = $this->update($data, $where);
+		return $result ? true : false;
 	}
 	
 	function deleteFeature($id){
-		$db = Zend_Registry::get('db');
-		$where[] = "id = $id";
-		$result = $db->delete('features',$where);
-		if($result){
-			return true;		
-		}
-		return false;
+		$where = $this->getAdapter()->quoteInto('id = ?', $id);
+		$result = $this->delete($where);
+		return $result ? true : false;
 	}
 	
 }
