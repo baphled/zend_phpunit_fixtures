@@ -42,14 +42,14 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		parent::setUp ();
-		$this->_featureFixtures->dropFixtureTable();
-		$this->_featureFixtures->setupFixtureTable();
+		$this->_featureFixtures->dropTable();
+		$this->_featureFixtures->setupTable();
 		$this->_feature = new Features();
 	}
 	
 	public function tearDown() {
 		$this->_feature = null;
-		//$this->_featureFixtures->dropFixtureTable();
+		//$this->_featureFixtures->dropTable();
 		$this->_featureFixtures = null;
 		parent::tearDown ();
 	}
@@ -113,7 +113,7 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 		$data = $this->_featureFixtures->getTestData('userid',1);
 		$this->_feature->addNewFeature($data);
 		$result = $this->_feature->show(1);
-		$this->assertType('array', $result);
+		$this->assertNotNull($result);
 	}
 	
 	/**

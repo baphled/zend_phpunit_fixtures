@@ -26,6 +26,11 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	
 	private $_functions;
 	
+	private function _initialiseCompleteFunction(){
+		$data = $this->_functionFixtures->getTestData('userid', 10);
+		return $this->_functions->addNewFunction($data);
+	}
+	
 	public function __construct() {
 		$this->setName ( 'FunctionsTest Case' );
 		$this->_functionFixtures = new FunctionFixture();
@@ -37,8 +42,8 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		parent::setUp ();
-		$this->_functionFixtures->dropFixtureTable();
-		$this->_functionFixtures->setupFixtureTable();
+		$this->_functionFixtures->dropTable();
+		$this->_functionFixtures->setupTable();
 		$this->_functions = new Functions();
 	}
 	
@@ -97,8 +102,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * since we are implementing data with id=1
 	 */
 	public function testAddNewFunctionReturnsTrueOnSuccess(){
-		$data 	= $this->_functionFixtures->getTestData('userid',10);
-		$result = $this->_functions->addNewFunction($data);
+		$result = $this->_initialiseCompleteFunction();
 		$this->assertEquals(1,$result);	
 	}
 	
@@ -117,10 +121,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * returns an array
 	 */
 	public function testViewFunctionByIdReturnsArray(){
-		$data = $this->_functionFixtures->getTestData('userid',20);
-		$this->_functions->addNewFunction($data);
+		$this->_initialiseCompleteFunction();
 		$result = $this->_functions->viewFunction(1);
-		$this->assertType('array', $result);
+		$this->assertNotNull($result);
 	}
 	
 	/*
@@ -128,10 +131,9 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * if yes,return false
 	 */
 	public function testAddNewFunctionAllowNoDuplication(){
-		$data 	= $this->_functionFixtures->getTestData('userid',10);
-		$this->_functions->addNewFunction($data);
+		$this->_initialiseCompleteFunction();
 		$result = $this->_functionFixtures->getTestData('userid',20);
-		$final 	= $this->_functions->functionExists($result);
+		$final 	= $this->_functions->_functionExists($result);
 		$this->assertEquals(FALSE, $final);
 	}
 	
@@ -142,7 +144,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	public function testAddNewFunctionReturnsTrueOnFunctionDuplication(){
 		$data = $this->_functionFixtures->getTestData('userid',10);
 		$this->_functions->addNewFunction($data);
-		$result = $this->_functions->functionExists($data);
+		$result = $this->_functions->_functionExists($data);
 		$this->assertEquals(TRUE, $result);
 	}
 	
@@ -153,18 +155,16 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	public function testUserIdThrowExceptionIfNull(){
 		$id = null;
 		$this->setExpectedException('ErrorException');
-		$result = $this->_functionFixtures->getTestData('userid', 10);
-		$this->_functions->updateFunction($id, $result);
+		$this->_functions->updateFunction($id, $this->_functionFixtures->getTestData('userid', 10));
 	}
-	
+	 
 	/*
 	 * test to update function data
 	 * return true on success
 	 * the first id is for userid, the id in updateFunction is for functionid
 	 */
 	public function testUpdateFunctionsReturnTrueOnSuccess(){
-		$data = $this->_functionFixtures->getTestData('userid', 10);
-		$this->_functions->addNewFunction($data);
+		$this->_initialiseCompleteFunction();
 		$data['title'] = 'updated title';
 		$result = $this->_functions->updateFunction(1, $data);
 		$this->assertTrue($result);

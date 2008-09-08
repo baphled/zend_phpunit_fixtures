@@ -32,50 +32,27 @@ class Functions extends Zend_Db_Table_Abstract {
 	}
 	
 	function viewFunction($id){
-		$db 	= Zend_Registry::get('db');
-		$select = $this->select()
-					    ->from('functions',array('id'))
-					    ->where('id = ?', $id);
-		$query 	= $db->query($select); 
-		$result = $query->fetchAll();
-		return $result;
+		return $this->find($id);
 	}
 	
-	function functionExists($data){
-		$db 	= Zend_Registry::get('db');
-		$select = $this->select()
-					   ->from('functions', array('title'))
-					   ->where('title = ?', $data['title']);
-		$query 	= $db->query($select);
-		$result = $query->fetchAll();
-		if(count($result) > 0){
-			return true;
-		}
-		return false;
+	function _functionExists($data){
+		$result = $this->fetchAll($this->select()->where('title = ?', $data['title']));
+		return (count($result)) ? true : false;
 	}
 	
 	function updateFunction($id, $data){
-		$db 	 = Zend_Registry::get('db');
 		if(null === $id || empty($id)){
 			throw new ErrorException('Id must not be empty');			
 		}	
 		
-		$where[] = "id = $id";
-		$result  = $db->update('functions', $data, $where); 
-		if($result){
-			return true;
-		}
-		return false;		
+		$where 	= $this->getAdapter()->quoteInto('id = ?', $id);
+		$result = $this->update($data, $where); 
+		return $result ? true : false;		
 	}
 	
 	function deleteFunction($id){
-		$db = Zend_Registry::get('db');
-		$where[] = "id = $id";
-		$result = $db->delete('functions',$where);
-		if($result){
-			return true;		
-		}
-		return false;
-	}
-	
+		$where 	= $this->getAdapter()->quoteInto('id = ?',$id);
+		$result = $this->delete($where);
+		return $result ? true : false;		
+	}	
 }

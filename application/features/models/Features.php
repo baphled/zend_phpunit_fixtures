@@ -28,7 +28,7 @@ class Features extends Zend_Db_Table_Abstract {
 	}
 	
 	function show($id){		
-		return $this->find($id)->toArray();
+		return $this->find($id);
 	}
 	
 	function _featureExists($feature){
