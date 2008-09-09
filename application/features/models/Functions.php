@@ -54,5 +54,6 @@ class Functions extends Zend_Db_Table_Abstract {
 		$where 	= $this->getAdapter()->quoteInto('id = ?',$id);
 		$result = $this->delete($where);
 		return $result ? true : false;		
-	}	
+	}
+	
 }

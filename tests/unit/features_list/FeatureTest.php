@@ -13,7 +13,7 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../libs/' ) 
+set_include_path ( '.' .PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../libs/' ) 
 					   .PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../fixtures/' ) 
 					   .PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../../library/' 
 					   .PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../../application/features/models/' 
@@ -49,9 +49,8 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	
 	public function tearDown() {
 		$this->_feature = null;
-		//$this->_featureFixtures->dropTable();
 		$this->_featureFixtures = null;
-		parent::tearDown ();
+		parent::tearDown();
 	}
 	
 	public function testConstructor(){

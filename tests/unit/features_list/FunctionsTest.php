@@ -142,7 +142,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * if yes, return true
 	 */
 	public function testAddNewFunctionReturnsTrueOnFunctionDuplication(){
-		$data = $this->_functionFixtures->getTestData('userid',10);
+		$data 	= $this->_functionFixtures->getTestData('userid',10);
 		$this->_functions->addNewFunction($data);
 		$result = $this->_functions->_functionExists($data);
 		$this->assertEquals(TRUE, $result);
