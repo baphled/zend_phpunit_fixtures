@@ -13,14 +13,7 @@
  * 
  */
 
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../libs/' ) 
-					   .PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../fixtures/' ) 
-					   .PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../../library/' 
-					   .PATH_SEPARATOR . dirname ( __FILE__ ) . '/../../../application/features/models/' 
-					   .PATH_SEPARATOR . get_include_path () );
-
-require_once 'Zend/Loader.php';
-Zend_Loader::registerAutoload ();
+require_once dirname(__FILE__) . '/../../TestHelper.php';
 
 class FunctionsTest extends PHPUnit_Framework_TestCase {
 	

@@ -13,17 +13,20 @@ require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
 class FeatureFunctionFixture extends PHPUnit_Fixture {
-	public $_table = 'featureFunction';
+	public $_table = 'feature2Function';
 	
 	public $_fields = array(
-					 'featureid' => array('type' => 'integer', 'length'=>10, 'key' => 'primary'),
+					 'id' => array('type' => 'integer', 'length'=>10),
 					 'functionid' => array('type' => 'integer', 'length'=>10),
 					  );
 	
 	public $_testData = array(
-						array('featureid' => 1, 'functionid' => 10),
-						array('featureid' => 2, 'functionid' => 20),
-						array('featureid' => 3, 'functionid' => 30)
+						array('id' => 1, 'functionid' => 10),
+						array('id' => 2, 'functionid' => 20),
+						array('id' => 3, 'functionid' => 30),
+						array('id' => 1, 'functionid' => 40),
+						array('id' => 2, 'functionid' => 70),
+						array('id' => 3, 'functionid' => 90)
 						);
 }
 ?>

@@ -18,13 +18,8 @@ class Features extends Zend_Db_Table_Abstract {
 		if(!is_array($data)){
 			throw new ErrorException('Must be an array');
 		}
-		if(null === $data['title'] || empty($data['title'])){
-			throw new ErrorException('title must not be empty');			
-		}
-		if(null === $data['userid'] || empty($data['userid'])){
-			throw new ErrorException('User id must not be empty');			
-		}		
-		return $this->insert($data);
+		$params = array('title','userid');
+		return CrudHandler::add($data,$params,$this);
 	}
 	
 	function show($id){		
@@ -32,24 +27,15 @@ class Features extends Zend_Db_Table_Abstract {
 	}
 	
 	function _featureExists($feature){
-		$result = $this->fetchAll($this->select()->where('title = ?', $feature['title']));
-		return (count($result)) ? true : false;
+		return CrudHandler::exists($feature,$this);
 	}
 	
 	function updateFeature($id, $data){
-		if(null === $id || empty($id)){
-			throw new ErrorException('Id must not be empty');			
-		}		
-		
-		$where = $this->getAdapter()->quoteInto('id = ?', $id);
-		$result = $this->update($data, $where);
-		return $result ? true : false;
+		return CrudHandler::update($id,$data,$this);
 	}
 	
 	function deleteFeature($id){
-		$where = $this->getAdapter()->quoteInto('id = ?', $id);
-		$result = $this->delete($where);
-		return $result ? true : false;
+		return CrudHandler::delete($id,$this);
 	}
 	
 }

@@ -17,18 +17,8 @@ class Functions extends Zend_Db_Table_Abstract {
 		if (!is_array($data)){
 			throw new ErrorException('Must be an array');
 		}
-		if(null === $data['title'] || '' === $data['title']){
-			throw new ErrorException('Title must not be empty');
-		}
-		if(null === $data['id'] || '' === $data['id']){
-			throw new ErrorException('User Id must not be empty');
-		}
-		/*
-		 * check if data sent to the table is inserted successfully
-		 * returns the last id that has been inserted
-		 * we are checking it against id inserted which is 1
-		 */
-		return $this->insert($data);
+		$params = array('title','id');
+		return CrudHandler::add($data,$params,$this);
 	}
 	
 	function viewFunction($id){
@@ -36,24 +26,15 @@ class Functions extends Zend_Db_Table_Abstract {
 	}
 	
 	function _functionExists($data){
-		$result = $this->fetchAll($this->select()->where('title = ?', $data['title']));
-		return (count($result)) ? true : false;
+		return CrudHandler::exists($data,$this);
 	}
 	
 	function updateFunction($id, $data){
-		if(null === $id || empty($id)){
-			throw new ErrorException('Id must not be empty');			
-		}	
-		
-		$where 	= $this->getAdapter()->quoteInto('id = ?', $id);
-		$result = $this->update($data, $where); 
-		return $result ? true : false;		
+		return CrudHandler::update($id,$data,$this);		
 	}
 	
 	function deleteFunction($id){
-		$where 	= $this->getAdapter()->quoteInto('id = ?',$id);
-		$result = $this->delete($where);
-		return $result ? true : false;		
+		return CrudHandler::delete($id,$this);
 	}
 	
 }
