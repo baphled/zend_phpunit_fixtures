@@ -27,11 +27,80 @@ Zend_Loader::registerAutoload ();
 class DataTypeChecker {
 	
     /**
+     * Checks that our data type is an integer, by default id's
+     * are set to null, this is so that our db can create our
+     * ID for us on insertion.
+     *
+     * @access static
+     * @param Array $dataType
+     * @param int $field
+     * @param Fixture $obj
+     */
+    static function dataTypeIsAnInt($dataType,$field,$obj) {
+       if('integer' === $dataType) {
+            if('id' !== $field) {
+                $obj->_result[$field] = rand();
+            }
+            else {
+                $obj->_result[$field] = NULL;
+            }
+        }
+    }
+
+    /**
+     * Checks that our a string, if so we generate test data.
+     *
+     * @access static
+     * @param Array $dataType
+     * @param int $field
+     * @param Fixture $obj
+     * 
+     */
+    static function dataTypeIsAString($dataType,$field,$obj) {
+       if('string' === $dataType) {
+           $obj->_result[$field] = 'my string';
+       }
+    }
+    
+    /**
+     * Checks to see if our data type is a date, if it is,
+     * we generate the current date.
+     *
+     * @access static
+     * @param Array $dataType
+     * @param int $field
+     * @param Fixture $obj
+     * 
+     */
+    static function dataTypeIsADate($dataType,$field,$obj) {
+       if('date' === $dataType) {
+            $obj->_result[$field] = date('Ymd');
+       }
+    }
+    
+
+    /**
+     * Checks to see if we have a datetype type, if we do
+     * we generate the current date & time.
+     *
+     * @access static
+     * @param Array $dateType
+     * @param int $field
+     * @param Fixture $obj
+     * 
+     */
+    static function dataTypeIsDateTime($dateType,$field,$obj) {
+       if('datetime' === $dateType) {
+            $obj->_result[$field] = date(DATE_RFC822);
+       }    
+    }
+    
+    /**
      * Checks that our datatype is an array and that our table
      * is a valid string, if this is not the case we need to throw
-     * an exception 
+     * an exception.
      *
-     * @access private
+     * @access static
      * @param Array $insertDataType
      * @param String $tableName
      * 
@@ -59,17 +128,17 @@ class DataTypeChecker {
      */
     static function checkDataTypeValues($key,$value) {
         $typeSegment = '';
-        if($key === 'type') {               // smells, need to refactor
-            if($value === 'string') {
+        if('type' === $key) {               // smells, need to refactor
+            if('string' === $value) {
                 $typeSegment = ' VARCHAR';
             }
-            if($value === 'integer') {
+            if('integer' === $value) {
                 $typeSegment = ' INT';
             }
-            if($value === 'date') {
+            if('date' === $value) {
                 $typeSegment = ' DATE';
             }
-            if($value === 'datetime') {
+            if('datetime' === $value) {
                 $typeSegment = ' DATETIME';
             }
         }
@@ -83,10 +152,11 @@ class DataTypeChecker {
      * @param String $key
      * @param String $value
      * @return String
+     * 
      */
     static function checkDataTypeValuesLength($key,$value) {
         $data = '';
-        if($key === 'length') {
+        if('length' === $key) {
             $data .= '(' .$value .')';
         }
         return $data;
@@ -104,7 +174,7 @@ class DataTypeChecker {
      */
     static function checkDataTypeValueNull($key,$value) {
         $data = '';
-        if($key === 'null') {
+        if('null' === $key) {
             if(TRUE === $value) {
                 $data .= ' NULL';
             }
@@ -127,14 +197,31 @@ class DataTypeChecker {
      */
     static function checkDataTypeDefault($key,$value) {
         $data = null;
-        if($key === 'default') {
+        if('default' === $key) {
             $data = ' DEFAULT ';
-            if($value === '') {
+            if('' === $value) {
                $data .= '""'; 
             }
             else {
                $data .= '"' .$value .'"';
             }
+        }
+        return $data;
+    }
+    
+    /**
+     * Checks to see if we have a primary key set, if we do
+     * we need to create the corresponding SQL.
+     *
+     * @access static
+     * @param Array $key
+     * @return bool
+     * 
+     */
+    static function checkDataTypePrimaryKey($key) {
+        $data = '';
+        if('key' === $key) {
+            $data .= ' PRIMARY KEY AUTO_INCREMENT';    
         }
         return $data;
     }
@@ -152,7 +239,7 @@ class DataTypeChecker {
     		throw new ErrorException('Data type must be an array.');
     	}
     	if(array_key_exists('type', $dataType)) {
-	    	if($dataType['type'] === 'date' || $dataType['type'] === 'datetime') {         // throws notices, when type key not present
+	    	if('date' === $dataType['type'] || 'datetime' === $dataType['type']) {         // throws notices, when type key not present
 	        	if(array_key_exists('length',$dataType)) {
 	        		throw new ErrorException('Invalid data format.');
 	        	}
@@ -163,23 +250,6 @@ class DataTypeChecker {
         }
     }
     
-    /**
-     * Checks to see if we have a primary key set, if we do
-     * we need to create the corresponding SQL.
-     *
-     * @access static
-     * @param Array $key
-     * @return bool
-     * 
-     */
-    static function checkDataTypePrimaryKey($key) {
-    	$data = '';
-        if($key === 'key') {
-            $data .= ' PRIMARY KEY AUTO_INCREMENT';    
-        }
-        return $data;
-    }
-    
     static function checkFieldsType($dataType) {
        DataTypeChecker::checkDataType($dataType);
        if($dataType['type'] === 'integer' || $dataType['type'] ===  'string' ) {
@@ -187,7 +257,7 @@ class DataTypeChecker {
                 throw new ErrorException('String & Integer must have a length specified.');
             }
        }
-       elseif($dataType['type'] === 'date' || $dataType['type'] ===  'datetime') {}
+       elseif('date' === $dataType['type'] || 'datetime' === $dataType['type']) {}
        else {
             throw new ErrorException('Invalid data type.');
        }
@@ -203,4 +273,48 @@ class DataTypeChecker {
             }
        }
     }
+    
+
+    /**
+     * Used to make sure that our data type fields are all valid.
+     * 
+     * @access private
+     * @param $dataType
+     * 
+     */
+    static function validateDataTypeFields($dataType) {
+       self::checkFieldsType($dataType);
+       self::checkFieldsNullProperty($dataType);
+    }
+    
+
+    /**
+     * Validates that our test data is of the same structure
+     * as pre-existing data. We get the first data type from
+     * our test data & store it for comparison, if the validating
+     * datatype is not of the same structure we throw and exception.
+     *
+     * @access public
+     * @param Array $testData
+     * @return bool
+     * 
+     
+    static function validateTestData($testData,$obj) {
+        if(0 === $obj->testDataCount()) {
+            return true;
+        }
+        else {
+            $existingTestData = $obj->getTestData('id',1);
+            if(false === $existingTestData) {
+                return true;
+            }
+            foreach ($testData as $key=>$value) {
+                if(!array_key_exists($key, $existingTestData)){
+                    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
+                }
+            }
+        }
+        return false;
+    }
+*/
 }
