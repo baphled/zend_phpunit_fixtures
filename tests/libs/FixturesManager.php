@@ -91,6 +91,7 @@ class FixturesManager {
     /**
      * Zend DB, used to connect to our DB
      * @access private
+     * 
     */
     private $_db;
     
@@ -126,6 +127,22 @@ class FixturesManager {
         }
         return $data;
     }
+    
+    /**
+     * Parses through our test data constructing the nessary SQL
+     * which is run, giving us our populated test DB.
+     *
+     * @param Array $testData
+     * @param String $table
+     * 
+     */
+    private function _parseTestData($testData,$table) {
+       DataTypeChecker::checkTestDataAndTableName($testData,$table);
+       foreach($testData as $data) {
+            $query = $this->_constructInsertQuery($data,$table);
+            $this->_runFixtureQuery($query);                
+       }
+    }
 
     /**
      * Used to actually execute our dynamically
@@ -148,21 +165,6 @@ class FixturesManager {
             throw new PDOException($e->getMessage());
         }
         return true;
-    }
-    
-    /**
-     * Parses through our test data constructing the nessary SQL
-     * which is run, giving us our populated test DB.
-     *
-     * @param Array $testData
-     * @param String $table
-     */
-    private function _parseTestData($testData,$table) {
-       DataTypeChecker::checkTestDataAndTableName($testData,$table);
-       foreach($testData as $data) {
-            $query = $this->_constructInsertQuery($data,$table);
-            $this->_runFixtureQuery($query);                
-       }
     }
     
     /**
@@ -301,11 +303,10 @@ class FixturesManager {
                 $sql = 'DROP TABLE ' .$fixture;         // smells
                 $this->_db->getConnection()->exec($sql);		
 			}
-			return true;
 		}
 		catch(Exception $e) {
 			echo $e->getMessage();
 		}
-		return false;
+		return true;
 	}
 }
