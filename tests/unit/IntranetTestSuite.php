@@ -13,7 +13,7 @@ class IntranetTestSuite extends PHPUnit_Framework_TestSuite {
 	 * Constructs the test suite handler.
 	 */
 	public function __construct() {
-		$this->setName ( 'unitSuite' );
+		$this->setName ( 'IntranetTestSuite' );
 		
 		$this->addTestSuite ( 'FeaturesListSuite' );
 		
