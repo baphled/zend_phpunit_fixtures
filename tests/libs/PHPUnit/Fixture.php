@@ -112,6 +112,11 @@ class PHPUnit_Fixture {
 		$this->_fixMan = new FixturesManager();
 		date_default_timezone_set('Europe/London');
 	}
+	
+	public function __destruct() {
+		$this->dropTable();
+		$this->_fixMan = null;
+	}
 
 	/**
      * Verify that our test data is of a valid
