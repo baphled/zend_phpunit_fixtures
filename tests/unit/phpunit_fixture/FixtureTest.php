@@ -45,10 +45,7 @@
  * of the system.
  * 
  */
-
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../fixtures/' ) 
-                       .PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../libs/' ) 
-                       .PATH_SEPARATOR . get_include_path () );
+require_once dirname(__FILE__) .'/../../../tests/TestHelper.php';
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
@@ -58,6 +55,11 @@ require_once 'PHPUnit/Fixture.php';
 
 class BasicFixture extends PHPUnit_Fixture {}
 
+class AnotherFixture extends PHPUnit_Fixture {
+	public function fixtureMethodCheck() {
+		$this->_fixtureMethodCheck('blah');
+	}
+}
 class FixtureTest extends PHPUnit_Framework_TestCase {
 	
 	private $_fixtures;
@@ -786,7 +788,23 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveTestDataIncrementsFromTheLastInputtedID() {
-		$this->markTestIncomplete();
-		$this->assertFalse();
+		$this->_testFix->autoGenerateTestData(20);
+        $data = $this->_testFix->retrieveTestDataResults();
+		for($i=0;$i<$this->_testFix->testDataCount();$i++) {
+			$this->assertEquals($i+1,$data[$i]['id']);
+		}
 	}
+
+    /**
+     * We want to be able to check that fixtureMethodCheck throws
+     * an exception, even though we have implemented the funcionality
+     * we should still be able to test this by subclassing fixture
+     * and _fixtureMethodCheck, passing it an invalid call parameter.
+     *
+     */
+    function testFixureMethodCheckThrowsExceptionIfInvalidCall() {
+        $this->setExpectedException('ErrorException');
+        $this->_anotherFix = new AnotherFixture();
+        $this->_anotherFix->fixtureMethodCheck();
+    }
 }

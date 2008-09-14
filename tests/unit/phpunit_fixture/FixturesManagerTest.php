@@ -76,12 +76,8 @@
  * @todo Now we have completed the basics PHPUnit_Fixture we can now use it for our test data.
  * 
  */
-
-set_include_path ( '.' . PATH_SEPARATOR . realpath ( dirname ( __FILE__ ) . '/../../fixtures/' )  
-                       . PATH_SEPARATOR .realpath(dirname(__FILE__) .'/../../libs/') 
-                       . PATH_SEPARATOR . get_include_path () );
-
-require_once '../../libs/FixturesManager.php';
+require_once dirname(__FILE__) .'/../../../tests/TestHelper.php';
+require_once 'FixturesManager.php';
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();

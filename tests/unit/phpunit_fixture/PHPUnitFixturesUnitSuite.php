@@ -11,9 +11,10 @@
  * $LastChangedBy$
  * 
  */
+require_once dirname(__FILE__) .'/../../../tests/TestHelper.php';
 
-set_include_path ( '.' . PATH_SEPARATOR .realpath(dirname(__FILE__) .'../../libs/') 
-                       .PATH_SEPARATOR . get_include_path () );
+require_once 'FixtureTest.php';
+require_once 'FixturesManagerTest.php';
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
