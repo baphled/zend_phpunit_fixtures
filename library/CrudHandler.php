@@ -26,7 +26,7 @@ class CrudHandler {
 		if(!is_array($params)){
 			throw new ErrorException('Parameter must be an array');
 		}
-		self::_parseParameteres($params,$data);
+		self::_parseParameters($params,$data);
 		return $obj->insert($data);
 	}
 
@@ -39,7 +39,7 @@ class CrudHandler {
 	 * @param $data The data we want to validate against
 	 * 
 	 */
-	private function _parseParameteres($params,$data) {
+	private function _parseParameters($params,$data) {
 	   foreach($params as $param) {
             if(array_key_exists($param, $data)) {
                 if(null === $data[$param] || empty($data[$param])){
