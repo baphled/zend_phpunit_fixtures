@@ -49,7 +49,6 @@
  * the amount of test data present, aswell as retrieve, specific test data
  * & a whole of list of test data which can be used for testing.
  * 
- * @todo Turn all property with a '_' prefix into private properties.
  * @todo Implement functionality to allows users to specify an already
  *       setup table.
  * 
@@ -59,30 +58,37 @@ class PHPUnit_Fixture {
 	/**
 	 * Stores the fixtures table name
 	 *
+	 * @access protected
 	 * @var String
+	 * 
 	 */
 	protected $_table = null;
 	
     /**
-     * Stores the fixtures table structure
+     * The fixtures table structure
      *
+     * @access protected
      * @var Array
+     * 
      */
     protected $_fields = array();
     
 	/**
-	 * Stores the fixtures test data.
+	 * The fixtures test data.
 	 *
+	 * @access protected
 	 * @var Array
+	 * 
 	 */
 	protected $_testData = null;
 	
 	/**
-	 * Stores our fixture manager, used
-	 * to handle the meat of fixture interactions
+	 * Our fixture manager, used to handle 
+	 * the meat of fixture interactions.
 	 *
 	 * @access private
 	 * @var FixtureManager
+	 * 
 	 */
 	private $_fixMan;
 	
@@ -91,6 +97,7 @@ class PHPUnit_Fixture {
 	 *
 	 * @access private
 	 * @var Array
+	 * 
 	 */
 	private $_result = null;
 	
@@ -113,86 +120,16 @@ class PHPUnit_Fixture {
      *
      * @access private
      * @param Array $testData
+     * 
      */
     private function _verifyTestData($testData) {
        try {
-            $this->validateTestData($testData);
+            $this->validateTestData($testData,$this);
             $this->_testData[] = $testData;
        }
        catch(ErrorException $e) {
             throw new ErrorException($e->getMessage());
        }
-    }
-	
-    /**
-     * Used to make sure that our data type fields are all valid.
-     * 
-     * @access private
-     * @param $dataType
-     * 
-     */
-    private function _validateDataTypeFields($dataType) {
-       DataTypeChecker::checkFieldsType($dataType);
-       DataTypeChecker::checkFieldsNullProperty($dataType);
-    }
-    
-    /**
-     * Checks that our data type is an integer
-     *
-     * @access private
-     * @param Array $dataType
-     * @param int $field
-     */
-    private function _dataTypeIsAnInt($dataType,$field) {
-       if('integer' === $dataType) {
-            if($field !== 'id') {
-                $this->_result[$field] = rand();
-            }
-            else {
-                $this->_result[$field] = NULL;
-            }
-        }
-    }
-
-    /**
-     * Checks that our a string, if so we generate test data.
-     *
-     * @access private
-     * @param Array $dataType
-     * @param int $field
-     */
-    private function _dataTypeIsAString($dataType,$field) {
-       if('string' === $dataType) {
-           $this->_result[$field] = 'my string';
-       }
-    }
-    
-    /**
-     * Checks to see if our data type is a date, if it is,
-     * we generate the current date.
-     *
-     * @access private
-     * @param Array $dataType
-     * @param int $field
-     */
-    private function _dataTypeIsADate($dataType,$field) {
-       if('date' === $dataType) {
-            $this->_result[$field] = date('Ymd');
-       }
-    }
-    
-    /**
-     * Checks to see if we have a datetype type, if we do
-     * we generate the current date & time.
-     *
-     * @access private
-     * @param Array $dateType
-     * @param int $field
-     */
-    private function _dataTypeIsDateTime($dateType,$field) {
-       if('datetime' === $dateType) {
-            $this->_result[$field] = date(DATE_RFC822);
-       }    
     }
     
     /**
@@ -205,13 +142,14 @@ class PHPUnit_Fixture {
      * @access private
      * @param String $field
      * @param Array $values
+     * 
      */
     private function _parseSchema($field, $values) {
        foreach ($values as $value) {
-            $this->_dataTypeIsAnInt($value,$field);
-            $this->_dataTypeIsAString($value,$field);
-            $this->_dataTypeIsADate($value,$field);
-            $this->_dataTypeIsDateTime($value,$field);
+            DataTypeChecker::dataTypeIsAnInt($value,$field,$this);
+            DataTypeChecker::dataTypeIsAString($value,$field,$this);
+            DataTypeChecker::dataTypeIsADate($value,$field,$this);
+            DataTypeChecker::dataTypeIsDateTime($value,$field,$this);
         }
     }
 
@@ -222,6 +160,11 @@ class PHPUnit_Fixture {
      * @param String    $key
      * @param Array     $value
      * @return Array
+     * 
+     * @todo Should not really return false but instead
+     *       throw an exception if no test data is found.
+     * @todo This would be so much more effient as an iterator.
+     * 
      */
     private function _retrieveTestData($key,$value) {
        if(0 !== $this->testDataCount()) {
@@ -238,23 +181,23 @@ class PHPUnit_Fixture {
         }
         return false;
     }
-    
+
     /**
      * Is used to run build & drop, seeing as both methods
      * have practically the same functionality, it seems
      * silly not to refactor them into this function.
      *
      * @access private
-     * @param string $calledBy
+     * @param string $called  The method that was called.
      * @return bool
      * 
      * @todo Write test to ascertain whether the string
      *       build/drop & that it is actually a string.
      * 
      */
-    private function _runFixtureMethod($calledBy) {
+    private function _runFixtureMethod($called) {
         try {
-            $result = $this->_fixtureMethodCheck($calledBy);
+            $result = $this->_fixtureMethodCheck($called);
             if(true === $result) {
                 return true;
             }
@@ -264,27 +207,31 @@ class PHPUnit_Fixture {
         }
         return false;
     }
-    
+
     /**
-     * Does the checking for our method call
+     * Does the checking for our method call, at the moment
+     * we can only use setup & drop calls.
      *
      * @access private
-     * @param String $call
+     * @param String $call      The called method.
      * @return bool
      * 
      * @todo could be done better but this seems fine for the moment.
      * 
      */
-    private function _fixtureMethodCheck($call) {
+    protected function _fixtureMethodCheck($call) {
         if('drop' === $call) {
             $result = $this->_fixMan->dropTable();
         }
-        if('setup' === $call) {
+        elseif('setup' === $call) {
             $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
+        }
+        else {
+        	throw new ErrorException('Invalid fixture method call.');
         }
         return $result;
     }
-    
+
     /**
      * Generates our fixture test data, we need this so we can
      * loop through our fields array, to ascertain the data type
@@ -293,6 +240,7 @@ class PHPUnit_Fixture {
      * @access public
      * @param int $numOfTestData
      * @return Array
+     * 
      */
     private function _generateTestData($numOfTestData) {
         if(0 === count($this->_fields)) {
@@ -304,8 +252,7 @@ class PHPUnit_Fixture {
         $results = array();
         $this->_result = array();
         for($i=0;$i<$numOfTestData;$i++) {
-        	$fields = $this->getTableFields();
-            foreach ($fields as $field=>$values) {
+            foreach ($this->getTableFields() as $field=>$values) {
                 DataTypeChecker::checkDataType($values);
                 $this->_parseSchema($field, $values);
             }
@@ -335,7 +282,7 @@ class PHPUnit_Fixture {
 				return true;
 			}
 			foreach ($testData as $key=>$value) {
-				if(!array_key_exists($key, $existingTestData)){
+				if(!array_key_exists($key, $existingTestData)) {
 				    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
 				}
 			}
@@ -373,17 +320,18 @@ class PHPUnit_Fixture {
 	 * @return String
 	 * 
 	 */
-	function getTableName() {
+	public function getTableName() {
 		return $this->_table;
 	}
 	
-	function setTableName($tableName) {
+	public function setTableName($tableName) {
 		if(!is_string($tableName)) {
 			throw new ErrorException('Table name must be a string');
 		}
 		$this->_table = $tableName;
 		return true;
 	}
+	
 	/**
 	 * Gets our test data for use, if parameters are not passed
 	 * we will retrieve all test data stored in this object, otherwise
@@ -463,7 +411,7 @@ class PHPUnit_Fixture {
 	 * @param Array $fields
 	 * @return bool
 	 */
-	function setFields(array $fields) {
+	public function setFields(array $fields) {
 		if(0 === count($fields)) {
 			throw new ErrorException('Illegal field format.');
 		}
@@ -474,7 +422,7 @@ class PHPUnit_Fixture {
 				if(!is_array($data)) {
 					throw new ErrorException('Data must be in an associative array.');
 				}
-				$this->_validateDataTypeFields($data);
+				DataTypeChecker::validateDataTypeFields($data);
 		}
 		$this->_fields = $fields;
 		return true;
