@@ -16,17 +16,17 @@ class FeatureFunctionFixture extends PHPUnit_Fixture {
 	public $_table = 'feature2Function';
 	
 	public $_fields = array(
-					 'id' => array('type' => 'integer', 'length'=>10),
-					 'functionid' => array('type' => 'integer', 'length'=>10),
+					 'feature_id' => array('type' => 'integer', 'length'=>10),
+					 'function_id' => array('type' => 'integer', 'length'=>10),
 					  );
 	
 	public $_testData = array(
-						array('id' => 1, 'functionid' => 10),
-						array('id' => 2, 'functionid' => 20),
-						array('id' => 3, 'functionid' => 30),
-						array('id' => 1, 'functionid' => 40),
-						array('id' => 2, 'functionid' => 70),
-						array('id' => 3, 'functionid' => 90)
+						array('feature_id' => 1, 'function_id' => 10),
+						array('feature_id' => 2, 'function_id' => 20),
+						array('feature_id' => 3, 'function_id' => 30),
+						array('feature_id' => 1, 'function_id' => 40),
+						array('feature_id' => 2, 'function_id' => 70),
+						array('feature_id' => 3, 'function_id' => 90)
 						);
 }
 ?>
