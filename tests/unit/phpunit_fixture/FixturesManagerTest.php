@@ -13,7 +13,7 @@
  * @version $Id$
  * @copyright 2008
  * @package PHPUnit_FixturesManager
- * @subpackage TestSuite
+ * @subpackage TestSuite_PHPUnit_FixturesManager
  *
  * $LastChangedBy$
  * Date: 06/09/2008

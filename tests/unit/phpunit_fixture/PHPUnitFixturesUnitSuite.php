@@ -6,7 +6,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package TestSuite
+ * @package TestSuite_PHPUnit_FixturesManager
  *
  * $LastChangedBy$
  * 

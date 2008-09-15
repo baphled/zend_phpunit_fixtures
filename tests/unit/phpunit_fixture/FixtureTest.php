@@ -7,7 +7,7 @@
  * @version $Id$
  * @copyright 2008
  * @package PHPUnit_Fixture
- * @subpackage TestSuite
+ * @subpackage TestSuite_PHPUnit_Fixture
  *
  * $LastChangedBy$
  * 
