@@ -13,7 +13,7 @@ require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
 class FeatureFunctionFixture extends PHPUnit_Fixture {
-	public $_table = 'feature2Function';
+	public $_table = 'feature2function';
 	
 	public $_fields = array(
 					 'feature_id' => array('type' => 'integer', 'length'=>10),
