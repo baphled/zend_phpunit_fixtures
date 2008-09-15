@@ -27,7 +27,8 @@ class Features extends Zend_Db_Table_Abstract {
 	}
 	
 	function _featureExists($feature){
-		return CrudHandler::exists($feature,$this);
+		$param = 'title';
+		return CrudHandler::exists($feature,$param,$this);
 	}
 	
 	function updateFeature($id, $data){
