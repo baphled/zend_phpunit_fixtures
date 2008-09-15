@@ -21,9 +21,9 @@ class FeatureFunctionTest extends PHPUnit_Framework_TestCase {
 	
 	private $_featureFunction;
 	
-	private function _initialiseCompleteFeatureFunction(){
-		$data = $this->_featureFunctionFixtures->getTestData('functionid',10);
-		return $this->_featureFunction->addNewFeatureFunction($data);	
+	private function _initialiseCompleteFF(){
+		$data = $this->_featureFunctionFixtures->getTestData('function_id',10);
+		return $this->_featureFunction->add($data);	
 	}
 	
 	public function __construct(){
@@ -34,7 +34,7 @@ class FeatureFunctionTest extends PHPUnit_Framework_TestCase {
 	public function setUp(){
 		parent::setUp();
 		$this->_featureFunctionFixtures->setupTable();
-		$this->_featureFunction = new FeatureFunction;
+		$this->_featureFunction = new FeatureFunction();
 	}
 	
 	public function tearDown(){
@@ -50,53 +50,56 @@ class FeatureFunctionTest extends PHPUnit_Framework_TestCase {
 	public function testInvalidParam(){
 		$data = 'not an integer or can be null or empty also';
 		$this->setExpectedException('ErrorException');
-		$this->_featureFunction->addNewFeatureFunction($data);
+		$this->_featureFunction->add($data);
 	}
 	
 	public function testAddNewFeatureFunctionReturnsTrueOnSuccess(){
-		$result = $this->_initialiseCompleteFeatureFunction();
-		$this->assertEquals(1, $result);
+		$result = $this->_initialiseCompleteFF();
+		$this->assertType('array',$result);
 	}
 	
 	public function testViewFeatureFunctionById(){
-		$data = $this->_featureFunctionFixtures->getTestData('functionid',10);
-		$this->_featureFunction->addNewFeatureFunction($data);
-		$result = $this->_featureFunction->show(1);
+		$data = $this->_featureFunctionFixtures->getTestData(array('feature_id', 'function_id'), array(1, 10));
+		$this->_featureFunction->add($data);
+		$result = $this->_featureFunction->show(array(1,10));
 		$this->assertNotNull($result);
 		$this->assertEquals(1, count($result));
 	}
-	
+
 	public function testAddNewFeatureFunctionDoesNotAllowDuplication(){
-		$this->_initialiseCompleteFeatureFunction();
-		$data = $this->_featureFunctionFixtures->getTestData('functionid', 20);
-		$result = $this->_featureFunction->_featureFunctionExists($data);
-		$this->assertEquals(FALSE, $result);
+		$this->_initialiseCompleteFF();
+		$data = $this->_featureFunctionFixtures->getTestData('function_id', 10);
+		$result = $this->_featureFunction->exists($data);
+		$this->assertEquals(TRUE, $result);
 	}
-	
+	/*	
 	public function testUpdateFeatureFunctionReturnsTrueOnSuccess(){
-		$data = $this->_featureFunctionFixtures->getTestData('functionid',10);
-		$this->_featureFunction->addNewFeatureFunction($data);
-		$data['functionid'] = 40;
-		$result = $this->_featureFunction->updateFeatureFunction(1, $data);
+		$data = $this->_featureFunctionFixtures->getTestData('function_id',10);
+		$this->_featureFunction->add($data);
+		$data['function_id'] = 40;
+		$result = $this->_featureFunction->update(1, $data);
 		$this->assertTrue($result);
 	}
+	*/
 	
+	/*
 	public function testUpdateFeatureFunctionReturnsFalseOnFailure(){
-		$data = $this->_featureFunctionFixtures->getTestData('functionid',10);
-		$this->_featureFunction->addNewFeatureFunction($data);
-		$result = $this->_featureFunction->updateFeatureFunction(1, $data);
+		$data = $this->_featureFunctionFixtures->getTestData('function_id',10);
+		$this->_featureFunction->add($data);
+		$result = $this->_featureFunction->update(1, $data);
 		$this->assertFalse($result);
 	}
 	
 	public function testDeleteFeatureFunctionReturnsTrueOnSuccess(){
-		$data = $this->_featureFunctionFixtures->getTestData('functionid',10);
-		$this->_featureFunction->addNewFeatureFunction($data);
-		$result = $this->_featureFunction->deleteFeatureFunction(1);
+		$data = $this->_featureFunctionFixtures->getTestData('function_id',10);
+		$this->_featureFunction->add($data);
+		$result = $this->_featureFunction->delete(1);
 		$this->assertTrue($result);
 	}
-	
+	*/
 	public function testDeleteFeatureFunctionReturnsFalseOnFailure(){
-		$result = $this->_featureFunction->deleteFeatureFunction(50);
+		$result = $this->_featureFunction->delete(50);
 		$this->assertFalse($result);
 	}
+
 }
