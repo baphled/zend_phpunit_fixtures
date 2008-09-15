@@ -26,7 +26,8 @@ class Functions extends Zend_Db_Table_Abstract {
 	}
 	
 	function _functionExists($data){
-		return CrudHandler::exists($data,$this);
+		$param = 'title';
+		return CrudHandler::exists($data,$param,$this);
 	}
 	
 	function updateFunction($id, $data){
