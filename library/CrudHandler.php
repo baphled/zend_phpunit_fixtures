@@ -94,8 +94,8 @@ class CrudHandler {
      * @return bool
      * 
      */
-	static function exists($data,$obj) {
-		$result = $obj->fetchAll($obj->select()->where('title = ?', $data['title']));
+	static function exists($data,$param,$obj) {
+		$result = $obj->fetchAll($obj->select()->where("$param = ?", $data[$param]));
 		return (count($result)) ? true : false;
 	}
 	
