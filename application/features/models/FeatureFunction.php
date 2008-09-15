@@ -14,28 +14,30 @@ class FeatureFunction extends Zend_Db_Table_Abstract {
 	 * The default table name 
 	 */
 	protected $_name = 'feature2Function';
+	protected $_primary = array('feature_id', 'function_id');
 
 	function add($data){
 		if(!is_array($data)){
 			throw new ErrorException('Should be an integer.');
 		}
-		$params = array('title','id');
+		$params = array('feature_id', 'function_id');
 		return CrudHandler::add($data,$params,$this);
 	}
 	
 	function show($id){
-		return $this->find($id);
+		return $this->find($id[0], $id[1]); // too rigid. needs working on
 	}
 	
-	function Exists($data){
-		return CrudHandler::exists($data,$this);
+	function exists($data){
+		$param = 'feature_id';
+		return CrudHandler::exists($data,$param,$this);
 	}
 	
-	function updateFeatureFunction($id, $data){
+	function update($id, $data){
 		return CrudHandler::update($id,$data,$this);
 	}
 	
-	function deleteFeatureFunction($id){
+	function delete($id){
 		return CrudHandler::delete($id,$this);
 	}
 }
