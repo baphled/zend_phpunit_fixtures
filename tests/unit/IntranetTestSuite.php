@@ -5,7 +5,10 @@ require_once 'phpunit_fixture/PHPUnitFixturesUnitSuite.php';
 
 /**
  * Static test suite.
+ * @author Yomi (baphled) Akindayini
  * @version $Id$
+ * 
+ * $LastChangedBy$
  */
 class IntranetTestSuite extends PHPUnit_Framework_TestSuite {
 	
