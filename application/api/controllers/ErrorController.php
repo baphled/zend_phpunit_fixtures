@@ -3,8 +3,8 @@
 /**
  * ErrorController - The default error controller class
  * 
- * @author
- * @version 
+ * @author Ekerete Akpan
+ * @version $Id$
  */
 
 require_once 'Zend/Controller/Action.php';
