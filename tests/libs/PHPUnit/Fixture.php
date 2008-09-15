@@ -114,7 +114,9 @@ class PHPUnit_Fixture {
 	}
 	
 	public function __destruct() {
-		$this->dropTable();
+		if($this->_fixMan->tablesPresent()) {
+		      $this->dropTable();
+		}
 		$this->_fixMan = null;
 	}
 
