@@ -776,4 +776,25 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$this->_fixturesManager->dropTable();
     	$this->assertTrue($result);
     }
+    
+    /**
+     * We need to a method that allows us to determine whether
+     * we have actually created a fixture table, if so, we return
+     * true, otherwise false.
+     */
+    function testTablePresentReturnsFalseIfNoTablesExists() {
+    	$result = $this->_fixturesManager->tablesPresent();
+    	$this->assertFalse($result);
+    }
+    
+    /**
+     * If we have tables present in our fixtures table, we will want
+     * to return true.
+     */
+    function testTablesPresentReturnsTrueIfTablesArePresent() {
+        $table = 'apples';
+        $this->_setUpTestTableStructure($table);
+    	$result = $this->_fixturesManager->tablesPresent();
+    	$this->assertTrue($result);
+    }
 }

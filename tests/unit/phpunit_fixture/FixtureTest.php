@@ -372,7 +372,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testSetupFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
 		$result = $this->_testFix->setupTable();
 		$this->assertTrue($result);
-        $this->_testFix->dropTable();
 	}
 	
 	/**
@@ -434,7 +433,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->_testFix->setupTable();
 		$result = $this->_testFix->populate();
 		$this->assertTrue($result);
-		$this->_testFix->dropTable();
 	}
 
 	/**
