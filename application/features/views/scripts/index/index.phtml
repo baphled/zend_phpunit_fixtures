@@ -2,4 +2,9 @@
 
 <?php if (!empty($this->features)) : ?>
 <p>No features have been added yet.</p>
+<?php else : ?>
+<?php foreach($this->features as $feature) {
+	echo $feature; 
+}
+?>
 <?php endif; ?>
