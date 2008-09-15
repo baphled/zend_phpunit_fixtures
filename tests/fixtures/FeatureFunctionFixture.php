@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Nadjaha (baphled) Wohedally 2008
- * @version $Id: Features.php 41 2008-09-09 15:48:50Z nadjaha $
+ * @version $Id$
  * @copyright ibetX Ltd2008
  * @package
  * 
