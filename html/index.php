@@ -2,8 +2,9 @@
 /**
  * My new Zend Framework project
  * 
- * @author  
- * @version 
+ * @author Yomi (baphled) Akindayini
+ * @version $Id$
+ 
  */
 
 set_include_path('.' . PATH_SEPARATOR . '../library' . PATH_SEPARATOR . './application/default/models/' . PATH_SEPARATOR . get_include_path());
