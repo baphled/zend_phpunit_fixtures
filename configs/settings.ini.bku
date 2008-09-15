@@ -1,0 +1,8 @@
+[development]
+database.type		= PDO_Mysql
+database.hostname	= localhost
+database.username	= root
+database.password	= 
+database.database	= intrabetx
+
+paths.base		    = /home/baphled/workspace/IntraIBetx
