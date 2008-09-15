@@ -39,7 +39,7 @@ class CrudHandler {
 	 * @param $data The data we want to validate against
 	 * 
 	 */
-	private static function _parseParameters($params,$data) {
+	private function _parseParameters($params,$data) {
 	   foreach($params as $param) {
             if(array_key_exists($param, $data)) {
                 if(null === $data[$param] || empty($data[$param])){
@@ -61,11 +61,11 @@ class CrudHandler {
 	 * @return bool
 	 * 
 	 */
-	static function update($id, $data,$obj){
+	static function update($id,$data,$obj,$param='id'){
 		if(null === $id || empty($id)){
 			throw new ErrorException('Id must not be empty');			
 		}	
-		$where 	= $obj->getAdapter()->quoteInto('id = ?', $id);
+		$where 	= $obj->getAdapter()->quoteInto($param .' = ?', $id);
 		$result = $obj->update($data, $where); 
 		return $result ? true : false;		
 	}
@@ -79,8 +79,8 @@ class CrudHandler {
      * @return bool
      * 
      */
-	static function delete($id,$obj){
-		$where 	= $obj->getAdapter()->quoteInto('id = ?',$id);
+	static function delete($id,$obj,$param='id'){
+		$where 	= $obj->getAdapter()->quoteInto($param .' = ?',$id);
 		$result = $obj->delete($where);
 		return $result ? true : false;		
 	}

@@ -47,4 +47,30 @@ class FeatureFunctionTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($this->_featureFunction);
 	}
 	
+	public function testAddNewRecordIsSuccessful() {
+		$data = $this->_initialiseCompleteFF();
+		$this->assertEquals('10', $data['function_id']);
+	}
+	
+	public function testFindRecordByFieldName() {
+		$this->_initialiseCompleteFF();
+		$data = $this->_featureFunction->findByField('function_id', 10);
+		$this->assertEquals('10', $data->function_id);
+	}
+	
+	public function testRecordCanBeEdited() {
+		$data = $this->_initialiseCompleteFF();
+		$data['feature_id'] = '50';
+		$this->_featureFunction->updateRecord(10, $data);
+		$newdata = $this->_featureFunction->findByField('function_id', 10);
+		$this->assertEquals('50', $newdata->feature_id);
+	}
+	
+	public function testDeletingRecordIsSuccessful() {
+		$this->_initialiseCompleteFF();
+		$this->_featureFunction->deleteRecord(10, 'function_id');
+		$data = $this->_featureFunction->findByField('function_id', 10);
+		$this->assertNull($data);
+	}
+	
 }
