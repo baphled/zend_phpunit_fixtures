@@ -277,7 +277,7 @@ class FixturesManager {
 	 * @param String $tableName
 	 * @return bool
 	 */
-	function tableExists($tableName) {
+	public function tableExists($tableName) {
 		if(empty($tableName)) {
 			throw new ErrorException('Table name can not be empty');
 		}
@@ -293,7 +293,7 @@ class FixturesManager {
 	 * @access public
 	 * @return bool
 	 */
-	function dropTable() {
+	public function dropTable() {
 		$fixtures = $this->_db->listTables();
 		if(count($fixtures) === 0) {
 			throw new ErrorException('No fixture tables to drop.');
@@ -309,4 +309,13 @@ class FixturesManager {
 		}
 		return true;
 	}
+	
+	function tablesPresent() {
+		if($this->_db->listTables()) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 }
