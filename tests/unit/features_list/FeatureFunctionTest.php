@@ -4,11 +4,13 @@
  * FeatureFunctionTestCase
  * 
  * @author Nadjaha (ibetxadmin) Wohedally 2008
- * @version $Id: FeatureTest.php 145 2008-09-08 11:27:15Z nadjaha $
+ * @version $Id$
  * @copyright ibetX Ltd 2008
- * @package 
- * @subpackage TestSuite
+ * @package FeaturesList
+ * @subpackage TestSuite_FeaturesList
  *
+ * $LastChangedBy$
+ 
  * Date: 08 Sept 2008
  * 
  */
@@ -31,7 +33,6 @@ class FeatureFunctionTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp(){
 		parent::setUp();
-		$this->_featureFunctionFixtures->dropTable();
 		$this->_featureFunctionFixtures->setupTable();
 		$this->_featureFunction = new FeatureFunction;
 	}

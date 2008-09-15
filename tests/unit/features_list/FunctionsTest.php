@@ -6,11 +6,14 @@
  * @author Nadjaha (ibetxadmin) Wohedally 2008
  * @version $Id$
  * @copyright ibetX Ltd2008
- * @package 
- * @subpackage TestSuite
+ * @package FeaturesList
+ * @subpackage TestSuite_FeaturesList
+ *
+ * $LastChangedBy$
  *
  * Date: 5 Sep 2008
- * 
+ * Created initial test cases.
+ *
  */
 
 require_once dirname(__FILE__) . '/../../TestHelper.php';

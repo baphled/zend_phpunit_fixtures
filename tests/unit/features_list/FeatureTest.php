@@ -6,8 +6,10 @@
  * @author Nadjaha (ibetxadmin) Wohedally 2008
  * @version $Id$
  * @copyright ibetX Ltd 2008
- * @package 
- * @subpackage FeaturesListTestSuite
+ * @package FeaturesList
+ * @subpackage TestSuite_FeaturesList
+ *
+ * $LastChangedBy$
  *
  * Date: 21 Aug 2008
  * 
