@@ -3,8 +3,8 @@
 /**
  * FeatureFunction
  *  
- * @author ibetxadmin
- * @version 
+ * @author  Nadjaha Wohedally
+ * @version $Id$
  */
 
 require_once 'Zend/Db/Table/Abstract.php';
