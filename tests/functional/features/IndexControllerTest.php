@@ -11,7 +11,7 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->_featureFixtures = new FeatureFixture();
 		$this->_featureFixtures->setupTable();
 		$this->_featureFixtures->populate();
-		$this->bootstrap= dirname(__FILE__) . '/../../bootstrap.php';		
+		$this->bootstrap = dirname(__FILE__) . '/../../bootstrap.php';		
 		parent::setup();
 	}
 	
@@ -41,6 +41,17 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public function testDefaultFeaturesUrlShouldShowListOfFeaturesIfDataExists() {
 		$this->dispatch('/features');
+		$this->assertQueryContentContains('td', 'To test a new feature');
+	}
+	
+	public function testLinksToRelatedFunctionsPageAreAdded() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('a', 'View Functions');
+	}
+	
+	public function testLinksToRelatedFunctionsAreCorrect() {
+		$this->dispatch('/features');
+		$this->assertQuery('td a[href*="id/1"]');
 	}
 	
 }

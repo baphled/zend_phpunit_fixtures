@@ -1,4 +1,5 @@
 <h1>Features</h1>
+
 <?php if (!count($this->features)) : ?>
 	<p>No features have been added yet.</p>
 <?php else : ?>
@@ -15,7 +16,7 @@
 			<td>Edit</td>	
 			<td><?php echo $feature->title; ?></td>
 			<td><?php echo $feature->description; ?></td>
-			<td>View Functions</td>
+			<td><a href="<?php echo $this->url(array('controller'=>'functions','action'=>'index','id'=>$feature->id)); ?>">View Functions</a></td>
 			<td>Delete</td>
 		</tr>
 	<?php endforeach; ?>
