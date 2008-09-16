@@ -286,6 +286,17 @@ class FixturesManager {
 		}
 		return false;
 	}
+
+    function truncateTable($name) {
+        if(!is_string($name)) {
+            throw new ErrorException('Tablename must be a string.');
+        }
+        if($this->tableExists($name)) {
+        	$sql = 'TRUNCATE TABLE ' .$name;
+        	$this->_db->getConnection()->exec($sql);
+        }
+        return true;
+    }
 	
 	/**
 	 * Deletes all our fixtures tables.
