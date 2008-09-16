@@ -262,6 +262,9 @@ class PHPUnit_Fixture {
         elseif('setup' === $call) {
             $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
         }
+        elseif('truncate' === $call) {
+        	 $result = $this->_fixMan->truncateTable($this->_table);
+        }
         else {
             throw new ErrorException('Invalid fixture method call.');
         }
@@ -445,6 +448,10 @@ class PHPUnit_Fixture {
 	 */
 	public function dropTable() {
 		return $this->_runFixtureMethod('drop');
+	}
+	
+	public function truncateTable() {
+		return $this->_runFixtureMethod('truncate');
 	}
 	
 	/**
