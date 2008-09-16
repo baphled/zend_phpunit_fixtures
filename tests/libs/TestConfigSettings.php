@@ -39,10 +39,11 @@ class TestConfigSettings {
 	 *                      we want to configure.
 	 * 
 	 */
-    static function setUpConfig($env = 'development') {
+    static function setUpConfig() {
         $root = realpath(dirname(__FILE__) . '/../../configs/'); // smelly, could be anything
         $configPath = $root .'/settings.ini';          
-        self::$_config = new Zend_Config_Ini( $configPath, $env);
+        $general = new Zend_Config_Ini( $configPath, 'general');
+        self::$_config = new Zend_Config_Ini( $configPath, $general->environment);
         Zend_Registry::set('config',self::$_config);
     }
     

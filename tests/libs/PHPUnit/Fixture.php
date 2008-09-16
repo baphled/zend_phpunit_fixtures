@@ -216,30 +216,6 @@ class PHPUnit_Fixture {
     }
 
     /**
-     * Does the checking for our method call, at the moment
-     * we can only use setup & drop calls.
-     *
-     * @access private
-     * @param String $call      The called method.
-     * @return bool
-     * 
-     * @todo could be done better but this seems fine for the moment.
-     * 
-     */
-    protected function _fixtureMethodCheck($call) {
-        if('drop' === $call) {
-            $result = $this->_fixMan->dropTable();
-        }
-        elseif('setup' === $call) {
-            $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
-        }
-        else {
-        	throw new ErrorException('Invalid fixture method call.');
-        }
-        return $result;
-    }
-
-    /**
      * Generates our fixture test data, we need this so we can
      * loop through our fields array, to ascertain the data type
      * of each piece of test data.
@@ -268,6 +244,30 @@ class PHPUnit_Fixture {
         return $results;
     }
 	
+    /**
+     * Does the checking for our method call, at the moment
+     * we can only use setup & drop calls.
+     *
+     * @access private
+     * @param String $call      The called method.
+     * @return bool
+     * 
+     * @todo could be done better but this seems fine for the moment.
+     * 
+     */
+    protected function _fixtureMethodCheck($call) {
+        if('drop' === $call) {
+            $result = $this->_fixMan->dropTable();
+        }
+        elseif('setup' === $call) {
+            $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
+        }
+        else {
+            throw new ErrorException('Invalid fixture method call.');
+        }
+        return $result;
+    }
+    
 	/**
 	 * Validates that our test data is of the same structure
 	 * as pre-existing data. We get the first data type from

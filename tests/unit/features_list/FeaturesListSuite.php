@@ -6,6 +6,15 @@ require_once 'FunctionsTest.php';
 
 /**
  * Static test suite.
+ *
+ * @author Yomi (baphled) Akindayini 2008
+ * @version $Id$
+ * @copyright 2008
+ * @package FeaturesList
+ * @subpackage TestSuite_FeaturesList
+ *
+ * $LastChangedBy$
+ *
  */
 class FeaturesListSuite extends PHPUnit_Framework_TestSuite {
 	
