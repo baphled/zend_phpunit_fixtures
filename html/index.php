@@ -31,12 +31,17 @@ Zend_Layout::startMvc(array(
     'layoutPath' => '../application/default/layouts',
     'layout' => 'main'
 	));
-	
+
+$root = realpath(dirname(__FILE__) . '/../configs/'); // smelly, could be anything
+$configPath = realpath($root .'/settings.ini'); 
+
+$config = new Zend_Config_Ini($configPath, 'localmachine');
+
 // setup Zend_Db_Table
-$params = array('host'     => 'localhost',
-                'username' => 'root',
-                'password' => '',
-                'dbname'   => 'intrabetx');
+$params = array( 'host'     => $config->database->hostname,
+                 'username' => $config->database->username,
+                 'password' => $config->database->password,
+                 'dbname'   => $config->database->database);
 
 $db = Zend_Db::factory('PDO_MYSQL', $params);
 $db->setFetchMode(Zend_Db::FETCH_OBJ);

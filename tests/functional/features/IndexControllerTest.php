@@ -34,13 +34,13 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	}
 	
 	public function testDefaultFeaturesUrlShowsErrorMessageIfNoDataExists() {
-		$this->dispatch('/features');
+		$this->_featureFixtures->truncateTable();
+		$this->dispatch('/features');	
 		$this->assertQueryContentContains('p', 'No features have been added yet.');
 	}
 	
 	public function testDefaultFeaturesUrlShouldShowListOfFeaturesIfDataExists() {
 		$this->dispatch('/features');
-		var_dump($this->_response);
 	}
 	
 }

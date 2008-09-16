@@ -1,10 +1,23 @@
 <h1>Features</h1>
-
-<?php if (!empty($this->features)) : ?>
-<p>No features have been added yet.</p>
+<?php if (!count($this->features)) : ?>
+	<p>No features have been added yet.</p>
 <?php else : ?>
-<?php foreach($this->features as $feature) {
-	echo $feature; 
-}
-?>
+	<table>
+		<tr>
+			<td>&nbsp;</td>
+			<td>Title</td>
+			<td>Description</td>
+			<td>&nbsp;</td>
+			<td>&nbsp;</td>
+		</tr>
+	<?php foreach($this->features as $feature) : ?>
+		<tr>	
+			<td>Edit</td>	
+			<td><?php echo $feature->title; ?></td>
+			<td><?php echo $feature->description; ?></td>
+			<td>View Functions</td>
+			<td>Delete</td>
+		</tr>
+	<?php endforeach; ?>
+	</table>
 <?php endif; ?>
