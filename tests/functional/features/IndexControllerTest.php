@@ -1,6 +1,6 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../TestHelper.php';
+require_once dirname(__FILE__) . '/../../libs/TestHelper.php';
 
 class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
 	
@@ -11,7 +11,7 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->_featureFixtures = new FeatureFixture();
 		$this->_featureFixtures->setupTable();
 		$this->_featureFixtures->populate();
-		$this->bootstrap = dirname(__FILE__) . '/../../bootstrap.php';		
+		$this->bootstrap = dirname(__FILE__) . '/../../libs/bootstrap.php';		
 		parent::setup();
 	}
 	

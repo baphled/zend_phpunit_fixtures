@@ -1,13 +1,13 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../TestHelper.php';
+require_once dirname(__FILE__) . '/../../libs/TestHelper.php';
 
 class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
 	
 	public $bootstrap;
 	
 	public function setup() {
-		$this->bootstrap= dirname(__FILE__) . '/../../bootstrap.php';
+		$this->bootstrap= dirname(__FILE__) . '/../../libs/bootstrap.php';
 		parent::setup();
 	}
 	
