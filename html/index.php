@@ -24,7 +24,7 @@ $controller->setControllerDirectory(
 		'features' => '../application/features/controllers'
 	)
 );
-$controller->throwExceptions(false); // should be turned on in development time 
+$controller->throwExceptions(true); // should be turned on in development time 
 
 // bootstrap layouts
 Zend_Layout::startMvc(array(

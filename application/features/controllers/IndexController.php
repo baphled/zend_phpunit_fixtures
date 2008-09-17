@@ -20,6 +20,18 @@ class Features_IndexController extends Zend_Controller_Action {
 		$table = new Features();
 		$this->view->features = $table->fetchAll();
 	}
+	
+	public function editAction() {
+		$table = new Features();
+		$request = $this->getRequest();
+		$id = $request->getParam('id');
+		$this->view->features = $table->show($id);
+	}	
+	
+	public function deleteAction() {
+		
+	}
+
 }
 ?>
 

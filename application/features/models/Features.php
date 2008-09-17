@@ -23,7 +23,7 @@ class Features extends Zend_Db_Table_Abstract {
 	}
 	
 	function show($id){		
-		return $this->find($id);
+		return $this->find($id)->current();
 	}
 	
 	function _featureExists($feature){
