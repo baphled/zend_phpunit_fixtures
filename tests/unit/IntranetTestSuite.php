@@ -1,5 +1,5 @@
 <?php
-require_once '../TestHelper.php';
+require_once dirname(__FILE__) .'/../libs/TestHelper.php';
 require_once 'features_list/FeaturesListSuite.php';
 require_once 'phpunit_fixture/PHPUnitFixturesUnitSuite.php';
 

@@ -45,7 +45,7 @@
  * of the system.
  * 
  */
-require_once dirname(__FILE__) .'/../../../tests/TestHelper.php';
+require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();

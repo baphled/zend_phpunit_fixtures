@@ -287,13 +287,27 @@ class FixturesManager {
 		return false;
 	}
 
-    function truncateTable($name) {
+	/**
+	 * Truncates our fixtures table
+	 * @param $name    Our fixture table name
+	 * @return bool
+	 */
+    public function truncateTable($name) {
         if(!is_string($name)) {
             throw new ErrorException('Tablename must be a string.');
         }
-        if($this->tableExists($name)) {
-        	$sql = 'TRUNCATE TABLE ' .$name;
-        	$this->_db->getConnection()->exec($sql);
+        try {
+	        if($this->tableExists($name)) {
+	        	$sql = 'TRUNCATE TABLE ' .$name;
+	        	$this->_db->getConnection()->exec($sql);
+	        }
+	        else {
+	        	throw new ErrorException($name .' does not exist.');
+	        }
+        }
+        catch (ErrorException $e) {
+        	echo $e->getMessage();
+        	return false;
         }
         return true;
     }
@@ -327,6 +341,4 @@ class FixturesManager {
 		}
 		return false;
 	}
-	
-	
 }

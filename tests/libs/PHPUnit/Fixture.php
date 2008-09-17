@@ -415,6 +415,22 @@ class PHPUnit_Fixture {
 		return $this->_runFixtureMethod('setup');
 	}
 	
+    /**
+     * Another wrapper function, this time used for deleting
+     * our test tables.
+     *
+     * @access public
+     * @return bool
+     * 
+     */
+    public function dropTable() {
+        return $this->_runFixtureMethod('drop');
+    }
+    
+    public function truncateTable() {
+        return $this->_runFixtureMethod('truncate');
+    }
+    
 	/**
 	 * Sets PHPUnit_Fixture's field property.
 	 *
@@ -436,22 +452,6 @@ class PHPUnit_Fixture {
 		}
 		$this->_fields = $fields;
 		return true;
-	}
-
-	/**
-	 * Another wrapper function, this time used for deleting
-	 * our test tables.
-	 *
-	 * @access public
-	 * @return bool
-     * 
-	 */
-	public function dropTable() {
-		return $this->_runFixtureMethod('drop');
-	}
-	
-	public function truncateTable() {
-		return $this->_runFixtureMethod('truncate');
 	}
 	
 	/**

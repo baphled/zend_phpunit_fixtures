@@ -11,7 +11,7 @@
  * $LastChangedBy$
  * 
  */
-require_once dirname(__FILE__) .'/../../../tests/TestHelper.php';
+require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
 
 require_once 'FixtureTest.php';
 require_once 'FixturesManagerTest.php';

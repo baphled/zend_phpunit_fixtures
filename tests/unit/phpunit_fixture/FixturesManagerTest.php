@@ -76,7 +76,7 @@
  * @todo Now we have completed the basics PHPUnit_Fixture we can now use it for our test data.
  * 
  */
-require_once dirname(__FILE__) .'/../../../tests/TestHelper.php';
+require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
 require_once 'FixturesManager.php';
 
 require_once 'Zend/Loader.php';
@@ -795,6 +795,32 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $table = 'apples';
         $this->_setUpTestTableStructure($table);
     	$result = $this->_fixturesManager->tablesPresent();
+        $this->_fixturesManager->dropTable();
     	$this->assertTrue($result);
+    }
+    
+    /**
+     * We need to make sure that our table name is not an array.
+     *
+     */
+    function testTruncateTableThrowsExceptionIfParamIsNotAString() {
+    	$this->setExpectedException('ErrorException');
+    	$table = 'apples';
+        $this->_setUpTestTableStructure($table);
+        $this->_fixturesManager->truncateTable(array());
+        $this->_fixturesManager->dropTable();
+    }
+    
+    function testTruncateTableReturnsTrueOnSuccess() {
+        $table = 'snooker';
+        $this->_setUpTestTableStructure($table);
+    	$result = $this->_fixturesManager->truncateTable($table);
+    	$this->assertTrue($result);
+    	$this->_fixturesManager->dropTable();
+    }
+    
+    function testTruncateTableReturnsFalseIfFailsToTruncate() {
+    	$result = $this->_fixturesManager->truncateTable('tree');
+    	$this->assertFalse($result);
     }
 }
