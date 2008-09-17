@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../../libs/TestHelper.php';
 
-class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
+class ApiIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
 	
 	public $bootstrap;
 	
