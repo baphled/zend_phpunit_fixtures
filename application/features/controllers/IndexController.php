@@ -11,27 +11,23 @@ require_once 'Zend/Controller/Action.php';
 
 class Features_IndexController extends Zend_Controller_Action {
 	
-	
 	public function init() {
 		parent::init();
+		$this->_table = new Features();
 	}
 	
 	public function indexAction() {
-		$table = new Features();
-		$this->view->features = $table->fetchAll();
+		$this->view->features = $this->_table->fetchAll();
 	}
 	
 	public function editAction() {
-		$table = new Features();
 		$request = $this->getRequest();
 		$id = $request->getParam('id');
-		$this->view->features = $table->show($id);
+		$this->view->features = $this->_table->show($id);
 	}	
 	
 	public function deleteAction() {
 		
 	}
-
 }
-?>
 
