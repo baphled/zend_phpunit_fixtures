@@ -55,7 +55,7 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	}
 	
 	public function testUrlForEditFeatureLink() {
-		$this->markTestSkipped('Need to look into 2morra');
+		//$this->markTestSkipped('Need to look into 2morra');
 		$this->dispatch('/features/index/edit/id/1');
 		$this->assertQueryContentContains('h1', 'Edit Feature by ID');		
 	}
