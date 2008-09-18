@@ -1,8 +1,17 @@
 <h1>Features</h1>
 
+<?php if (!empty($this->messages)) : ?>
+	<ul>
+	<?php foreach ($this->messages as $message) : ?>
+		<li><?php echo  $message; ?></li>
+	<?php endforeach; ?>
+	</ul>
+<? endif; ?>
+
 <?php if (!count($this->features)) : ?>
 	<p>No features have been added yet.</p>
 <?php else : ?>
+
 	<table border="0" cellspacing="5" cellpadding="5">
 		<tr>
 			<td>&nbsp;</td>			

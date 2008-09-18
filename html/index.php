@@ -48,5 +48,7 @@ $db->setFetchMode(Zend_Db::FETCH_OBJ);
 Zend_Registry::set('db', $db);
 Zend_Db_Table::setDefaultAdapter($db);
 
+Zend_Session::start();
+
 // run!
 $controller->dispatch();

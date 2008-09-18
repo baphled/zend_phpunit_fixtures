@@ -54,8 +54,12 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->assertQuery('td a[href*="functions/index/id/1"]');
 	}
 	
+	public function testUrlForId() {
+		$this->dispatch('/features/index/edit');
+		$this->assertRedirectTo('/features');
+	}
+	
 	public function testUrlForEditFeatureLink() {
-		//$this->markTestSkipped('Need to look into 2morra');
 		$this->dispatch('/features/index/edit/id/1');
 		$this->assertQueryContentContains('h1', 'Edit Feature by ID');		
 	}

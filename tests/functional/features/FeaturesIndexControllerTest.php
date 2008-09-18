@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../../libs/TestHelper.php';
 
-class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
+class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
 	
 	public $bootstrap;
 	private $_featureFixtures;
@@ -51,7 +51,17 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public function testLinksToRelatedFunctionsAreCorrect() {
 		$this->dispatch('/features');
-		$this->assertQuery('td a[href*="id/1"]');
+		$this->assertQuery('td a[href*="functions/index/id/1"]');
+	}
+	
+	public function testUrlForId() {
+		$this->dispatch('/features/index/edit');
+		$this->assertRedirectTo('/features');
+	}
+	
+	public function testUrlForEditFeatureLink() {
+		$this->dispatch('/features/index/edit/id/1');
+		$this->assertQueryContentContains('h1', 'Edit Feature by ID');		
 	}
 	
 }
