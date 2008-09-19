@@ -51,10 +51,10 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public function testLinksToRelatedFunctionsAreCorrect() {
 		$this->dispatch('/features');
-		$this->assertQuery('td a[href*="functions/index/id/1"]');
+		$this->assertQuery('td a[href*="index/edit/id/1"]');
 	}
 	
-	public function testUrlForId() {
+	public function testUrlForFeatureEditIdPage() {
 		$this->dispatch('/features/index/edit');
 		$this->assertRedirectTo('/features');
 	}
@@ -64,7 +64,7 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->assertQueryContentContains('h2', 'Edit Feature by ID');		
 	}
 	
-	public function testIfRetrieveDataIsSuccessful() {
+	public function testToCheckIfRetrievingFeatureEditDataIsSuccessful() {
 		$this->dispatch('/features/index/edit/id/1');
 		$this->assertQueryContentContains('td', 'new feature');		
 	}

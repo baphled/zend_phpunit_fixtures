@@ -34,7 +34,7 @@ class FeaturesFunctionControllerTest extends Zend_Test_PHPUnit_ControllerTestCas
 	
 	public function testDefaultFunctionsUrlHasFunctionsAsItsHeading() {
 		$this->dispatch('/features/functions');
-		$this->assertQueryContentContains('h1', 'Functions');
+		$this->assertQueryContentContains('h2', 'Functions');
 	}
 
 	public function testDefaultFunctionsUrlShouldShowListOfFunctionsIfDataExists() {
@@ -49,8 +49,22 @@ class FeaturesFunctionControllerTest extends Zend_Test_PHPUnit_ControllerTestCas
 	
 	public function testLinksToRelatedFeaturesAreCorrect() {
 		$this->dispatch('/features/functions');
-		$this->assertQuery('td a[href*="/index/index/id/1"]');
+		$this->assertQuery('td a[href*="/functions/edit/id/1"]');
 	}
 	
+	public function testUrlForFunctionEditIdPage() {
+		$this->dispatch('/features/functions/edit');
+		$this->assertRedirectTo('/features/functions');		
+	}
+	
+	public function testUrlForEditFunctionLink() {
+		$this->dispatch('/features/functions/edit/id/1');
+		$this->assertQueryContentContains('h2', 'Edit Function by ID');				
+	}
+	
+	public function testToCheckIfRetrievingFunctionEditDataIsSuccessful() {
+		$this->dispatch('/features/functions/edit/id/1');
+		$this->assertQueryContentContains('td', 'To test a new description');				
+	}
 }
 

@@ -23,14 +23,41 @@ class Features_IndexController extends Zend_Controller_Action {
 	public function editAction() {
 		$request = $this->getRequest();
 		$id = $request->getParam('id');
+		
 		if(null === $id) {
 			$this->getHelper('redirector')->goto('index');
-		}		
+		}				
+		
+		if($request->isPost())	{
+			$filters = array(
+				'title' => 'StripTags',
+				'desc' => 'StripTags'
+			);
+			
+			$validation = array(
+				'title' => array(),
+				'desc' => array()
+			);
+			
+			$zfi = new Zend_Filter_Input($filters, $validation, $request->getPost());
+			
+			if($zfi->isValid()) {
+				$data = array();
+				$data['title'] 		 = $zfi->title;
+				$data['description'] = $zfi->desc;
+				
+				$this->view->features = $this->_table->updateFeature($id, $data);				
+				$this->getHelper('redirector')->goto('index');
+			}
+		}
 		$this->view->features = $this->_table->show($id);
 	}	
 	
 	public function deleteAction() {
-		
+		$request = $this->getRequest();
+		$id = $request->getParam('id');
+		$this->view->features = $this->_table->deleteFeature($id);		
+		$this->getHelper('redirector')->goto('index');
 	}
 }
 
