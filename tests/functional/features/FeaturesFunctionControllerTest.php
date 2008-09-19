@@ -1,8 +1,8 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../TestHelper.php';
+require_once dirname(__FILE__) . '/../../libs/TestHelper.php';
 
-class FunctionControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
+class FeaturesFunctionControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public $bootstrap;
 	private $_functionFixtures;
@@ -11,7 +11,7 @@ class FunctionControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->_functionFixtures = new FunctionFixture();
 		$this->_functionFixtures->setupTable();
 		$this->_functionFixtures->populate();
-		$this->bootstrap = dirname(__FILE__) . '/../../bootstrap.php';
+		$this->bootstrap = dirname(__FILE__) . '/../../libs/bootstrap.php';
 		parent::setUp ();
 	}
 	

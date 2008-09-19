@@ -2,7 +2,7 @@
 
 require_once dirname(__FILE__) . '/../../libs/TestHelper.php';
 
-class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
+class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase { 
 	
 	public $bootstrap;
 	private $_featureFixtures;
@@ -30,7 +30,7 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public function testDefaultFeaturesUrlHasFeaturesAsItsHeading() {
 		$this->dispatch('/features');
-		$this->assertQueryContentContains('h1', 'Features');
+		$this->assertQueryContentContains('h2', 'Features');
 	}
 	
 	public function testDefaultFeaturesUrlShowsErrorMessageIfNoDataExists() {
@@ -61,7 +61,12 @@ class IndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public function testUrlForEditFeatureLink() {
 		$this->dispatch('/features/index/edit/id/1');
-		$this->assertQueryContentContains('h1', 'Edit Feature by ID');		
+		$this->assertQueryContentContains('h2', 'Edit Feature by ID');		
+	}
+	
+	public function testIfRetrieveDataIsSuccessful() {
+		$this->dispatch('/features/index/edit/id/1');
+		$this->assertQueryContentContains('td', 'new feature');		
 	}
 	
 }
