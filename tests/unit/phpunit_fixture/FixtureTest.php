@@ -805,4 +805,14 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
         $this->_anotherFix = new AnotherFixture();
         $this->_anotherFix->fixtureMethodCheck();
     }
+    
+    /**
+     * We need to make sure that our fixtures class can actually
+     * truncate our table.
+     */
+    function testTruncateTableReturnsTrueOnSuccess() {
+    	$this->_testFix->setupTable();
+    	$result = $this->_testFix->truncateTable();
+    	$this->assertTrue($result);
+    }
 }
