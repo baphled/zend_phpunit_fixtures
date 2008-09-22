@@ -1,7 +1,7 @@
 <?php
 /**
  *
- * DBTestFixturesTestCase
+ * FixturesManagerTestCase
  * 
  * Used to work with the fixtures we'll need to run
  * our test cases.
@@ -72,9 +72,7 @@
  * Date: 19/08/2008
  * Started session, will implement basic functionality needed
  * to create the db and import the needed fixtures.
- * 
- * @todo Now we have completed the basics PHPUnit_Fixture we can now use it for our test data.
- * 
+ *  
  */
 require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
 require_once 'FixturesManager.php';
@@ -111,7 +109,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		 *       run and what to return.
 		 * 
 		 */
-		$this->_stub = $this->getMock('FixturesManager',array('setupTable'));
+		$this->_stub = $this->getMock('FixturesManager',array('setupTable'));                                                                                ));
         $this->_stub->expects($this->any())
                     ->method('setupTable')
                     ->will($this->returnValue(TRUE));
@@ -128,6 +126,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     public function tearDown() {
         $this->_fixturesManager = null;
         $this->_fixMan = null;
+        $this->_testFixture = null;
+        $this->_invalidFixture = null;
         parent::tearDown ();
     }
 	
@@ -823,4 +823,10 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$result = $this->_fixturesManager->truncateTable('tree');
     	$this->assertFalse($result);
     }
+    
+    /**
+     * We want to make sure that if we have a issue with a DB query
+     * that we can handle the exception as expected.
+     * 
+     */
 }
