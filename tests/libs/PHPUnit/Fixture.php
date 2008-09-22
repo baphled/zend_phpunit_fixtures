@@ -256,18 +256,19 @@ class PHPUnit_Fixture {
      * 
      */
     protected function _fixtureMethodCheck($call) {
-        if('drop' === $call) {
-            $result = $this->_fixMan->dropTable();
-        }
-        elseif('setup' === $call) {
-            $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
-        }
-        elseif('truncate' === $call) {
-        	 $result = $this->_fixMan->truncateTable($this->_table);
-        }
-        else {
-            throw new ErrorException('Invalid fixture method call.');
-        }
+    	switch($call) {
+    		case 'drop':
+    		    $result = $this->_fixMan->dropTable();
+    		    break;
+    		case 'setup':
+    		    $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
+    		    break;
+    		case 'truncate':
+    		    $result = $this->_fixMan->truncateTable($this->_table);
+    		    break;
+    		default:
+    		    throw new ErrorException('Invalid fixture method call.');    		  
+    	}
         return $result;
     }
     
@@ -427,6 +428,13 @@ class PHPUnit_Fixture {
         return $this->_runFixtureMethod('drop');
     }
     
+    /**
+     * Wrapper function for truncating our test tables.
+     * 
+     * @access public
+     * @return bool
+     * 
+     */
     public function truncateTable() {
         return $this->_runFixtureMethod('truncate');
     }
