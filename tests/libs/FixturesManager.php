@@ -80,6 +80,11 @@
  *       is mingled in here, it should really be refactored.
  * @todo Refactor class so that '_' prefixed functions are actually
  *       private.
+ * @todo It is now apparent that there are times we need to create
+ *       a development version of our DB, this is labourious, so we
+ *       need to create a method that can deal with this. Need to note
+ *       that this functionality is not directly related to this class,
+ *       so we need to look at remodelling.
  * 
  */
 
@@ -335,6 +340,13 @@ class FixturesManager {
 		return true;
 	}
 	
+	/**
+	 * Checks to see if any tables are present in our test db.
+	 *
+	 * @access public
+	 * @return bool
+	 * 
+	 */
 	function tablesPresent() {
 		if($this->_db->listTables()) {
 			return true;
