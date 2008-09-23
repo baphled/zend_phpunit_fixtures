@@ -106,8 +106,8 @@ class FixturesManager {
      * @access public
      * @param String $env
      */
-	public function __construct($env='development') {
-		TestConfigSettings::setUpConfig($env);
+	public function __construct() {
+		TestConfigSettings::setUpConfig();
 		TestConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 	}
@@ -291,6 +291,20 @@ class FixturesManager {
 		}
 		return false;
 	}
+    
+    /**
+     * Checks to see if any tables are present in our test db.
+     *
+     * @access public
+     * @return bool
+     * 
+     */
+    function tablesPresent() {
+        if($this->_db->listTables()) {
+            return true;
+        }
+        return false;
+    }
 
 	/**
 	 * Truncates our fixtures table
@@ -338,19 +352,5 @@ class FixturesManager {
 			echo $e->getMessage();
 		}
 		return true;
-	}
-	
-	/**
-	 * Checks to see if any tables are present in our test db.
-	 *
-	 * @access public
-	 * @return bool
-	 * 
-	 */
-	function tablesPresent() {
-		if($this->_db->listTables()) {
-			return true;
-		}
-		return false;
 	}
 }
