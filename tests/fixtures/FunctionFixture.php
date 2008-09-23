@@ -12,7 +12,7 @@
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
-class FunctionFixture extends PHPUnit_Fixture {
+class FunctionFixture extends PHPUnit_Fixture_DB {
 	public $_table = 'functions';
 	
 	public $_fields = array(

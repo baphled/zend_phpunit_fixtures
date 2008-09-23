@@ -97,7 +97,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	private $_stub;
 	
 	public function __construct() {
-		$this->setName ('FixturesManagerTest Case');
+		$this->setName ('FixturesManager Testcase');
 		
 		/*
 		 * For the moment we will only leave this here
@@ -109,7 +109,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		 *       run and what to return.
 		 * 
 		 */
-		$this->_stub = $this->getMock('FixturesManager',array('setupTable'));                                                                                ));
+		$this->_stub = $this->getMock('FixturesManager',array('setupTable'));
         $this->_stub->expects($this->any())
                     ->method('setupTable')
                     ->will($this->returnValue(TRUE));
@@ -124,6 +124,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	}
 	
     public function tearDown() {
+    	if($this->_fixturesManager->tablesPresent()) {
+    		$this->_fixturesManager->dropTable();
+    	}
         $this->_fixturesManager = null;
         $this->_fixMan = null;
         $this->_testFixture = null;
@@ -139,7 +142,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * out of our test units as its taking up too much space, not to
      * mention more than likely go at some stage.
      *
+     * @access private
      * @param String $table
+     * 
      */
     private function _setUpTestTableStructure($table) {
         $fixture = $this->_testFixture->getTableFields();
@@ -564,6 +569,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * fixture table exists. If it doesn't throw error.
 	 * 
 	 * @todo Realistically this functionality would be down to come kind of DB interface.
+	 * 
 	 */
 	function testDropFixtureTableFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
 		$this->setExpectedException('ErrorException');
@@ -699,7 +705,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $testData = $this->_testFixture->getTestData();
         $result = $this->_fixturesManager->insertTestData($testData,$table);
         $this->assertTrue($result);
-        $this->_fixturesManager->dropTable();
     }
     
     /**
@@ -714,7 +719,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $testData = $this->_testFixture->getTestData();
         $result = $this->_fixturesManager->insertTestData($testData,$table);
         $this->assertTrue($result);
-        $this->_fixturesManager->dropTable();
     }
     
     /**
@@ -726,7 +730,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$this->setExpectedException('PDOException');
         $testData = $this->_testFixture->getTestData();
         $this->_fixturesManager->insertTestData($testData,'plum');
-    	$this->_fixturesManager->dropFixtureTable();
     }
     
     /**
@@ -773,13 +776,12 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$table = 'apples';
         $this->_setUpTestTableStructure($table);
     	$result = $this->_fixturesManager->tableExists($table);
-    	$this->_fixturesManager->dropTable();
     	$this->assertTrue($result);
     }
     
     /**
      * We need to a method that allows us to determine whether
-     * we have actually created a fixture table, if so, we return
+     * we have actually created any fixture tables, if so, we return
      * true, otherwise false.
      */
     function testTablePresentReturnsFalseIfNoTablesExists() {
@@ -795,7 +797,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $table = 'apples';
         $this->_setUpTestTableStructure($table);
     	$result = $this->_fixturesManager->tablesPresent();
-        $this->_fixturesManager->dropTable();
     	$this->assertTrue($result);
     }
     
@@ -808,7 +809,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$table = 'apples';
         $this->_setUpTestTableStructure($table);
         $this->_fixturesManager->truncateTable(array());
-        $this->_fixturesManager->dropTable();
     }
     
     function testTruncateTableReturnsTrueOnSuccess() {
@@ -816,7 +816,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
         $this->_setUpTestTableStructure($table);
     	$result = $this->_fixturesManager->truncateTable($table);
     	$this->assertTrue($result);
-    	$this->_fixturesManager->dropTable();
     }
     
     function testTruncateTableReturnsFalseIfFailsToTruncate() {

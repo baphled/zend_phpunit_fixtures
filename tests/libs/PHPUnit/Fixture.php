@@ -55,15 +55,6 @@
  */
 class PHPUnit_Fixture {
 	
-	/**
-	 * Stores the fixtures table name
-	 *
-	 * @access protected
-	 * @var String
-	 * 
-	 */
-	protected $_table = null;
-	
     /**
      * The fixtures table structure
      *
@@ -83,16 +74,6 @@ class PHPUnit_Fixture {
 	protected $_testData = null;
 	
 	/**
-	 * Our fixture manager, used to handle 
-	 * the meat of fixture interactions.
-	 *
-	 * @access private
-	 * @var FixtureManager
-	 * 
-	 */
-	private $_fixMan;
-	
-	/**
 	 * Stores our test data results
 	 *
 	 * @access private
@@ -109,15 +90,7 @@ class PHPUnit_Fixture {
 	 *
 	 */
 	public function __construct() {
-		$this->_fixMan = new FixturesManager();
 		date_default_timezone_set('Europe/London');
-	}
-	
-	public function __destruct() {
-		if($this->_fixMan->tablesPresent()) {
-		      $this->dropTable();
-		}
-		$this->_fixMan = null;
 	}
 
 	/**
@@ -188,39 +161,13 @@ class PHPUnit_Fixture {
         }
         return false;
     }
-
-    /**
-     * Is used to run build & drop, seeing as both methods
-     * have practically the same functionality, it seems
-     * silly not to refactor them into this function.
-     *
-     * @access private
-     * @param string $called  The method that was called.
-     * @return bool
-     * 
-     * @todo Write test to ascertain whether the string
-     *       build/drop & that it is actually a string.
-     * 
-     */
-    private function _runFixtureMethod($called) {
-        try {
-            $result = $this->_fixtureMethodCheck($called);
-            if(true === $result) {
-                return true;
-            }
-        }
-        catch (ErrorException $e) {
-            echo $e->getMessage();
-        }
-        return false;
-    }
-
+    
     /**
      * Generates our fixture test data, we need this so we can
      * loop through our fields array, to ascertain the data type
      * of each piece of test data.
      *
-     * @access public
+     * @access private
      * @param int $numOfTestData
      * @return Array
      * 
@@ -242,34 +189,6 @@ class PHPUnit_Fixture {
             array_push($results,$this->_result);
         }
         return $results;
-    }
-	
-    /**
-     * Does the checking for our method call, at the moment
-     * we can only use setup & drop calls.
-     *
-     * @access private
-     * @param String $call      The called method.
-     * @return bool
-     * 
-     * @todo could be done better but this seems fine for the moment.
-     * 
-     */
-    protected function _fixtureMethodCheck($call) {
-    	switch($call) {
-    		case 'drop':
-    		    $result = $this->_fixMan->dropTable();
-    		    break;
-    		case 'setup':
-    		    $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
-    		    break;
-    		case 'truncate':
-    		    $result = $this->_fixMan->truncateTable($this->_table);
-    		    break;
-    		default:
-    		    throw new ErrorException('Invalid fixture method call.');    		  
-    	}
-        return $result;
     }
     
 	/**
@@ -302,48 +221,6 @@ class PHPUnit_Fixture {
 	}
 	
 	/**
-	 * Sets our test data to our fixture.
-	 *
-	 * @access public
-	 * @param Array $testData
-	 * @return bool
-	 * 
-	 */
-	public function addTestData($testData) {
-		if(!is_array($testData)) {
-			throw new ErrorException('Test data must be in an array format.');
-		} 
-		foreach ($testData as $data) {
-			if(is_array($data)) {
-				$this->_verifyTestData($data);
-			}
-			else {
-				$this->_testData = $testData;
-				break;
-			}
-		}
-		return true;
-	}
-	
-	/**
-	 * Returns the fixtures table name.
-	 *
-	 * @return String
-	 * 
-	 */
-	public function getTableName() {
-		return $this->_table;
-	}
-	
-	public function setTableName($tableName) {
-		if(!is_string($tableName)) {
-			throw new ErrorException('Table name must be a string');
-		}
-		$this->_table = $tableName;
-		return true;
-	}
-	
-	/**
 	 * Gets our test data for use, if parameters are not passed
 	 * we will retrieve all test data stored in this object, otherwise
 	 * we will return the specific test data in question.
@@ -364,6 +241,30 @@ class PHPUnit_Fixture {
 		return $this->_retrieveTestData($key,$value);
 		
 	}
+    
+    /**
+     * Sets our test data to our fixture.
+     *
+     * @access public
+     * @param Array $testData
+     * @return bool
+     * 
+     */
+    public function addTestData($testData) {
+        if(!is_array($testData)) {
+            throw new ErrorException('Test data must be in an array format.');
+        } 
+        foreach ($testData as $data) {
+            if(is_array($data)) {
+                $this->_verifyTestData($data);
+            }
+            else {
+                $this->_testData = $testData;
+                break;
+            }
+        }
+        return true;
+    }
 	
 	/**
 	 * Gets the fixture fields data in an array format.
@@ -380,7 +281,46 @@ class PHPUnit_Fixture {
 			return $this->_fields;
 		}
 	}
+    
+    /**
+     * Gets a single data type field from our fixture.
+     *
+     * @param String $field
+     * @return Array
+     */
+    function getSingleDataTypeField($field) {
+        if(!is_string($field)) {
+            throw new ErrorException('Field name must be a string.');
+        }
+        if(!array_key_exists($field,$this->_fields)) {
+            throw new ErrorException('Field id does not exist.');
+        }
+        return array($field => $this->_fields[$field]);
+    }
 	
+	/**
+     * Sets PHPUnit_Fixture's field property.
+     *
+     * @param Array $fields
+     * @return bool
+     */
+    public function setFields(array $fields) {
+        if(0 === count($fields)) {
+            throw new ErrorException('Illegal field format.');
+        }
+        foreach ($fields as $name=>$data) {
+                if(!is_string($name)) {
+                    throw new ErrorException('Field name must be a string.');
+                }
+                if(!is_array($data)) {
+                    throw new ErrorException('Data must be in an associative array.');
+                }
+                DataTypeChecker::validateDataTypeFields($data);
+        }
+        $this->_fields = $fields;
+        return true;
+    }
+    
 	/**
 	 * Basic method, allowsing us to determine
 	 * the number of test data we have within
@@ -397,111 +337,6 @@ class PHPUnit_Fixture {
 		}
 		return $result;
 	}
-	
-	/*
-	 * Wrapper functions
-	 */
-	
-	/**
-	 * Wrapper function used to build our fixture tables.
-	 *
-	 * @access public
-	 * @return bool
-	 * 
-	 */
-	public function setupTable() {		
-		if(0 === count($this->_fields)) {
-			throw new ErrorException('No table fields present.');
-		}
-		return $this->_runFixtureMethod('setup');
-	}
-	
-    /**
-     * Another wrapper function, this time used for deleting
-     * our test tables.
-     *
-     * @access public
-     * @return bool
-     * 
-     */
-    public function dropTable() {
-        return $this->_runFixtureMethod('drop');
-    }
-    
-    /**
-     * Wrapper function for truncating our test tables.
-     * 
-     * @access public
-     * @return bool
-     * 
-     */
-    public function truncateTable() {
-        return $this->_runFixtureMethod('truncate');
-    }
-    
-	/**
-	 * Sets PHPUnit_Fixture's field property.
-	 *
-	 * @param Array $fields
-	 * @return bool
-	 */
-	public function setFields(array $fields) {
-		if(0 === count($fields)) {
-			throw new ErrorException('Illegal field format.');
-		}
-		foreach ($fields as $name=>$data) {
-				if(!is_string($name)) {
-					throw new ErrorException('Field name must be a string.');
-				}
-				if(!is_array($data)) {
-					throw new ErrorException('Data must be in an associative array.');
-				}
-				DataTypeChecker::validateDataTypeFields($data);
-		}
-		$this->_fields = $fields;
-		return true;
-	}
-	
-	/**
-	 * Automatically generates our test data.
-	 * 
-	 * Once it generates our data, it then passes it
-	 * to _addTestData to append to the _testData
-	 * property.
-	 *
-	 * @access private
-	 * @param int $numOfTestData
-	 * @return bool
-	 * 
-	 */
-	public function autoGenerateTestData($numOfTestData=10) {
-		try {
-			$result = $this->_generateTestData($numOfTestData);
-			if(0 === count($result)) {
-				throw new ErrorException('Unable to generate test data.');
-			}
-			$this->addTestData($result);
-			return true;
-		}
-		catch(Exception $e) {
-			echo $e->getMessage();
-		}
-		return false;
-	}
-	
-    /**
-     * Populates our fixtures test table with our test data.
-     *
-     * @access public
-     * @return bool
-     * 
-     */
-    public function populate() {
-        if(!$this->_fixMan->tableExists($this->_table)) {
-            throw new ErrorException('Fixtures table is not present.');
-        }
-        return $this->_fixMan->insertTestData($this->_testData,$this->_table);
-    }
     
     /**
      * Determines whether our test data already exists
@@ -523,31 +358,42 @@ class PHPUnit_Fixture {
     }
     
     /**
-     * Gets a single data type field from our fixture.
-     *
-     * @param String $field
-     * @return Array
-     */
-    function getSingleDataTypeField($field) {
-    	if(!is_string($field)) {
-    		throw new ErrorException('Field name must be a string.');
-    	}
-    	if(!array_key_exists($field,$this->_fields)) {
-    		throw new ErrorException('Field id does not exist.');
-    	}
-    	return array($field => $this->_fields[$field]);
-    }
-    
-    /**
      * Returns our results with a id auto incremented.
      *
      * @return Array
      */
     function retrieveTestDataResults() {
-    	$testData = $this->getTestData();
-    	for($i=0;$i<$this->testDataCount();$i++) {
-    		$testData[$i]['id'] = $i+1;
-    	}
-    	return $testData;
+        $testData = $this->getTestData();
+        for($i=0;$i<$this->testDataCount();$i++) {
+            $testData[$i]['id'] = $i+1;
+        }
+        return $testData;
+    }
+    
+    /**
+     * Automatically generates our test data.
+     * 
+     * Once it generates our data, it then passes it
+     * to _addTestData to append to the _testData
+     * property.
+     *
+     * @access private
+     * @param int $numOfTestData
+     * @return bool
+     * 
+     */
+    public function autoGenerateTestData($numOfTestData=10) {
+        try {
+            $result = $this->_generateTestData($numOfTestData);
+            if(0 === count($result)) {
+                throw new ErrorException('Unable to generate test data.');
+            }
+            $this->addTestData($result);
+            return true;
+        }
+        catch(Exception $e) {
+            echo $e->getMessage();
+        }
+        return false;
     }
 }

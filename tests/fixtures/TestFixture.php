@@ -18,7 +18,7 @@
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
-class TestFixture extends PHPUnit_Fixture {
+class TestFixture extends PHPUnit_Fixture_DB {
 	public $_table = 'apples';
 	
 	public $_fields = array(

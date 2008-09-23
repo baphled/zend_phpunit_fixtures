@@ -9,7 +9,7 @@
  * @package
  *
  */
-class InvalidFieldTypeFixture extends PHPUnit_Fixture {
+class InvalidFieldTypeFixture extends PHPUnit_Fixture_DB {
 	public $_table = 'snooker';
 	
 	public $_fields  = array(

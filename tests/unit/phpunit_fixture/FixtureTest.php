@@ -55,11 +55,6 @@ require_once 'PHPUnit/Fixture.php';
 
 class BasicFixture extends PHPUnit_Fixture {}
 
-class AnotherFixture extends PHPUnit_Fixture {
-	public function fixtureMethodCheck() {
-		$this->_fixtureMethodCheck('blah');
-	}
-}
 class FixtureTest extends PHPUnit_Framework_TestCase {
 	
 	private $_fixtures;
@@ -67,7 +62,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	private $_testFix;
 	
 	public function __construct() {
-		$this->setName ( 'FixtureTest Case' );
+		$this->setName ( 'PHPUnit_Fixture Testcase' );
 	}
 	
 	public function setUp() {
@@ -104,18 +99,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testPHPUnitFixtureHasFieldsProperty() {
 		$this->assertClassHasAttribute('_fields','PHPUnit_Fixture');
 	}
-	
-	/**
-	 * Lastly we need a table property to store the table name
-	 * 
-	 */
-	function testPHPUnitFixtureHasTableProperty() {
-		$this->assertClassHasAttribute('_table','PHPUnit_Fixture');
-	}
-	
-    function testPHPUnitFixtureHasFixtureManagerProperty() {
-        $this->assertClassHasAttribute('_fixMan','PHPUnit_Fixture');
-    }
 	
    /**
      * If we have no fixtures we need to know. We'll create a method
@@ -306,136 +289,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * Now we can add test data to our fixtures, we want to be able
-	 * to create a fixture table, this will mainly be done, by FixturesManager
-	 * but we will create an accessor class here also for flexiblity.
-	 * 
-	 */
-	
-	/**
-	 * If we the default return value must be false, we will only return
-	 * true if we have successfully built our fixture table.
-	 *
-	 * @todo Need to refactor and replace dropTable with Fixture's
-	 *       implementation, once it is done.
-	 * 
-	 */
-	function testSetupFixtureTableReturnsTrueIfSetupFixtureTableSucceeds() {
-		$result = $this->_testFix->setupTable();
-		$this->assertTrue($result);
-		$this->_testFix->dropTable();
-	}
-	
-	/**
-	 * If our fixture does not have a table name set we need to handle it.
-	 * 
-	 */
-	function testSetupFixtureTableThrowsExceptionIfTableNameIsNotSet() {
-		$this->_basicFix->addTestData($this->_testFix->getTestData('id',1));
-		$this->setExpectedException('ErrorException');
-		$this->_basicFix->setupTable();
-	}
-	
-	/**
-	 * If we are not able to build our fixtures table we need to return
-	 * false.
-	 * 
-	 */
-	function testSetupFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
-		$this->_basicFix->setFields($this->_testFix->_fields);
-		$result = $this->_basicFix->setupTable();
-		$this->assertFalse($result);
-	}
-	/**
-	 * What happens if our fixture doesnt have a table name or testdata set?
-	 * We know that FixtureManager handles this pretty well so we will use
-	 * its internal voodoo to deal with exceptions and simply catch them.
-	 */
-	
-	/**
-	 * So we want to make sure that an exception is thrown if our fixture
-	 * doesnt have any test fields.
-	 *
-	 */
-	function testSetupFixtureTableThrowsExceptionIfTestFieldsIsNotSet() {
-		$this->_basicFix->setTableName('blah');
-		$this->_basicFix->addTestData($this->_testFix->getTestData('id',1));
-		$this->setExpectedException('ErrorException');
-		$this->_basicFix->setupTable();
-	}
-	
-	/**
-	 * Now we need to be able to actually build our fixture table, this
-	 * will be done by actually calling FixturesManagers method.
-	 * 
-	 */
-	function testSetupFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
-		$result = $this->_testFix->setupTable();
-		$this->assertTrue($result);
-	}
-	
-	/**
-	 * each test we need to create a drop method to remove all our fixture data.
-	 * This'll be just a simple wrapper method that will use FixtureManager to remove
-	 * the table.
-	 * 
-	 */
-	function testDropFixtureTableReturnsFalseOnFailure() {
-		$result = $this->_testFix->dropTable();
-		$this->assertFalse($result);
-	}
-	
-	/**
-	 * Now we want to check that our drop method returns true
-	 * if we actually drop a table.
-	 * Very naughty but we'll use testFix to actually build
-	 * our table & then drop it.
-	 * 
-	 */
-	function testDropFixtureTableReturnsTrueOnSuccess() {
-		$this->_testFix->setupTable();
-		$result = $this->_testFix->dropTable();
-        $this->assertTrue($result);
-	}
-	
-	/**
-	 * Ok, now we have implemented dropTable, we will use
-	 * it to keep our tests clean, ideally this will be used within
-	 * the tearDown() method.
-	 * 
-	 */
-	
-	/**
-	 * First off if we haven't built the fixture table, we need to throw
-	 * an error.
-	 * 
-	 */
-	function testpopulateThrowsExceptionIfTableNameIsEmpty() {
-		$this->setExpectedException('ErrorException');
-		$this->_basicFix->populate();
-	}
-	
-	/**
-	 * If we dont have a fixtures table, we need to throw an
-	 * exception.
-	 */
-	function testpopulateThrowsExceptionIfTableIsNotBuilt() {
-		$this->setExpectedException('ErrorException');
-		$this->_testFix->populate();
-	}
-	
-	/**
-	 * Now if our fixture table is present we need can insert out
-	 * test data.
-	 * 
-	 */
-	function testpopulateReturnsTrueIfTestDataIsSuccessfullyInserted() {
-		$this->_testFix->setupTable();
-		$result = $this->_testFix->populate();
-		$this->assertTrue($result);
-	}
-
-	/**
 	 * We'll need this at some point to help us generate our 
 	 * actul test data & add it to the fixtures test data.
 	 *
@@ -590,47 +443,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$fieldData = array('id'=>$this->_testFix->_fields['id']);
 		$result = $this->_testFix->getSingleDataTypeField('id');
 		$this->assertSame($fieldData,$result);
-	}
-	
-	/**
-	 * We really need some getters for our fixtures properties,
-	 * so far they have not been privatise but it would be a good
-	 * idea to do so now.
-	 * 
-	 */
-	function testGetTableNameReturnsString() {
-		$result = $this->_testFix->getTableName();
-		$this->assertType('string',$result);
-	}
-	
-	/**
-	 * Now we need to be able to set our fixture table.
-	 * Our setting will only allow a string.
-	 * 
-	 */
-	function testSetTableNameThrowsExceptionIfParamIsNotAString() {
-		$this->setExpectedException('ErrorException');
-		$this->_basicFix->setTableName(array());
-	}
-	
-	/**
-	 * Now we need to be able to actual set the name.
-	 * 
-	 */
-	function testSetTableNameReturnsTrueOnSucces() {
-		$result = $this->_basicFix->setTableName('coffee');
-		$this->assertTrue($result);
-	}
-	
-	/**
-	 * Now we want to make sure that the name has actually
-	 * been set.
-	 * 
-	 */
-	function testSetTableNameActuallySetsNameOnSucces() {
-		$table = 'tea';
-		$this->_basicFix->setTableName($table);
-		$this->assertEquals($this->_basicFix->getTableName(),$table);
 	}
 	
 	/**
@@ -792,27 +604,4 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 			$this->assertEquals($i+1,$data[$i]['id']);
 		}
 	}
-
-    /**
-     * We want to be able to check that fixtureMethodCheck throws
-     * an exception, even though we have implemented the funcionality
-     * we should still be able to test this by subclassing fixture
-     * and _fixtureMethodCheck, passing it an invalid call parameter.
-     *
-     */
-    function testFixureMethodCheckThrowsExceptionIfInvalidCall() {
-        $this->setExpectedException('ErrorException');
-        $this->_anotherFix = new AnotherFixture();
-        $this->_anotherFix->fixtureMethodCheck();
-    }
-    
-    /**
-     * We need to make sure that our fixtures class can actually
-     * truncate our table.
-     */
-    function testTruncateTableReturnsTrueOnSuccess() {
-    	$this->_testFix->setupTable();
-    	$result = $this->_testFix->truncateTable();
-    	$this->assertTrue($result);
-    }
 }

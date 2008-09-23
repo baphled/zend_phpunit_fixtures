@@ -13,8 +13,9 @@
  */
 require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
 
-require_once 'FixtureTest.php';
 require_once 'FixturesManagerTest.php';
+require_once 'FixtureTest.php';
+require_once 'FixtureDBTest.php';
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
@@ -32,6 +33,7 @@ class PHPUnitFixturesUnitSuite extends PHPUnit_Framework_TestSuite {
 		
 		$this->addTestSuite ( 'FixturesManagerTest' );
 		$this->addTestSuite ( 'FixtureTest' );
+		$this->addTestSuite ( 'FixtureDBTest' );
 	}
 	
 	/**
