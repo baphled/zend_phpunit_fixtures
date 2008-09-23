@@ -2,6 +2,10 @@
 /**
  * DevelopmentHandler
  * 
+ * Used to generate our test data DB for development.
+ * Seeing as this process can be combersome, we have
+ * created this class to deal with the basic creation
+ * of our DB.
  * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
@@ -26,7 +30,7 @@ class DevelopmentHandler {
 	 * environment.
 	 * 
 	 * @access public
-	 * @param $env String  our testing environment
+	 * @param $env String  our testing environment.
 	 * 
 	 */
 	public function __construct($env='development') {
@@ -48,12 +52,16 @@ class DevelopmentHandler {
 		if(null === $fixture->getTableName()) {
 			throw new ErrorException('Fixture does not possess a table name.');
 		}
-		if(0 === count($fixture->getTableFields())) {
-			throw new ErrorException('Fixture must have field data.');
-		}
 		return $this->_fixMan->setupTable($fixture->getTableFields(),$fixture->getTableName());
 	}
 	
+	/**
+	 * Drops our development DB
+	 * 
+	 * @access public
+	 * @return bool
+	 * 
+	 */
 	public function dropDB() {
 	   if($this->_fixMan->tablesPresent()) {
               return $this->_fixMan->dropTable();
