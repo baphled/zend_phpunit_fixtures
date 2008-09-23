@@ -106,8 +106,13 @@ class FixturesManager {
      * @access public
      * @param String $env
      */
-	public function __construct() {
-		TestConfigSettings::setUpConfig();
+	public function __construct($env=null) {
+		if(null === $env) {
+		  TestConfigSettings::setUpConfig();
+		}
+		else {
+			TestConfigSettings::setUpConfigEnv($env);
+		}
 		TestConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 	}
