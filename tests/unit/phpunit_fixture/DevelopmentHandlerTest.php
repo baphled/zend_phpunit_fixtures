@@ -2,6 +2,10 @@
 /**
  * DevelopmentHandler
  * 
+ * Testcase for building our Development Handler, which we'll use to setup
+ * our development DB tables. As we know what our DB structures will be for
+ * PHPUnit_Fixture_DB, it seems to make sense to create functionalit that will
+ * also create and populate our development DB.
  * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
@@ -58,7 +62,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testBuildDBTakesFixtureAsClass() {
 		$this->setExpectedException('ErrorException');
-		$this->_devHandler->buildDB(array());
+		$this->_devHandler->build(array());
 	}
 	
 	/**
@@ -74,7 +78,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testBuildDBThrowsExceptionIfFixtureHasNoTableName() {
 		$this->setExpectedException('ErrorException');
-		$this->_devHandler->buildDB($this->_blankFix);
+		$this->_devHandler->build($this->_blankFix);
 	}
 	
 	/**
@@ -85,7 +89,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	function testBuildDBThrowsExceptionIfFixtureHasNoFieldsData() {
 		$this->_blankFix->setTableName('chicken');
 		$this->setExpectedException('ErrorException');
-		$this->_devHandler->buildDB($this->_blankFix);
+		$this->_devHandler->build($this->_blankFix);
 	}
 	
 	/**
@@ -94,9 +98,9 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testBuildDBReturnsTrueOnSuccess() {
-		$result = $this->_devHandler->buildDB($this->_testFix);
+		$result = $this->_devHandler->build($this->_testFix);
 		$this->assertTrue($result);
-		$this->_devHandler->dropDB();
+		$this->_devHandler->drop();
 	}
 	
 	/**
@@ -104,8 +108,36 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 * across this when testing but will implement anyway for cleanliness.
 	 */
 	function testBuildDBReturnsFalseIfNoTables() {
-		$result = $this->_devHandler->dropDB();
+		$result = $this->_devHandler->drop();
 		$this->assertFalse($result);
 	}
+	
+	/**
+	 * We need to make sure that we can actually populate our development table
+	 * 
+	 */
+	function testPopulateThrowsExceptionIfHasNoTestData() {
+		$this->_blankFix->setTableName('another');
+		$this->setExpectedException('ErrorException');
+		$result = $this->_devHandler->populate($this->_blankFix);
+		$this->assertFalse($result);
+	}
+	
+	function testPopulateThrowsExceptionIfFixtureNotASubclassOfPHPUnitFixtureDB() {
+		$this->setExpectedException('ErrorException');
+		$this->_devHandler->populate(NULL);
+	}
+	
+	function testPopulateThrowsExceptionIfFixtureHasNotFieldData() {
+		$this->_blankFix->setTableName('blah');
+		$this->setExpectedException('ErrorException');
+        $this->_devHandler->populate($this->_blankFix);
+	}
+	
+	function testPopulateReturnsTrueIfSuccessfullyPopulatesTable() {
+		$this->_devHandler->build($this->_testFix);
+		$result = $this->_devHandler->populate($this->_testFix);
+		$this->assertTrue($result);
+		$this->_devHandler->drop();
+	}
 }
- ?>

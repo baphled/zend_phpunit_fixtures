@@ -65,7 +65,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
     protected function _fixtureMethodCheck($call) {
         switch($call) {
             case 'drop':
-                $result = $this->_fixMan->dropTable();
+                $result = $this->_fixMan->dropTables();
                 break;
             case 'setup':
                 $result = $this->_fixMan->setupTable($this->_fields,$this->_table);

@@ -45,7 +45,7 @@ class DevelopmentHandler {
 	 * @return  bool
 	 * 
 	 */
-	public function buildDB($fixture) {
+	public function build($fixture) {
 		if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
 			throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
 		}
@@ -56,18 +56,37 @@ class DevelopmentHandler {
 	}
 	
 	/**
-	 * Drops our development DB
+	 * Drops our development DB tables
 	 * 
 	 * @access public
 	 * @return bool
 	 * 
 	 */
-	public function dropDB() {
+	public function drop() {
 	   if($this->_fixMan->tablesPresent()) {
-              return $this->_fixMan->dropTable();
+              return $this->_fixMan->dropTables();
         }
         else {
         	return false;
         }
 	}
+
+    /**
+     * Populates our test table with our test data.
+     *
+     * @access public
+     * @param PHPUnitFixture_DB $fixture
+     * @return bool
+     * 
+     * @todo refactor, is a copy of PHPUnit_Fixture_DB's functionality
+     */
+    public function populate($fixture) {
+        if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
+            throw new ErrorException('Fixture must subclass PHPUnit_Fixture_DB.');
+        }
+        if(!$this->_fixMan->tableExists($fixture->getTableName())) {
+            throw new ErrorException('Fixtures table is not present.');
+        }
+        return $this->_fixMan->insertTestData($fixture->getTestData(),$fixture->getTableName());
+    }
 }

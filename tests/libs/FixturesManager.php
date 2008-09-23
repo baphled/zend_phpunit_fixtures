@@ -342,7 +342,7 @@ class FixturesManager {
 	 * @access public
 	 * @return bool
 	 */
-	public function dropTable() {
+	public function dropTables() {
 		$fixtures = $this->_db->listTables();
 		if(count($fixtures) === 0) {
 			throw new ErrorException('No fixture tables to drop.');

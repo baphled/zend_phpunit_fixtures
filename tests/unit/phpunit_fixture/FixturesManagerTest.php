@@ -125,7 +125,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	
     public function tearDown() {
     	if($this->_fixturesManager->tablesPresent()) {
-    		$this->_fixturesManager->dropTable();
+    		$this->_fixturesManager->dropTables();
     	}
         $this->_fixturesManager = null;
         $this->_fixMan = null;
@@ -573,7 +573,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testDropFixtureTableFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->dropTable();
+		$this->_fixturesManager->dropTables();
 	}
 	
 	/**
@@ -589,7 +589,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$query = $this->_getGenericQuery('blah');
 		$result = $this->_fixWrap->runFixtureQuery($query);
 		$this->assertTrue($result);
-		$wasDeleted = $this->_fixturesManager->dropTable();
+		$wasDeleted = $this->_fixturesManager->dropTables();
 		$this->assertTrue($wasDeleted);
 	}
 
