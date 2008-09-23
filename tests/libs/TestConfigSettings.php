@@ -47,6 +47,22 @@ class TestConfigSettings {
         Zend_Registry::set('config',self::$_config);
     }
     
+    /**
+     * Sets up our configuration settings depending on environment
+     * will be needed when we want to specify config settings for a
+     * particular situation. ie. needing a diff DB for development.
+     * 
+     * @access static
+     * @param $env  Configuration 
+     * 
+     */
+    static function setUpConfigEnv($env) {
+        $root = realpath(dirname(__FILE__) . '/../../configs/'); // smelly, could be anything
+        $configPath = $root .'/settings.ini';          
+        self::$_config = new Zend_Config_Ini( $configPath, $env);
+        Zend_Registry::set('config',self::$_config);
+    }
+    
     static function getDBParams($config) {
         $params = array( 'host'     => $config->database->hostname,
                  'username' => $config->database->username,
