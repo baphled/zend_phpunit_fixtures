@@ -440,7 +440,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testRetrieveSingleTestDataFieldReturnExpected() {
-		$fieldData = array('id'=>$this->_testFix->_fields['id']);
+		$fieldData = $this->_testFix->getSingleDataTypeField('id');
 		$result = $this->_testFix->getSingleDataTypeField('id');
 		$this->assertSame($fieldData,$result);
 	}

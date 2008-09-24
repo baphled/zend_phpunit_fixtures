@@ -53,7 +53,7 @@ class DataTypeChecker {
      * @access static
      * @param Array $dataType
      * @param int $field
-     * @param Fixture $obj
+     * @param PHP_Fixture $obj
      * 
      */
     static function dataTypeIsAString($dataType,$field,$obj) {
@@ -129,18 +129,20 @@ class DataTypeChecker {
     static function checkDataTypeValues($key,$value) {
         $typeSegment = '';
         if('type' === $key) {               // smells, need to refactor
-            if('string' === $value) {
-                $typeSegment = ' VARCHAR';
-            }
-            if('integer' === $value) {
-                $typeSegment = ' INT';
-            }
-            if('date' === $value) {
-                $typeSegment = ' DATE';
-            }
-            if('datetime' === $value) {
-                $typeSegment = ' DATETIME';
-            }
+        	switch ($value) {
+        		case 'string':
+        			$typeSegment = ' VARCHAR';
+        			break;
+        		case 'integer':
+        			$typeSegment = ' INT';
+        			break;
+        		case 'date':
+        			$typeSegment = ' DATE';
+        			break;
+        		case 'datetime':
+        			$typeSegment = ' DATETIME';
+        			break;
+        	}
         }
         return $typeSegment;
     }
@@ -184,7 +186,6 @@ class DataTypeChecker {
         }
         return $data;
     }
-    
     
     /**
      * Checks that our datatype has a default value,
@@ -286,35 +287,4 @@ class DataTypeChecker {
        self::checkFieldsType($dataType);
        self::checkFieldsNullProperty($dataType);
     }
-    
-
-    /**
-     * Validates that our test data is of the same structure
-     * as pre-existing data. We get the first data type from
-     * our test data & store it for comparison, if the validating
-     * datatype is not of the same structure we throw and exception.
-     *
-     * @access public
-     * @param Array $testData
-     * @return bool
-     * 
-     
-    static function validateTestData($testData,$obj) {
-        if(0 === $obj->testDataCount()) {
-            return true;
-        }
-        else {
-            $existingTestData = $obj->getTestData('id',1);
-            if(false === $existingTestData) {
-                return true;
-            }
-            foreach ($testData as $key=>$value) {
-                if(!array_key_exists($key, $existingTestData)){
-                    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
-                }
-            }
-        }
-        return false;
-    }
-*/
 }

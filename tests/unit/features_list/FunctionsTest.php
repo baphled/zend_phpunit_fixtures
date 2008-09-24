@@ -38,7 +38,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		parent::setUp ();
-		$this->_functionFixtures->setupTable();
+		$this->_functionFixtures->setup();
 		$this->_functions = new Functions();
 	}
 	

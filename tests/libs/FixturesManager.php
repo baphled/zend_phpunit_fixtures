@@ -349,13 +349,24 @@ class FixturesManager {
 		}
 		try {
 			foreach ($fixtures as $fixture) {
-                $sql = 'DROP TABLE ' .$fixture;         // smells
-                $this->_db->getConnection()->exec($sql);		
+                $this->dropTable($fixture);
 			}
 		}
 		catch(Exception $e) {
 			echo $e->getMessage();
 		}
 		return true;
+	}
+	
+	/**
+	 * Deletes a specific table.
+	 * 
+	 * @access public
+	 * @param $name    Tablename
+	 * 
+	 */
+	public function dropTable($name) {
+		$sql = 'DROP TABLE ' .$name;         // smells
+        $this->_db->getConnection()->exec($sql);        
 	}
 }

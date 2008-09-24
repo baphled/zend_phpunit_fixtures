@@ -79,13 +79,11 @@ class DevelopmentHandler {
      * @return bool
      * 
      * @todo refactor, is a copy of PHPUnit_Fixture_DB's functionality
+     * 
      */
     public function populate($fixture) {
         if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
             throw new ErrorException('Fixture must subclass PHPUnit_Fixture_DB.');
-        }
-        if(!$this->_fixMan->tableExists($fixture->getTableName())) {
-            throw new ErrorException('Fixtures table is not present.');
         }
         return $this->_fixMan->insertTestData($fixture->getTestData(),$fixture->getTableName());
     }

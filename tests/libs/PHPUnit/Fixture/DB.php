@@ -46,7 +46,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
 
     public function __destruct() {
         if($this->_fixMan->tablesPresent()) {
-              $this->dropTable();
+              $this->drop();
         }
         $this->_fixMan = null;
     }
@@ -134,7 +134,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * @return bool
      * 
      */
-    public function setupTable() {      
+    public function setup() {      
         if(0 === count($this->_fields)) {
             throw new ErrorException('No table fields present.');
         }
@@ -163,7 +163,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * @return bool
      * 
      */
-    public function dropTable() {
+    public function drop() {
         return $this->_runFixtureMethod('drop');
     }
     
@@ -174,7 +174,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * @return bool
      * 
      */
-    public function truncateTable() {
+    public function truncate() {
         return $this->_runFixtureMethod('truncate');
     }
 }

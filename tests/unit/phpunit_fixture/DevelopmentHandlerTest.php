@@ -34,7 +34,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		parent::setUp();
-		$this->_devHandler = new DevelopmentHandler('localmachine');
+		$this->_devHandler = new DevelopmentHandler('development');
 		$this->_testFix = new TestFixture();
 		$this->_blankFix = new BlankFixture();
 	}

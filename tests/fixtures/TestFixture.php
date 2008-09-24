@@ -19,9 +19,9 @@ require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
 class TestFixture extends PHPUnit_Fixture_DB {
-	public $_table = 'apples';
+	protected $_table = 'apples';
 	
-	public $_fields = array(
+	protected $_fields = array(
             'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
             'apple_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
             'color' => array('type' => 'string', 'length' => 255, 'default' => 'green'),
@@ -31,7 +31,7 @@ class TestFixture extends PHPUnit_Fixture_DB {
             'modified' => array('type' => 'datetime', 'null' => FALSE)
         );
         
-	public $_testData = array(
+	protected $_testData = array(
            array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26'),
            array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10'),
            array('id' => 3, 'apple_id' => 2, 'color' => 'blue green', 'name' => 'green blue', 'created' => '2006-12-25 05:13:36', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:23:24'),
@@ -41,4 +41,3 @@ class TestFixture extends PHPUnit_Fixture_DB {
            array('id' => 7, 'apple_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21')
        );
 }
- ?>

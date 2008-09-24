@@ -121,15 +121,12 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
     /**
      * If we the default return value must be false, we will only return
      * true if we have successfully built our fixture table.
-     *
-     * @todo Need to refactor and replace dropTable with Fixture's
-     *       implementation, once it is done.
      * 
      */
     function testSetupFixtureTableReturnsTrueIfSetupFixtureTableSucceeds() {
-        $result = $this->_testFix->setupTable();
+        $result = $this->_testFix->setup();
         $this->assertTrue($result);
-        $this->_testFix->dropTable();
+        $this->_testFix->drop();
     }
 
     /**
@@ -152,7 +149,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testDropFixtureTableReturnsFalseOnFailure() {
-        $result = $this->_testFix->dropTable();
+        $result = $this->_testFix->drop();
         $this->assertFalse($result);
     }
     
@@ -164,8 +161,8 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testDropFixtureTableReturnsTrueOnSuccess() {
-        $this->_testFix->setupTable();
-        $result = $this->_testFix->dropTable();
+        $this->_testFix->setup();
+        $result = $this->_testFix->drop();
         $this->assertTrue($result);
     }
     
@@ -184,7 +181,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
     function testSetupFixtureTableThrowsExceptionIfTableNameIsNotSet() {
         $this->_emptyFix->addTestData($this->_testFix->getTestData('id',1));
         $this->setExpectedException('ErrorException');
-        $this->_emptyFix->setupTable();
+        $this->_emptyFix->setup();
     }
     
     /**
@@ -193,8 +190,8 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testSetupFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
-        $this->_emptyFix->setFields($this->_testFix->_fields);
-        $result = $this->_emptyFix->setupTable();
+        $this->_emptyFix->setFields($this->_testFix->getTableFields());
+        $result = $this->_emptyFix->setup();
         $this->assertFalse($result);
     }
     /**
@@ -212,7 +209,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
         $this->_emptyFix->setTableName('blah');
         $this->_emptyFix->addTestData($this->_testFix->getTestData('id',1));
         $this->setExpectedException('ErrorException');
-        $this->_emptyFix->setupTable();
+        $this->_emptyFix->setup();
     }
     
     /**
@@ -221,7 +218,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testSetupFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
-        $result = $this->_testFix->setupTable();
+        $result = $this->_testFix->setup();
         $this->assertTrue($result);
     }
     
@@ -250,7 +247,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testpopulateReturnsTrueIfTestDataIsSuccessfullyInserted() {
-        $this->_testFix->setupTable();
+        $this->_testFix->setup();
         $result = $this->_testFix->populate();
         $this->assertTrue($result);
     }
@@ -260,8 +257,8 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * truncate our table.
      */
     function testTruncateTableReturnsTrueOnSuccess() {
-        $this->_testFix->setupTable();
-        $result = $this->_testFix->truncateTable();
+        $this->_testFix->setup();
+        $result = $this->_testFix->truncate();
         $this->assertTrue($result);
     }
 }
