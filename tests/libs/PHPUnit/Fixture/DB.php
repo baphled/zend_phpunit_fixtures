@@ -45,10 +45,15 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
     }
 
     public function __destruct() {
-        if($this->_fixMan->tablesPresent()) {
-              $this->drop();
-        }
-        $this->_fixMan = null;
+    	try {
+	        if($this->_fixMan->tablesPresent()) {
+	              $this->drop();
+	        }
+	        $this->_fixMan = null;
+    	}
+    	catch(Exception $e) {
+    		echo $e->getMessage();
+    	}
     }
     
     /**
