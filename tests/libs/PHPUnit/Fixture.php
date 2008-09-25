@@ -182,7 +182,7 @@ class PHPUnit_Fixture {
         $results = array();
         $this->_result = array();
         for($i=0;$i<$numOfTestData;$i++) {
-            foreach ($this->getTableFields() as $field=>$values) {
+            foreach ($this->getFields() as $field=>$values) {
                 DataTypeChecker::checkDataType($values);
                 $this->_parseSchema($field, $values);
             }
@@ -280,7 +280,7 @@ class PHPUnit_Fixture {
 	 * @return Array
 	 * 
 	 */
-	public function getTableFields() {
+	public function getFields() {
 		if(0 === count($this->_fields)) {
 			throw new ErrorException('No fixture fields present.');
 		}

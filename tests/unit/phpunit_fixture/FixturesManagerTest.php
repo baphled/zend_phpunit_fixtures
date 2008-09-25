@@ -147,7 +147,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     private function _setUpTestTableStructure($table) {
-        $fixture = $this->_testFixture->getTableFields();
+        $fixture = $this->_testFixture->getFields();
         $this->_fixturesManager->setupTable($fixture,$table);
     }
 	
@@ -173,7 +173,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testFixtureDataHasDataTypes() {
-		$fields = $this->_testFixture->getTableFields();
+		$fields = $this->_testFixture->getFields();
 		foreach ($fields as $field) {
 			$this->assertArrayHasKey('type',$field);	
 		}
@@ -207,7 +207,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *  
 	 */
 	function testFieldsArrayStoresCorrectDataType() {
-		$fields = $this->_invalidFixture->getTableFields();
+		$fields = $this->_invalidFixture->getFields();
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->convertDataType($fields);
 	}
@@ -220,7 +220,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testDoesBuildQueryReturnAString() {
 		$table = 'blah';
-		$fields = $this->_testFixture->getTableFields();
+		$fields = $this->_testFixture->getFields();
 		$result = $this->_fixturesManager->convertDataType($fields,$table);
 		$this->assertType('string',$result); 
 	}
@@ -230,7 +230,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testDoesConstructQueryReturnStringContainingCreateTable() {
-		$fields = $this->_testFixture->getTableFields();
+		$fields = $this->_testFixture->getFields();
 		$result = $this->_fixturesManager->convertDataType($fields,'blah');
 		$this->assertContains('CREATE TABLE', $result);
 	}
@@ -240,7 +240,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testDoesConstructQueryReturnContainTheCorrectTableName() {
-		$fields = $this->_testFixture->getTableFields();
+		$fields = $this->_testFixture->getFields();
 		$result = $this->_fixturesManager->convertDataType($fields,'fakeTable');
 		$this->assertContains('fakeTable',$result);
 	}
@@ -385,7 +385,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeCanParseDate() {
     	$query = 'DATE';
-    	$dataType = $this->_testFixture->getTableFields();
+    	$dataType = $this->_testFixture->getFields();
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
@@ -423,7 +423,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertDataTypeReturnsExpectedQueryString() {
     	$table = 'apples';
     	$query = $this->_getGenericQuery($table);
-    	$dataType = $this->_testFixture->getTableFields();
+    	$dataType = $this->_testFixture->getFields();
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
@@ -436,7 +436,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertDataTypeParsesDateAndSetsDefaultToCurrentDate() {
     	$table = 'side';
     	$query = $this->_getGenericQuery($table);
-    	$dataType = $this->_testFixture->getTableFields();
+    	$dataType = $this->_testFixture->getFields();
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertContains($query,$result);
     }
@@ -452,7 +452,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testCheckDataTypeCanBuildOurCreateTableQuery() {
     	$table = 'blah';
     	$query = $this->_getGenericQuery($table);
-    	$dataType = $this->_testFixture->getTableFields();
+    	$dataType = $this->_testFixture->getFields();
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
@@ -464,7 +464,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertDataTypeNowTakesTableNameAsParam() {
     	$table = 'blah';
     	$query = $this->_getGenericQuery($table);
-    	$dataType = $this->_testFixture->getTableFields();
+    	$dataType = $this->_testFixture->getFields();
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
@@ -475,7 +475,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeThrowsExceptionIfParamIsInvalid() {
-    	$dataType = $this->_invalidFixture->getTableFields();
+    	$dataType = $this->_invalidFixture->getFields();
     	$this->setExpectedException('ErrorException');
     	$this->_fixturesManager->convertDataType($dataType);
     }
@@ -487,7 +487,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	function testTurnFixtureFieldsArrayIntoString() {
 		$table  = 'blah';
 		$query = $this->_getGenericQuery($table);
-		$result = $this->_fixturesManager->convertDataType($this->_testFixture->getTableFields(),$table);
+		$result = $this->_fixturesManager->convertDataType($this->_testFixture->getFields(),$table);
 		$this->assertEquals($query,$result);		
 	}
 	
@@ -501,7 +501,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testSetupFixtureTableReturnsTrue() {
-		$dataType = $this->_testFixture->getTableFields();
+		$dataType = $this->_testFixture->getFields();
 		$result = $this->_stub->setupTable($dataType,'info');
 		$this->assertTrue($result);
 	}
@@ -512,7 +512,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testSetupTableThrowsExceptionOnEmptyTableName() {
 		$tableName = '';
-		$dataType = $this->_testFixture->getTableFields();
+		$dataType = $this->_testFixture->getFields();
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->setupTable($dataType,$tableName);
 	}
@@ -527,7 +527,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testSetupFixtureTableShouldReturnFalseIfDataTypeInvalidLength() {
 		$tableName = 'illegalTable';
-		$dataType = $this->_invalidFixture->getTableFields();
+		$dataType = $this->_invalidFixture->getFields();
 		$result = $this->_fixturesManager->setupTable($dataType,$tableName);
 		$this->assertFalse($result);
 	}

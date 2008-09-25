@@ -116,7 +116,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * @return String
      * 
      */
-    public function getTableName() {
+    public function getName() {
         return $this->_table;
     }
     

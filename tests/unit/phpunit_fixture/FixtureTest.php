@@ -361,7 +361,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testGetFixtureTableFieldsThrowsExceptionsIfNoFieldsAreDefined() {
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->getTableFields();
+		$this->_basicFix->getFields();
 	}
 	
 	/**
@@ -369,7 +369,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testGetFixtureTableFieldsReturnsAnArrayOnSuccess() {
-		$result = $this->_testFix->getTableFields();
+		$result = $this->_testFix->getFields();
 		$this->assertType('array',$result);
 	}
 	
@@ -544,7 +544,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
     function testSetDataFieldsReturnsTrueOnSuccess() {
-        $result = $this->_basicFix->setFields($this->_testFix->getTableFields());
+        $result = $this->_basicFix->setFields($this->_testFix->getFields());
         $this->assertTrue($result);
     }
     
@@ -553,9 +553,9 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      *  
      */
     function testSetDataFieldsActuallySetsOurFieldsProperty() {
-    	$expected = $this->_testFix->getTableFields();
+    	$expected = $this->_testFix->getFields();
     	$result = $this->_basicFix->setFields($expected);
-    	$actual = $this->_basicFix->getTableFields();
+    	$actual = $this->_basicFix->getFields();
     	$this->assertTrue($result);
     	$this->assertEquals($expected,$actual);
     }
@@ -582,7 +582,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveTestDataResultsReturnsArrayAndIdsAreNotNull() {
-		$this->_basicFix->setFields($this->_testFix->getTableFields());
+		$this->_basicFix->setFields($this->_testFix->getFields());
 		$this->assertTrue($this->_basicFix->autoGenerateTestData(20));
 		$data = $this->_basicFix->retrieveTestDataResults();
 		for($i=0;$i<$this->_basicFix->testDataCount();$i++) {

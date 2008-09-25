@@ -31,7 +31,7 @@ class DataTypeChecker {
      * are set to null, this is so that our db can create our
      * ID for us on insertion.
      *
-     * @access static
+     * @access public
      * @param Array $dataType
      * @param int $field
      * @param Fixture $obj
@@ -50,7 +50,7 @@ class DataTypeChecker {
     /**
      * Checks that our a string, if so we generate test data.
      *
-     * @access static
+     * @access public
      * @param Array $dataType
      * @param int $field
      * @param PHP_Fixture $obj
@@ -61,12 +61,12 @@ class DataTypeChecker {
            $obj->setResult($field,'my string');
        }
     }
-    
+
     /**
      * Checks to see if our data type is a date, if it is,
      * we generate the current date.
      *
-     * @access static
+     * @access public
      * @param Array $dataType
      * @param int $field
      * @param Fixture $obj
@@ -77,13 +77,12 @@ class DataTypeChecker {
             $obj->setResult($field, date('Ymd'));
        }
     }
-    
 
     /**
      * Checks to see if we have a datetype type, if we do
      * we generate the current date & time.
      *
-     * @access static
+     * @access public
      * @param Array $dateType
      * @param int $field
      * @param Fixture $obj
@@ -94,13 +93,13 @@ class DataTypeChecker {
             $obj->setResult($field, date(DATE_RFC822));
        }    
     }
-    
+
     /**
      * Checks that our datatype is an array and that our table
      * is a valid string, if this is not the case we need to throw
      * an exception.
      *
-     * @access static
+     * @access public
      * @param Array $insertDataType
      * @param String $tableName
      * 
@@ -113,17 +112,16 @@ class DataTypeChecker {
             throw new ErrorException('Table name must be a string.');
         }
     }
-    
+
     /**
      * Checks out data type and returns the correct data type.
      *
-     * @access static
+     * @access public
      * @param  String  $key            
      * @param  String  $value          the value of our type.
      * @return String  $typeSegment    Returns a the SQL equalient to our type.
      * 
-     * @todo Check that if we have a type & it doesnt match, throw an exception.
-     * @todo Needs looking at, way too many if clauses.
+     * @todo Check that if we have a type & if it doesnt match, throw an exception.
      * 
      */
     static function checkDataTypeValues($key,$value) {
@@ -146,11 +144,11 @@ class DataTypeChecker {
         }
         return $typeSegment;
     }
-    
+
     /**
      * Checks if our datatype is a length value
      *
-     * @access static
+     * @access public
      * @param String $key
      * @param String $value
      * @return String
@@ -163,12 +161,12 @@ class DataTypeChecker {
         }
         return $data;
     }
-    
+
     /**
      * Determines whether our data type have 
      * a is allowed a null value.
      *
-     * @access  static
+     * @access  public
      * @param   String  $key
      * @param   String  $value
      * @return  String  $data
@@ -186,12 +184,12 @@ class DataTypeChecker {
         }
         return $data;
     }
-    
+
     /**
      * Checks that our datatype has a default value,
      * if it does we need to set the appropriate SQL string.
      *
-     * @access static
+     * @access public
      * @param String $key
      * @param String $value
      * @return String
@@ -209,12 +207,12 @@ class DataTypeChecker {
         }
         return $data;
     }
-    
+
     /**
      * Checks to see if we have a primary key set, if we do
      * we need to create the corresponding SQL.
      *
-     * @access static
+     * @access public
      * @param Array $key
      * @return bool
      * 
@@ -226,12 +224,12 @@ class DataTypeChecker {
         }
         return $data;
     }
-    
+
     /**
      * Makes sure that date & datetime properties do not come
      * with lengths
      *
-     * @access static
+     * @access public
      * @param Array $dataType
      * 
      */
@@ -250,7 +248,14 @@ class DataTypeChecker {
             throw new ErrorException('Must supply a valid data type.');
         }
     }
-    
+
+    /**
+     * Checks our field types for us, strings & integer must have a length.
+     * 
+     * @access public
+     * @param Array $dataType 
+     * 
+     */
     static function checkFieldsType($dataType) {
        DataTypeChecker::checkDataType($dataType);
        if($dataType['type'] === 'integer' || $dataType['type'] ===  'string' ) {
@@ -263,7 +268,14 @@ class DataTypeChecker {
             throw new ErrorException('Invalid data type.');
        }
     }
-    
+
+    /**
+     * Checks that our null propery is a boolean type.
+     * 
+     * @access public
+     * @param Array $dataType
+     * 
+     */
     static function checkFieldsNullProperty($dataType) {
        if(array_key_exists('null',$dataType)) {
             if(!is_bool($dataType['null'])) {
@@ -274,13 +286,12 @@ class DataTypeChecker {
             }
        }
     }
-    
 
     /**
      * Used to make sure that our data type fields are all valid.
      * 
-     * @access private
-     * @param $dataType
+     * @access public
+     * @param Array $dataType
      * 
      */
     static function validateDataTypeFields($dataType) {

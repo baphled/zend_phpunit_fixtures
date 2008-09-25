@@ -49,10 +49,10 @@ class DevelopmentHandler {
 		if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
 			throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
 		}
-		if(null === $fixture->getTableName()) {
+		if(null === $fixture->getName()) {
 			throw new ErrorException('Fixture does not possess a table name.');
 		}
-		return $this->_fixMan->setupTable($fixture->getTableFields(),$fixture->getTableName());
+		return $this->_fixMan->setupTable($fixture->getFields(),$fixture->getName());
 	}
 	
 	/**
@@ -85,6 +85,6 @@ class DevelopmentHandler {
         if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
             throw new ErrorException('Fixture must subclass PHPUnit_Fixture_DB.');
         }
-        return $this->_fixMan->insertTestData($fixture->getTestData(),$fixture->getTableName());
+        return $this->_fixMan->insertTestData($fixture->getTestData(),$fixture->getName());
     }
 }

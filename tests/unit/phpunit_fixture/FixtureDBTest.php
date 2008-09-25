@@ -76,8 +76,8 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * idea to do so now.
      * 
      */
-    function testGetTableNameReturnsString() {
-        $result = $this->_testFix->getTableName();
+    function testgetNameReturnsString() {
+        $result = $this->_testFix->getName();
         $this->assertType('string',$result);
     }
     
@@ -108,7 +108,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
     function testSetTableNameActuallySetsNameOnSucces() {
         $table = 'tea';
         $this->_emptyFix->setTableName($table);
-        $this->assertEquals($this->_emptyFix->getTableName(),$table);
+        $this->assertEquals($this->_emptyFix->getName(),$table);
     }
     
     /**
@@ -190,7 +190,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testSetupFixtureTableReturnsFalseIfUnableToCreateFixturesTable() {
-        $this->_emptyFix->setFields($this->_testFix->getTableFields());
+        $this->_emptyFix->setFields($this->_testFix->getFields());
         $result = $this->_emptyFix->setup();
         $this->assertFalse($result);
     }
