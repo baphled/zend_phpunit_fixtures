@@ -583,7 +583,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRetrieveTestDataResultsReturnsArrayAndIdsAreNotNull() {
 		$this->_basicFix->setFields($this->_testFix->getTableFields());
-		//print_r($this->_basicFix->getTableFields());
 		$this->assertTrue($this->_basicFix->autoGenerateTestData(20));
 		$data = $this->_basicFix->retrieveTestDataResults();
 		for($i=0;$i<$this->_basicFix->testDataCount();$i++) {
