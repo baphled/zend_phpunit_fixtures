@@ -203,7 +203,10 @@ class PHPUnit_Fixture {
 	 * 
 	 */
 	public function validateTestData($testData) {
-		if(null === $this->_testData) {
+        if(false === $testData) {
+            throw  new ErrorException('Invalid test data type.');
+        }
+        if(null === $this->_testData) {
 			return true;
 		}
 		else {
@@ -218,6 +221,10 @@ class PHPUnit_Fixture {
 			}
 		}
 		return false;
+	}
+	
+	function setResult($field, $data) {
+		$this->_result[$field] = $data;
 	}
 	
 	/**

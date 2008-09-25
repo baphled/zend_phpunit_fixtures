@@ -39,10 +39,10 @@ class DataTypeChecker {
     static function dataTypeIsAnInt($dataType,$field,$obj) {
        if('integer' === $dataType) {
             if('id' !== $field) {
-                $obj->_result[$field] = rand();
+                $obj->setResult($field, rand());
             }
             else {
-                $obj->_result[$field] = NULL;
+                $obj->setResult($field,NULL);
             }
         }
     }
@@ -58,7 +58,7 @@ class DataTypeChecker {
      */
     static function dataTypeIsAString($dataType,$field,$obj) {
        if('string' === $dataType) {
-           $obj->_result[$field] = 'my string';
+           $obj->setResult($field,'my string');
        }
     }
     
@@ -74,7 +74,7 @@ class DataTypeChecker {
      */
     static function dataTypeIsADate($dataType,$field,$obj) {
        if('date' === $dataType) {
-            $obj->_result[$field] = date('Ymd');
+            $obj->setResult($field, date('Ymd'));
        }
     }
     
@@ -91,7 +91,7 @@ class DataTypeChecker {
      */
     static function dataTypeIsDateTime($dateType,$field,$obj) {
        if('datetime' === $dateType) {
-            $obj->_result[$field] = date(DATE_RFC822);
+            $obj->setResult($field, date(DATE_RFC822));
        }    
     }
     

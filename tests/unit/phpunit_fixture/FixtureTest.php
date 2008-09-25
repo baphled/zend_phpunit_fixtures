@@ -583,8 +583,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRetrieveTestDataResultsReturnsArrayAndIdsAreNotNull() {
 		$this->_basicFix->setFields($this->_testFix->getTableFields());
-		$result = $this->_basicFix->autoGenerateTestData(20);
-		$this->assertTrue($result);
+		//print_r($this->_basicFix->getTableFields());
+		$this->assertTrue($this->_basicFix->autoGenerateTestData(20));
 		$data = $this->_basicFix->retrieveTestDataResults();
 		for($i=0;$i<$this->_basicFix->testDataCount();$i++) {
 		  $this->assertNotNull($data[$i]['id']);
@@ -608,5 +608,10 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testAutoGenerateTestDataThrowsException() {
 		$result = $this->_basicFix->autoGenerateTestData(20);
 		$this->assertFalse($result);
+	}
+	
+	function testValidateTestDataThrowsExceptionIfTestDataHasNoData() {
+		$this->setExpectedException('ErrorException');
+		$this->_basicFix->validateTestData(false);
 	}
 }
