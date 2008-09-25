@@ -572,7 +572,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * be used to retrieve test data without actually having to insert the data into our test DB.
 	 */
 	function testRetrieveTestDataResultsReturnsArrayOnSuccess() {
-		//$this->markTestIncomplete();
 		$result = $this->_testFix->retrieveTestDataResults();
 		$this->assertType('array',$result);
 	}
@@ -584,7 +583,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRetrieveTestDataResultsReturnsArrayAndIdsAreNotNull() {
 		$this->_basicFix->setFields($this->_testFix->getTableFields());
-		$this->_basicFix->autoGenerateTestData(20);
+		$result = $this->_basicFix->autoGenerateTestData(20);
+		$this->assertTrue($result);
 		$data = $this->_basicFix->retrieveTestDataResults();
 		for($i=0;$i<$this->_basicFix->testDataCount();$i++) {
 		  $this->assertNotNull($data[$i]['id']);
@@ -603,5 +603,10 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		for($i=0;$i<$this->_testFix->testDataCount();$i++) {
 			$this->assertEquals($i+1,$data[$i]['id']);
 		}
+	}
+	
+	function testAutoGenerateTestDataThrowsException() {
+		$result = $this->_basicFix->autoGenerateTestData(20);
+		$this->assertFalse($result);
 	}
 }

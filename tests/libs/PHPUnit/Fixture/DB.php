@@ -51,9 +51,6 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
 	        }
 	        $this->_fixMan = null;
     	}
-    	catch(PDOException $e) {
-    		echo 'Error with DB:' .$e->getMessage();
-    	}
     	catch(Exception $e) {
     		echo $e->getMessage();
     	}
@@ -186,4 +183,3 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
         return $this->_runFixtureMethod('truncate');
     }
 }
-?>
