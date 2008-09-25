@@ -37,6 +37,20 @@ class DevelopmentHandler {
         $this->_fixMan = new FixturesManager($env);
 	}
 	
+	private function _runTableMethod($call,$fixture) {
+	   if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
+            throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
+        }
+		if('populate' === $call) {
+			return $this->_fixMan->insertTestData($fixture->getTestData(),$fixture->getName());
+		}
+		elseif('build' === $call) {
+			return $this->_fixMan->setupTable($fixture->getFields(),$fixture->getName());
+		}
+		else {
+			return false;
+		}
+	}
 	/**
 	 * Builds our development database.
 	 * 
@@ -46,15 +60,23 @@ class DevelopmentHandler {
 	 * 
 	 */
 	public function build($fixture) {
-		if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
-			throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
-		}
-		if(null === $fixture->getName()) {
-			throw new ErrorException('Fixture does not possess a table name.');
-		}
-		return $this->_fixMan->setupTable($fixture->getFields(),$fixture->getName());
+		return $this->_runTableMethod('build',$fixture);
 	}
-	
+
+    /**
+     * Populates our test table with our test data.
+     *
+     * @access public
+     * @param PHPUnitFixture_DB $fixture
+     * @return bool
+     * 
+     * @todo refactor, is a copy of PHPUnit_Fixture_DB's functionality
+     * 
+     */
+    public function populate($fixture) {
+        return $this->_runTableMethod('populate',$fixture);
+    }
+    
 	/**
 	 * Drops our development DB tables
 	 * 
@@ -70,21 +92,4 @@ class DevelopmentHandler {
         	return false;
         }
 	}
-
-    /**
-     * Populates our test table with our test data.
-     *
-     * @access public
-     * @param PHPUnitFixture_DB $fixture
-     * @return bool
-     * 
-     * @todo refactor, is a copy of PHPUnit_Fixture_DB's functionality
-     * 
-     */
-    public function populate($fixture) {
-        if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
-            throw new ErrorException('Fixture must subclass PHPUnit_Fixture_DB.');
-        }
-        return $this->_fixMan->insertTestData($fixture->getTestData(),$fixture->getName());
-    }
 }
