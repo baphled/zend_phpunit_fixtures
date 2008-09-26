@@ -180,7 +180,7 @@ class FixturesManager {
      * @return  String
      * 
      */    
-    function _constructInsertQuery($insertTestData,$tableName) {
+    protected function _constructInsertQuery($insertTestData,$tableName) {
         DataTypeChecker::checkTestDataAndTableName($insertTestData,$tableName);
         $stmt = 'INSERT INTO ' .$tableName;
         $insert = '(';

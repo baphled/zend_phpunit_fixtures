@@ -80,17 +80,17 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * Our setting will only allow a string.
      * 
      */
-    function testSetTableNameThrowsExceptionIfParamIsNotAString() {
+    function testsetNameThrowsExceptionIfParamIsNotAString() {
         $this->setExpectedException('ErrorException');
-        $this->_emptyFix->setTableName(array());
+        $this->_emptyFix->setName(array());
     }
     
     /**
      * Now we need to be able to actual set the name.
      * 
      */
-    function testSetTableNameReturnsTrueOnSucces() {
-        $result = $this->_emptyFix->setTableName('coffee');
+    function testsetNameReturnsTrueOnSucces() {
+        $result = $this->_emptyFix->setName('coffee');
         $this->assertTrue($result);
     }
     
@@ -99,9 +99,9 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * been set.
      * 
      */
-    function testSetTableNameActuallySetsNameOnSucces() {
+    function testsetNameActuallySetsNameOnSucces() {
         $table = 'tea';
-        $this->_emptyFix->setTableName($table);
+        $this->_emptyFix->setName($table);
         $this->assertEquals($this->_emptyFix->getName(),$table);
     }
     
@@ -187,7 +187,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      *
      */
     function testSetupFixtureTableThrowsExceptionIfTestFieldsIsNotSet() {
-        $this->_emptyFix->setTableName('blah');
+        $this->_emptyFix->setName('blah');
         $this->_emptyFix->addTestData($this->_testFix->getTestData('id',1));
         $this->setExpectedException('ErrorException');
         $this->_emptyFix->setup();

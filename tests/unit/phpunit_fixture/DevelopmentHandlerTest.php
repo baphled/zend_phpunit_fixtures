@@ -87,7 +87,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testBuildDBThrowsExceptionIfFixtureHasNoFieldsData() {
-		$this->_blankFix->setTableName('chicken');
+		$this->_blankFix->setName('chicken');
 		$this->setExpectedException('ErrorException');
 		$this->_devHandler->build($this->_blankFix);
 	}
@@ -117,7 +117,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testPopulateThrowsExceptionIfHasNoTestData() {
-		$this->_blankFix->setTableName('another');
+		$this->_blankFix->setName('another');
 		$this->setExpectedException('ErrorException');
 		$result = $this->_devHandler->populate($this->_blankFix);
 		$this->assertFalse($result);
@@ -129,7 +129,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testPopulateThrowsExceptionIfFixtureHasNotFieldData() {
-		$this->_blankFix->setTableName('blah');
+		$this->_blankFix->setName('blah');
 		$this->setExpectedException('ErrorException');
         $this->_devHandler->populate($this->_blankFix);
 	}

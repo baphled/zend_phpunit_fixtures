@@ -88,6 +88,10 @@ class FixturesManWrapper extends FixturesManager {
 		}
 		return false;
 	}
+	
+	function constructInsertQuery($insert,$name) {
+		return $this->_constructInsertQuery($insert,$name);
+	}
 }
 
 class FixturesManagerTest extends PHPUnit_Framework_TestCase {
@@ -609,7 +613,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	function testConvertInsertQueryThrowsExceptionIfParamNotAnArray() {
 		$insertData = '';
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->_constructInsertQuery($insertData,'coffee');
+		$this->_fixWrap->constructInsertQuery($insertData,'coffee');
 	}
 	
 	/**
@@ -620,7 +624,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     	$table = array();
         $insertData = $this->_testFixture->getTestData('id',1);
         $this->setExpectedException('ErrorException');
-        $this->_fixturesManager->_constructInsertQuery($insertData,$table);
+        $this->_fixWrap->constructInsertQuery($insertData,$table);
     }
     
 	/**
@@ -629,7 +633,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testConstructInsertQueryReturnsTrue() {
 		$data = $this->_testFixture->getTestData('id',1);
-		$result = $this->_fixturesManager->_constructInsertQuery($data,'snooker');
+		$result = $this->_fixWrap->constructInsertQuery($data,'snooker');
 		$this->assertContains('INSERT INTO', $result);
 	}
 	
@@ -642,7 +646,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testConstructInsertQueryContainsEnclosingBrackets() {
 		$data = $this->_testFixture->getTestData('id',1);
-		$result = $this->_fixturesManager->_constructInsertQuery($data,'pool');
+		$result = $this->_fixWrap->constructInsertQuery($data,'pool');
 		$this->assertContains('VALUES (',$result);
 	}
 

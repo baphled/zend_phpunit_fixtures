@@ -85,7 +85,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
         return $this->_table;
     }
     
-    public function setTableName($tableName) {
+    public function setName($tableName) {
         if(!is_string($tableName)) {
             throw new ErrorException('Table name must be a string');
         }
