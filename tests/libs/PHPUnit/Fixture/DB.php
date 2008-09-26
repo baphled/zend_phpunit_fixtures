@@ -16,6 +16,9 @@
  * @copyright 2008
  * @package PHPUnit_Fixture
  * @subpackage PHPUnit_Fixture_DB
+ * 
+ * @todo Implement functionality to allows users to specify an already
+ *       setup table.
  *
  */
 
@@ -44,6 +47,11 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
         $this->_fixMan = new FixturesManager();
     }
 
+    /**
+     * Drops all test data DB's when object is destructed.
+     * Used to keep our DB in its original format.
+     * 
+     */
     public function __destruct() {
     	try {
 	        if($this->_fixMan->tablesPresent()) {
@@ -65,11 +73,11 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * 
      */
     private function _callMethod($call) {
-        $result = false;
         try {
             $result = $this->_fixMan->fixtureMethodCheck($call,$this);
         }
         catch(Exception $e) {
+        	$result = false;
             $e->getMessage();
         }
         return $result;
@@ -85,6 +93,14 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
         return $this->_table;
     }
     
+    /**
+     * Sets our test data DB table name
+     * 
+     * @access public
+     * @param String    $tableName
+     * @return bool
+     * 
+     */
     public function setName($tableName) {
         if(!is_string($tableName)) {
             throw new ErrorException('Table name must be a string');

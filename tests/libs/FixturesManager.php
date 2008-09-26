@@ -136,6 +136,7 @@ class FixturesManager {
      * Parses through our test data constructing the nessary SQL
      * which is run, giving us our populated test DB.
      *
+     * @access private
      * @param Array $testData
      * @param String $table
      * 
@@ -255,6 +256,7 @@ class FixturesManager {
 	 * Will parse through each of our test data inserting them into
 	 * the selected test table.
 	 *
+	 * @access public
 	 * @param Array $testData
 	 * @param String $table
 	 * @return Bool
@@ -277,6 +279,7 @@ class FixturesManager {
 	 * Determines whether the fixture 
 	 * actually exists with our test db.
 	 *
+	 * @access public
 	 * @param String $tableName
 	 * @return bool
 	 * 
@@ -294,6 +297,7 @@ class FixturesManager {
     /**
      * Checks to see if any tables are present in our test db.
      *
+     * @access public
      * @access public
      * @return bool
      * 

@@ -49,9 +49,6 @@
  * the amount of test data present, aswell as retrieve, specific test data
  * & a whole of list of test data which can be used for testing.
  * 
- * @todo Implement functionality to allows users to specify an already
- *       setup table.
- * 
  */
 class PHPUnit_Fixture {
 	
@@ -85,6 +82,8 @@ class PHPUnit_Fixture {
 	/**
 	 * Sets an instance of FixturesManager &
 	 * setup the timezone ready for later.
+	 * 
+	 * @access public
 	 * 
 	 * @todo Really should put the TZ in a config file.
 	 *
@@ -168,7 +167,7 @@ class PHPUnit_Fixture {
      *
      * @access private
      * @param int $numOfTestData
-     * @return Array
+     * @return Array $results
      * 
      */
     private function _generateTestData($numOfTestData) {
@@ -225,11 +224,12 @@ class PHPUnit_Fixture {
 	/**
 	 * Sets our results.
 	 *
+	 * @access public
 	 * @param String $field
 	 * @param Array $data
 	 * 
 	 */
-	function setResult($field, $data) {
+	public function setResult($field, $data) {
 		$this->_result[$field] = $data;
 	}
 	
@@ -298,8 +298,10 @@ class PHPUnit_Fixture {
     /**
      * Gets a single data type field from our fixture.
      *
+     * @access public
      * @param String $field
      * @return Array
+     * 
      */
     function getSingleDataTypeField($field) {
         if(!is_string($field)) {
@@ -314,8 +316,10 @@ class PHPUnit_Fixture {
 	/**
      * Sets PHPUnit_Fixture's field property.
      *
+     * @access public
      * @param Array $fields
      * @return bool
+     * 
      */
     public function setFields(array $fields) {
         if(0 === count($fields)) {
@@ -373,9 +377,10 @@ class PHPUnit_Fixture {
     /**
      * Returns our results with a id auto incremented.
      *
+     * @access public
      * @return Array
      */
-    function retrieveTestDataResults() {
+    public function retrieveTestDataResults() {
         $testData = $this->getTestData();
         for($i=0;$i<$this->testDataCount();$i++) {
             $testData[$i]['id'] = $i+1;
@@ -390,7 +395,7 @@ class PHPUnit_Fixture {
      * to _addTestData to append to the _testData
      * property.
      *
-     * @access private
+     * @access public
      * @param int $numOfTestData
      * @return bool
      * 
