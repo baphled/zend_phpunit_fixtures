@@ -57,57 +57,22 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
     }
     
     /**
-     * Does the checking for our method call, at the moment
-     * we can only use setup & drop calls.
-     *
-     * @access protected
-     * @param String $call      The called method.
+     * Used to call our CRUD methods
+     * 
+     * @access private
+     * @param String    $call   The call we want to make.
      * @return bool
      * 
-     * @todo could be done better but this seems fine for the moment.
-     * 
      */
-    protected function _fixtureMethodCheck($call) {
-        switch($call) {
-            case 'drop':
-                $result = $this->_fixMan->dropTables();
-                break;
-            case 'setup':
-                $result = $this->_fixMan->setupTable($this->_fields,$this->_table);
-                break;
-            case 'truncate':
-                $result = $this->_fixMan->truncateTable($this->_table);
-                break;
-            default:
-                throw new ErrorException('Invalid fixture method call.');             
+    private function _callMethod($call) {
+        $result = false;
+        try {
+            $result = $this->_fixMan->fixtureMethodCheck($call,$this);
+        }
+        catch(Exception $e) {
+            $e->getMessage();
         }
         return $result;
-    }
-
-    /**
-     * Is used to run build & drop, seeing as both methods
-     * have practically the same functionality, it seems
-     * silly not to refactor them into this function.
-     *
-     * @access private
-     * @param string $called  The method that was called.
-     * @return bool
-     * 
-     * @todo Write test to ascertain whether the string
-     *       build/drop & that it is actually a string.
-     * 
-     */
-    private function _runFixtureMethod($called) {
-        try {
-            $result = $this->_fixtureMethodCheck($called);
-            if(true === $result) {
-                return true;
-            }
-        }
-        catch (ErrorException $e) {
-            echo $e->getMessage();
-        }
-        return false;
     }
     
     /**
@@ -139,11 +104,11 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * @return bool
      * 
      */
-    public function setup() {      
+    public function setup() {
         if(0 === count($this->_fields)) {
             throw new ErrorException('No table fields present.');
         }
-        return $this->_runFixtureMethod('setup');
+       return $this->_callMethod('setup');
     }
     
     /**
@@ -157,7 +122,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
         if(!$this->_fixMan->tableExists($this->_table)) {
             throw new ErrorException('Fixtures table is not present.');
         }
-        return $this->_fixMan->insertTestData($this->_testData,$this->_table);
+        return $this->_callMethod('populate');
     }
     
     /**
@@ -169,7 +134,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * 
      */
     public function drop() {
-        return $this->_runFixtureMethod('drop');
+        return $this->_callMethod('drop');
     }
     
     /**
@@ -180,6 +145,6 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * 
      */
     public function truncate() {
-        return $this->_runFixtureMethod('truncate');
+        return $this->_callMethod('truncate');
     }
 }

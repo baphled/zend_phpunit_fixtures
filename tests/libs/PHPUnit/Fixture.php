@@ -143,7 +143,6 @@ class PHPUnit_Fixture {
      * 
      * @todo Should not really return false but instead
      *       throw an exception if no test data is found.
-     * @todo This would be so much more effient as an iterator.
      * 
      */
     private function _retrieveTestData($key,$value) {
@@ -223,6 +222,13 @@ class PHPUnit_Fixture {
 		return false;
 	}
 	
+	/**
+	 * Sets our results.
+	 *
+	 * @param String $field
+	 * @param Array $data
+	 * 
+	 */
 	function setResult($field, $data) {
 		$this->_result[$field] = $data;
 	}

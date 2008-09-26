@@ -824,6 +824,28 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     }
     
     /**
+     * We want to be able to check that fixtureMethodCheck throws
+     * an exception, even though we have implemented the funcionality
+     * we should still be able to test this by subclassing fixture
+     * and fixtureMethodCheck, passing it an invalid call parameter.
+     *
+     */
+    function testFixureMethodCheckThrowsExceptionIfInvalidCall() {
+        $this->setExpectedException('ErrorException');
+        $this->_fixturesManager->fixtureMethodCheck('blah',$this->_testFixture);
+    }
+    
+    function testFixtureMethodCheckThrowsExceptionIfFixtureIsNotOfExpectedType() {
+    	$this->setExpectedException('ErrorException');
+    	$this->_fixturesManager->fixtureMethodCheck('drop','blah');
+    }
+    
+    function testDropTableThrowsExceptionIfTableDoesNotExist() {
+    	$this->setExpectedException('PDOException');
+    	$this->_fixturesManager->dropTable('chicken');
+    }
+    
+    /**
      * We want to make sure that if we have a issue with a DB query
      * that we can handle the exception as expected.
      * 

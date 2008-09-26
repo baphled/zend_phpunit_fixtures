@@ -78,18 +78,12 @@
  * 
  * @todo Don't like the fact that the DB related functionality
  *       is mingled in here, it should really be refactored.
- * @todo Refactor class so that '_' prefixed functions are actually
- *       private.
- * @todo It is now apparent that there are times we need to create
- *       a development version of our DB, this is labourious, so we
- *       need to create a method that can deal with this. Need to note
- *       that this functionality is not directly related to this class,
- *       so we need to look at remodelling.
  * 
  */
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
+
 
 class FixturesManager {
 
@@ -213,8 +207,6 @@ class FixturesManager {
 	 * @param Array    $dataType
 	 * @return String Portion of SQL, which will be used to construct query.
 	 * 
-	 * @todo smells abit, probably needs a redesign.
-	 * 
 	 */
      public function convertDataType($dataTypeInfo,$tablename='default') {
 		if(!is_array($dataTypeInfo)) {
@@ -240,6 +232,7 @@ class FixturesManager {
 	 * @param Array $dataType
 	 * @param String $tableName
 	 * @return Bool
+	 * 
 	 */
 	public function setupTable($dataType,$tableName) {
 		$query = '';
@@ -267,7 +260,7 @@ class FixturesManager {
 	 * @return Bool
 	 * 
 	 */
-	function insertTestData($testData,$table) {
+	public function insertTestData($testData,$table) {
 		try {
 			$this->_parseTestData($testData,$table);
 		}
@@ -286,6 +279,7 @@ class FixturesManager {
 	 *
 	 * @param String $tableName
 	 * @return bool
+	 * 
 	 */
 	public function tableExists($tableName) {
 		if(empty($tableName)) {
@@ -304,7 +298,7 @@ class FixturesManager {
      * @return bool
      * 
      */
-    function tablesPresent() {
+    public function tablesPresent() {
         if($this->_db->listTables()) {
             return true;
         }
@@ -312,9 +306,12 @@ class FixturesManager {
     }
 
 	/**
-	 * Truncates our fixtures table
-	 * @param $name    Our fixture table name
+	 * Truncates our fixtures table.
+	 * 
+	 * @access public
+	 * @param String $name    Our fixture table name
 	 * @return bool
+	 * 
 	 */
     public function truncateTable($name) {
         if(!is_string($name)) {
@@ -341,6 +338,7 @@ class FixturesManager {
 	 *
 	 * @access public
 	 * @return bool
+	 * 
 	 */
 	public function dropTables() {
 		$fixtures = $this->_db->listTables();
@@ -369,4 +367,38 @@ class FixturesManager {
 		$sql = 'DROP TABLE ' .$name;         // smells
         $this->_db->getConnection()->exec($sql);        
 	}
+	
+    /**
+     * Does the checking for our method call.
+     *
+     * @access public
+     * @param String                $call      The called method.
+     * @param PHPUnit_Fixture_DB    $fixture
+     * @return bool
+     * 
+     * @todo could be done better but this seems fine for the moment.
+     * 
+     */
+    public function fixtureMethodCheck($call,$fixture) {
+    	if(!is_a($fixture,'PHPUnit_Fixture_DB')) {
+    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DB.');
+    	}
+        switch($call) {
+            case 'drop':
+                $result = $this->dropTables();
+                break;
+            case 'setup':
+                $result = $this->setupTable($fixture->getFields(),$fixture->getName());
+                break;
+            case 'truncate':
+                $result = $this->truncateTable($fixture->getName());
+                break;
+            case 'populate':
+                $result = $this->insertTestData($fixture->getTestData(),$fixture->getName());
+                break;
+            default:
+                throw new ErrorException('Invalid fixture method call.');             
+        }
+        return $result;
+    }
 }

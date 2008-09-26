@@ -26,12 +26,6 @@ require_once 'PHPUnit/Fixture/DB.php';
 
 class EmptyFixture extends PHPUnit_Fixture_DB {}
 
-class AnotherFixture extends PHPUnit_Fixture_DB {
-    public function fixtureMethodCheck() {
-        $this->_fixtureMethodCheck('blah');
-    }
-}
-
 class FixtureDBTest extends PHPUnit_Framework_TestCase {
 	
 	private $_fixturedb;
@@ -127,19 +121,6 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
         $result = $this->_testFix->setup();
         $this->assertTrue($result);
         $this->_testFix->drop();
-    }
-
-    /**
-     * We want to be able to check that fixtureMethodCheck throws
-     * an exception, even though we have implemented the funcionality
-     * we should still be able to test this by subclassing fixture
-     * and _fixtureMethodCheck, passing it an invalid call parameter.
-     *
-     */
-    function testFixureMethodCheckThrowsExceptionIfInvalidCall() {
-        $this->setExpectedException('ErrorException');
-        $this->_anotherFix = new AnotherFixture();
-        $this->_anotherFix->fixtureMethodCheck();
     }
     
     /**

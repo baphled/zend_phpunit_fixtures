@@ -37,20 +37,30 @@ class DevelopmentHandler {
         $this->_fixMan = new FixturesManager($env);
 	}
 	
+	/**
+	 * Runs our method calls
+	 * 
+	 * @access private
+	 * @param String $call
+	 * @param PHPUnit_Fixture_DB
+	 * @return bool $result
+	 * 
+	 * @todo Functionality is scarily simular to PHPUnit_Fixture_DB's callMethod
+	 * 
+	 */
 	private function _runTableMethod($call,$fixture) {
 	   if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
             throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
         }
-		if('populate' === $call) {
-			return $this->_fixMan->insertTestData($fixture->getTestData(),$fixture->getName());
-		}
-		elseif('build' === $call) {
-			return $this->_fixMan->setupTable($fixture->getFields(),$fixture->getName());
-		}
+        $result = $this->_fixMan->fixtureMethodCheck($call,$fixture);
+        if(false !== $result) {
+        	return $result;
+        }
 		else {
 			return false;
 		}
 	}
+	
 	/**
 	 * Builds our development database.
 	 * 
@@ -60,7 +70,7 @@ class DevelopmentHandler {
 	 * 
 	 */
 	public function build($fixture) {
-		return $this->_runTableMethod('build',$fixture);
+		return $this->_runTableMethod('setup',$fixture);
 	}
 
     /**
