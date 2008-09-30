@@ -125,10 +125,10 @@ class PHPUnit_Fixture {
      */
     private function _parseSchema($field, $values) {
        foreach ($values as $value) {
-            DataTypeChecker::dataTypeIsAnInt($value,$field,$this);
-            DataTypeChecker::dataTypeIsAString($value,$field,$this);
-            DataTypeChecker::dataTypeIsADate($value,$field,$this);
-            DataTypeChecker::dataTypeIsDateTime($value,$field,$this);
+            DataTypeIs::anInt($value,$field,$this);
+            DataTypeIs::aString($value,$field,$this);
+            DataTypeIs::aDate($value,$field,$this);
+            DataTypeIs::aDateTime($value,$field,$this);
         }
     }
 

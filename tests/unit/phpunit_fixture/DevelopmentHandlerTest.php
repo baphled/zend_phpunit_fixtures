@@ -15,7 +15,6 @@
  */
 require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
 
-
 require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'DevelopmentHandler.php';
 

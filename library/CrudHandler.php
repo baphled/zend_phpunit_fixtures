@@ -39,7 +39,7 @@ class CrudHandler {
 	 * @param $data The data we want to validate against
 	 * 
 	 */
-	private function _parseParameters($params,$data) {
+	static private function _parseParameters($params,$data) {
 	   foreach($params as $param) {
             if(array_key_exists($param, $data)) {
                 if(null === $data[$param] || empty($data[$param])){

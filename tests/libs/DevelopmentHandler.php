@@ -30,7 +30,7 @@ class DevelopmentHandler {
 	 * environment.
 	 * 
 	 * @access public
-	 * @param $env String  our testing environment.
+	 * @param String $env Our testing environment.
 	 * 
 	 */
 	public function __construct($env='development') {
@@ -42,30 +42,26 @@ class DevelopmentHandler {
 	 * 
 	 * @access private
 	 * @param String $call
-	 * @param PHPUnit_Fixture_DB
+	 * @param PHPUnit_Fixture_DB $fixture
 	 * @return bool $result
 	 * 
 	 * @todo Functionality is scarily simular to PHPUnit_Fixture_DB's callMethod
 	 * 
 	 */
 	private function _runTableMethod($call,$fixture) {
-	   if(!is_subclass_of($fixture,'PHPUnit_Fixture_DB')) {
-            throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
+	   if($fixture instanceof PHPUnit_Fixture_DB) {
+            return $this->_fixMan->fixtureMethodCheck($call,$fixture);    
         }
-        $result = $this->_fixMan->fixtureMethodCheck($call,$fixture);
-        if(false !== $result) {
-        	return $result;
+        else {
+        	throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
         }
-		else {
-			return false;
-		}
 	}
 	
 	/**
 	 * Builds our development database.
 	 * 
 	 * @access public
-	 * @param $fixture PHPUnit_Fixture_DB
+	 * @param PHPUnit_Fixture_DB $fixture
 	 * @return  bool
 	 * 
 	 */
@@ -77,11 +73,9 @@ class DevelopmentHandler {
      * Populates our test table with our test data.
      *
      * @access public
-     * @param PHPUnitFixture_DB $fixture
+     * @param PHPUnit_Fixture_DB $fixture
      * @return bool
-     * 
-     * @todo refactor, is a copy of PHPUnit_Fixture_DB's functionality
-     * 
+     *  
      */
     public function populate($fixture) {
         return $this->_runTableMethod('populate',$fixture);

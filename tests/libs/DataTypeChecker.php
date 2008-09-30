@@ -9,7 +9,8 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package TestSuite
+ * @package PHPUnit_Fixture
+ * @subpackage DataTypeChecker
  *
  * $LastChangedBy$
  * Date: 02/09/2008
@@ -26,74 +27,6 @@ Zend_Loader::registerAutoload ();
 
 class DataTypeChecker {
 	
-    /**
-     * Checks that our data type is an integer, by default id's
-     * are set to null, this is so that our db can create our
-     * ID for us on insertion.
-     *
-     * @access public
-     * @param Array $dataType
-     * @param int $field
-     * @param Fixture $obj
-     */
-    static function dataTypeIsAnInt($dataType,$field,$obj) {
-       if('integer' === $dataType) {
-            if('id' !== $field) {
-                $obj->setResult($field, rand());
-            }
-            else {
-                $obj->setResult($field,NULL);
-            }
-        }
-    }
-
-    /**
-     * Checks that our a string, if so we generate test data.
-     *
-     * @access public
-     * @param Array $dataType
-     * @param int $field
-     * @param PHP_Fixture $obj
-     * 
-     */
-    static function dataTypeIsAString($dataType,$field,$obj) {
-       if('string' === $dataType) {
-           $obj->setResult($field,'my string');
-       }
-    }
-
-    /**
-     * Checks to see if our data type is a date, if it is,
-     * we generate the current date.
-     *
-     * @access public
-     * @param Array $dataType
-     * @param int $field
-     * @param Fixture $obj
-     * 
-     */
-    static function dataTypeIsADate($dataType,$field,$obj) {
-       if('date' === $dataType) {
-            $obj->setResult($field, date('Ymd'));
-       }
-    }
-
-    /**
-     * Checks to see if we have a datetype type, if we do
-     * we generate the current date & time.
-     *
-     * @access public
-     * @param Array $dateType
-     * @param int $field
-     * @param Fixture $obj
-     * 
-     */
-    static function dataTypeIsDateTime($dateType,$field,$obj) {
-       if('datetime' === $dateType) {
-            $obj->setResult($field, date(DATE_RFC822));
-       }    
-    }
-
     /**
      * Checks that our datatype is an array and that our table
      * is a valid string, if this is not the case we need to throw
@@ -163,8 +96,8 @@ class DataTypeChecker {
     }
 
     /**
-     * Determines whether our data type have 
-     * a is allowed a null value.
+     * Determines whether our data type 
+     * is allowed a null value.
      *
      * @access  public
      * @param   String  $key
@@ -238,7 +171,7 @@ class DataTypeChecker {
     		throw new ErrorException('Data type must be an array.');
     	}
     	if(array_key_exists('type', $dataType)) {
-	    	if('date' === $dataType['type'] || 'datetime' === $dataType['type']) {         // throws notices, when type key not present
+	    	if('date' === $dataType['type'] || 'datetime' === $dataType['type']) {         // throws exception, when type key not present
 	        	if(array_key_exists('length',$dataType)) {
 	        		throw new ErrorException('Invalid data format.');
 	        	}

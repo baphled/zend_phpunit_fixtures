@@ -86,7 +86,7 @@ Zend_Loader::registerAutoload ();
 
 
 class FixturesManager {
-
+	
     /**
      * Zend DB, used to connect to our DB
      * @access private
@@ -110,7 +110,7 @@ class FixturesManager {
 		TestConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 	}
-
+	
 	/**
 	 * Loops through our datatypes and generate our SQL as well
 	 * go along.
@@ -298,7 +298,6 @@ class FixturesManager {
      * Checks to see if any tables are present in our test db.
      *
      * @access public
-     * @access public
      * @return bool
      * 
      */
@@ -384,25 +383,27 @@ class FixturesManager {
      * 
      */
     public function fixtureMethodCheck($call,$fixture) {
-    	if(!is_a($fixture,'PHPUnit_Fixture_DB')) {
+    	if($fixture instanceof PHPUnit_Fixture_DB) {
+	    	switch($call) {
+	            case 'drop':
+	                $result = $this->dropTables();
+	                break;
+	            case 'setup':
+	                $result = $this->setupTable($fixture->getFields(),$fixture->getName());
+	                break;
+	            case 'truncate':
+	                $result = $this->truncateTable($fixture->getName());
+	                break;
+	            case 'populate':
+	                $result = $this->insertTestData($fixture->getTestData(),$fixture->getName());
+	                break;
+	            default:
+	                throw new ErrorException('Invalid fixture method call.');             
+	        }
+    	}
+    	else {
     		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DB.');
     	}
-        switch($call) {
-            case 'drop':
-                $result = $this->dropTables();
-                break;
-            case 'setup':
-                $result = $this->setupTable($fixture->getFields(),$fixture->getName());
-                break;
-            case 'truncate':
-                $result = $this->truncateTable($fixture->getName());
-                break;
-            case 'populate':
-                $result = $this->insertTestData($fixture->getTestData(),$fixture->getName());
-                break;
-            default:
-                throw new ErrorException('Invalid fixture method call.');             
-        }
         return $result;
     }
 }
