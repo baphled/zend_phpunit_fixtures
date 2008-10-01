@@ -613,4 +613,20 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->setExpectedException('ErrorException');
 		$this->_basicFix->validateTestData(false);
 	}
+	
+	/**
+	 * The TMZ should be set in configs, if it is not present we should
+	 * throw an exception.
+	 */
+	
+	/**
+	 * First we need to make sure that the TMZ being passed is actually valid
+	 * we'll need to use DateTimeZone::listIdentifiers() for this.
+	 *
+	 */	
+	function testConstructorThrowsExceptionIfErrorWithSettingTimeZone() {
+		$this->markTestSkipped('Need a way of actually testing.');
+		$this->setExpectedException('ErrorException');
+		$newFixture = new BasicFixture('blah/blah');
+	}
 }

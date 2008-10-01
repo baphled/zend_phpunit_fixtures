@@ -54,12 +54,10 @@ class DataTypeChecker {
      * @param  String  $value          the value of our type.
      * @return String  $typeSegment    Returns a the SQL equalient to our type.
      * 
-     * @todo Check that if we have a type & if it doesnt match, throw an exception.
-     * 
      */
     static function checkDataTypeValues($key,$value) {
         $typeSegment = '';
-        if('type' === $key) {               // smells, need to refactor
+        if('type' === $key) {
         	switch ($value) {
         		case 'string':
         			$typeSegment = ' VARCHAR';

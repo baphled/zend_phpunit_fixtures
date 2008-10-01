@@ -27,22 +27,39 @@ class TestConfigSettings {
 	/**
 	 * Used to store our configurations
 	 *
-	 * @var Zend_Config
+	 * @var    Zend_Config
 	 */
 	static protected $_config;
-	
+
+	/**
+	 * Sets the configuration path.
+	 * 
+	 * @access private
+	 * @param  $path           Configurations path.
+	 * @param  $file           Name of configuration file.
+	 * @return $configPath     The whole configuration path in string format.
+	 * 
+	 */
+    static function _setPath($path,$file) {
+        $root = realpath(dirname(__FILE__) . $path); // smelly, could be anything
+        $configPath = realpath($root . '/'.$file);
+        
+        return $configPath;
+    }
+    
 	/**
 	 * Sets up our configurations, retrieves settings
 	 * and registers them to zend.
 	 *
-	 * @param String $env  The settings environment 
-	 *                      we want to configure.
+	 * @access public
+	 * @param  String $path Path of configuration direction in relation to working directory.
+	 * @param  String $file Configuration file name.
 	 * 
 	 */
-    static function setUpConfig() {
-        $root = realpath(dirname(__FILE__) . '/../../configs/'); // smelly, could be anything
-        $configPath = $root .'/settings.ini';          
-        $general = new Zend_Config_Ini( $configPath, 'general');
+    static public function setUpConfig($path='/../../configs',$file='settings.ini') {
+        $configPath = self::_setPath($path,$file);
+        self::setUpConfigEnv('general');
+        $general = self::$_config;
         self::$_config = new Zend_Config_Ini( $configPath, $general->environment);
         Zend_Registry::set('config',self::$_config);
     }
@@ -52,26 +69,67 @@ class TestConfigSettings {
      * will be needed when we want to specify config settings for a
      * particular situation. ie. needing a diff DB for development.
      * 
-     * @access static
-     * @param $env  Configuration 
+     * @access  public
+     * @param   String $env   Environment used for our tests.
+     * @param   String $path  Configurations path (relative to working directory.
+     * @param   String $file  Configuration file name.
      * 
      */
-    static function setUpConfigEnv($env) {
-        $root = realpath(dirname(__FILE__) . '/../../configs/'); // smelly, could be anything
-        $configPath = $root .'/settings.ini';          
+    static public function setUpConfigEnv($env='development',$path='/../../configs',$file='/settings.ini') {
+        $configPath = self::_setPath($path,$file);        
         self::$_config = new Zend_Config_Ini( $configPath, $env);
         Zend_Registry::set('config',self::$_config);
     }
     
-    static function getDBParams($config) {
-        $params = array( 'host'     => $config->database->hostname,
-                 'username' => $config->database->username,
-                 'password' => $config->database->password,
-                 'dbname'   => $config->database->database);
+    /**
+     * Sets up our timezone, using our configuration
+     * settings.
+     * 
+     * @access  public
+     * @return  String
+     * 
+     */
+    static public function setupTimeZone() {
+    	$flag = false;
+    	self::setUpConfigEnv('general');
+    	$tmz = self::$_config->timezone;
+        $tmzList = DateTimeZone::listIdentifiers();
+        foreach($tmzList as $timezone) {
+            if($timezone === $tmz) {
+                $flag = true;
+            }
+        }
+        if($flag === false) {
+            throw new ErrorException('Time zone invalid.');
+        }
+        return $tmz;
+    }
+    
+    /**
+     * Returns our DB parameters from out configuration file.
+     * 
+     * @access  public
+     * @param   Zend_Config $config    
+     * @return  Array       $params
+     * 
+     */
+    static public function getDBParams($config) {
+        $params = array( 
+                    'host'     => $config->database->hostname,
+                    'username' => $config->database->username,
+                    'password' => $config->database->password,
+                    'dbname'   => $config->database->database);
         return $params;
     }
     
-    static function setUpDBAdapter() {
+    /**
+     * Sets up our DB adapter, if none are found
+     * we use PDO MySQL.
+     * 
+     * @access  public
+     * 
+     */
+    static public function setUpDBAdapter() {
     	$config = self::$_config;
     	if(null === $config->type ) {
     		$adapter = 'PDO_MYSQL';

@@ -85,11 +85,10 @@ class PHPUnit_Fixture {
 	 * 
 	 * @access public
 	 * 
-	 * @todo Really should put the TZ in a config file.
-	 *
 	 */
 	public function __construct() {
-		date_default_timezone_set('Europe/London');
+		$tmz = TestConfigSettings::setupTimeZone();
+		date_default_timezone_set($tmz);
 	}
 
 	/**

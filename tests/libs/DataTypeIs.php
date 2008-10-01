@@ -17,11 +17,12 @@ class DataTypeIs {
      * ID for us on insertion.
      *
      * @access public
-     * @param Array $dataType
+     * @param String $dataType
      * @param int $field
      * @param PHPUnit_Fixture $obj
+     * 
      */
-    static function anInt($dataType,$field,$obj) {
+    static function anInt($dataType,$field, PHPUnit_Fixture $obj) {
        if('integer' === $dataType) {
             if('id' !== $field) {
                 $obj->setResult($field, rand());
@@ -36,7 +37,7 @@ class DataTypeIs {
      * Checks that our a string, if so we generate test data.
      *
      * @access public
-     * @param Array $dataType
+     * @param String $dataType
      * @param int $field
      * @param PHPUnit_Fixture $obj
      * 
@@ -52,7 +53,7 @@ class DataTypeIs {
      * we generate the current date.
      *
      * @access public
-     * @param Array $dataType
+     * @param String $dataType
      * @param int $field
      * @param PHPUnit_Fixture $obj
      * 
@@ -68,7 +69,7 @@ class DataTypeIs {
      * we generate the current date & time.
      *
      * @access public
-     * @param Array $dateType
+     * @param String $dateType
      * @param int $field
      * @param PHPUnit_Fixture $obj
      * 
@@ -78,6 +79,4 @@ class DataTypeIs {
             $obj->setResult($field, date(DATE_RFC822));
        }    
     }
-	
 }
-?>
