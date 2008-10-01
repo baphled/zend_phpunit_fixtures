@@ -8,7 +8,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package IntraBetxTestSuite
+ * @package Zend_PHPUnit_Scaffolding
  *
  * Date:21/08/08
  * Fixed configFile & renamed to configPath, was not

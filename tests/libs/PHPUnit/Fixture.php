@@ -9,7 +9,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package TestSuite
+ * @package Zend_PHPUnit_Scaffolding
  *
  * $LastChangedBy$
  * Date: 06/09/2008

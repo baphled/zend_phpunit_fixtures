@@ -7,7 +7,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package PHPUnit_Fixture
+ * @package Zend_PHPUnit_Scaffolding
  *
  */
 class DataTypeIs {

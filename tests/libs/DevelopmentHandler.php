@@ -10,7 +10,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package
+ * @package Zend_PHPUnit_Scaffolding
  *
  */
 class DevelopmentHandler {

@@ -6,7 +6,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package PHPUnit_Fixture
+ * @package Zend_PHPUnit_Scaffolding
  * @subpackage TestSuite_PHPUnit_Fixture_DB
  *
  * Date: Sep 23, 2008

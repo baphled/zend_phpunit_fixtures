@@ -14,7 +14,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package PHPUnit_Fixture
+ * @package Zend_PHPUnit_Scaffolding
  * @subpackage PHPUnit_Fixture_DB
  * 
  * @todo Implement functionality to allows users to specify an already

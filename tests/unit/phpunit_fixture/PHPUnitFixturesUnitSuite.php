@@ -6,7 +6,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package TestSuite_PHPUnit_FixturesManager
+ * @package Zend_PHPUnit_Scaffolding
  *
  * $LastChangedBy$
  * 

@@ -12,7 +12,7 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @package PHPUnit_FixturesManager
+ * @package Zend_PHPUnit_Scaffolding
  * @subpackage TestSuite_PHPUnit_FixturesManager
  *
  * $LastChangedBy$

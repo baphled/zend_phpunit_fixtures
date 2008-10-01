@@ -9,7 +9,7 @@
  * @version $Id$
  * @copyright 2008
  * @subpackage TestSuite
- * @package FixturesManager
+ * @package Zend_PHPUnit_Scaffolding
  *
  * $LastChangedBy$
  * Date: 04/09/2008

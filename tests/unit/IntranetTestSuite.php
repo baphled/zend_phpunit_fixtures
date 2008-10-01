@@ -7,6 +7,7 @@ require_once 'phpunit_fixture/PHPUnitFixturesUnitSuite.php';
  * Static test suite.
  * @author Yomi (baphled) Akindayini
  * @version $Id$
+ * @package Zend_PHPUnit_Scaffolding
  * 
  * $LastChangedBy$
  */
