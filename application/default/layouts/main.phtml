@@ -6,46 +6,27 @@
  * @author
  * @version
  */
-?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+echo $this->doctype();
+?>
 
 <html>
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>ibetX Ltd Features API</title>
-	    <link href="/styles/default.css" rel="stylesheet" type="text/css" />	    
+		<?php 
+		echo $this->headTitle();
+	    echo $this->headScript();
+	    echo $this->headStyle();
+	    ?>
 	</head>
 	
 	<body>
-		<div id="logo">
-			<h1><a href="/features">ibetX Features API</a></h1>
-		</div>
-		<div id="content">
-			<div id="sidebar">
-				<div id="menu">
-					<ul>
-						<li><a href="/features/index" title="">View Features</a></li>
-				    	<li><a href="/features/add" title="">Add Features </a></li>
-						<li><a href="/features/functions" title="">View Functions</a></li>
-						<li><a href="/features/functions/add" title="">Add Functions</a></li>
-					</ul>
-		  		</div>
-	 	 	</div>
+		<h1><?php echo $this->placeholder('title') ?></h1>
+		<?php echo $this->layout()->content ?>
 
-			<div id="main">
-				<div class="hr"><hr /></div>
-				<h1><?php echo $this->placeholder('title') ?></h1>
-				<?php echo $this->layout()->content ?>
-			</div>
-	 	 </div>
-	 	
-	 	<div id="extra"></div>
-		
-		<div id="footer">
-			<p id="legal">Copyright &copy; 2008 ibetX. Nadjaha</p>
-		</div>
-		
+		<br />
+		<br />
 	</body>
+
 </html>
