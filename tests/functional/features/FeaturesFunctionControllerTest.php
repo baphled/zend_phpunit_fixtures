@@ -9,7 +9,7 @@ class FeaturesFunctionControllerTest extends Zend_Test_PHPUnit_ControllerTestCas
 	
 	protected function setUp() {
 		$this->_functionFixtures = new FunctionFixture();
-		$this->_functionFixtures->setupTable();
+		$this->_functionFixtures->setup();
 		$this->_functionFixtures->populate();
 		$this->bootstrap = dirname(__FILE__) . '/../../libs/bootstrap.php';
 		parent::setUp ();
