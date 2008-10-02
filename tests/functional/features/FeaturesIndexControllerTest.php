@@ -9,7 +9,7 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public function setup() {
 		$this->_featureFixtures = new FeatureFixture();
-		$this->_featureFixtures->setupTable();
+		$this->_featureFixtures->setup();
 		$this->_featureFixtures->populate();
 		$this->bootstrap = dirname(__FILE__) . '/../../libs/bootstrap.php';		
 		parent::setup();
@@ -34,7 +34,7 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	}
 	
 	public function testDefaultFeaturesUrlShowsErrorMessageIfNoDataExists() {
-		$this->_featureFixtures->truncateTable();
+		$this->_featureFixtures->truncate();
 		$this->dispatch('/features');	
 		$this->assertQueryContentContains('p', 'No features have been added yet.');
 	}
