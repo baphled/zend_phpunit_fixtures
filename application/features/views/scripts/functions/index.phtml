@@ -21,7 +21,7 @@
                 	<td><a href="<?php echo $this->url(array('controller'=>'functions','action'=>'edit','id'=>$function->id)); ?>">Edit</a></td>	
 					<td><?php echo $function->title; ?></td>
 					<td><?php echo $function->description; ?></td>
-					<td><a href="<?php echo $this->url(array('controller'=>'functions','action'=>'index','id'=>$function->id)); ?>">View Features</a></td>
+					<td><a href="<?php echo $this->url(array('controller'=>'index','action'=>'index','id'=>$function->id)); ?>">View Features</a></td>
                     <td><a href="<?php echo $this->url(array('controller'=>'functions','action'=>'delete','id'=>$function->id)); ?>">Delete</a></td>
 				</tr>
 			<?php endforeach; ?>

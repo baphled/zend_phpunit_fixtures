@@ -20,6 +20,35 @@ class Features_IndexController extends Zend_Controller_Action {
 		$this->view->features = $this->_table->fetchAll();
 	}
 	
+	public function addAction() {
+		$request = $this->getRequest();
+		if($request->isPost())	{
+			$filters = array(
+				'title' => 'StripTags',
+				'desc' => 'StripTags'
+			);
+			
+			$validation = array(
+				'title' => array(),
+				'desc' => array()
+			);
+			
+			$zfi = new Zend_Filter_Input($filters, $validation, $request->getPost());
+			
+			if($zfi->isValid()) {
+				$data = array();
+				$data['title'] 		 = $zfi->title;
+				$data['description'] = $zfi->desc;
+				
+				$clean = array();
+				$clean['title'] = $zfi->title;
+				$clean['description'] = $zfi->desc;
+				
+				$this->view->features = $this->_table->addNewFeature($clean);
+			}
+		}
+	}	
+	
 	public function editAction() {
 		$request = $this->getRequest();
 		$id = $request->getParam('id');

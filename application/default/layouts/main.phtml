@@ -7,26 +7,44 @@
  * @version
  */
 
-echo $this->doctype();
+$this->doctype();
 ?>
-
 <html>
 
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<?php 
-		echo $this->headTitle();
-	    echo $this->headScript();
-	    echo $this->headStyle();
-	    ?>
+		<title>ibetX Ltd Features API</title>
+	    <link href="/styles/default.css" rel="stylesheet" type="text/css" />	    
 	</head>
 	
 	<body>
-		<h1><?php echo $this->placeholder('title') ?></h1>
-		<?php echo $this->layout()->content ?>
+		<div id="logo">
+			<h1><a href=<?php echo $this->url(array('controller'=>'index','action'=>'index')); ?>'>ibetX Features API</a></h1>
+		</div>
+		<div id="content">
+			<div id="sidebar">
+				<div id="menu">
+					<ul>
+						<li><a href='<?php echo $this->url(array('controller'=>'index','action'=>'index')); ?>'>View Features</a></li>
+				    	<li><a href='<?php echo $this->url(array('controller'=>'index','action'=>'add')); ?>'>Add Features </a></li>
+						<li><a href='<?php echo $this->url(array('controller'=>'functions','action'=>'index')); ?>'>View Functions</a></li>
+						<li><a href='<?php echo $this->url(array('controller'=>'functions','action'=>'add')); ?>'>Add Functions</a></li>
+					</ul>
+		  		</div>
+	 	 	</div>
 
-		<br />
-		<br />
+			<div id="main">
+				<div class="hr"><hr /></div>
+				<h1><?php echo $this->placeholder('title') ?></h1>
+				<?php echo $this->layout()->content ?>
+			</div>
+	 	 </div>
+	 	
+	 	<div id="extra"></div>
+		
+		<div id="footer">
+			<p id="legal">Copyright &copy; 2008 ibetX. Nadjaha</p>
+		</div>
+		
 	</body>
-
 </html>

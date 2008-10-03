@@ -3,8 +3,8 @@
 /**
  * IndexController - The default controller class
  * 
- * @author Yomi (baphled) Akindayini
- * @version $Id$
+ * @author
+ * @version 
  */
 
 require_once 'Zend/Controller/Action.php';
