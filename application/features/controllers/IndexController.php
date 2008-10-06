@@ -35,16 +35,13 @@ class Features_IndexController extends Zend_Controller_Action {
 			
 			$zfi = new Zend_Filter_Input($filters, $validation, $request->getPost());
 			
-			if($zfi->isValid()) {
-				$data = array();
-				$data['title'] 		 = $zfi->title;
-				$data['description'] = $zfi->desc;
-				
+			if($zfi->isValid()) {				
 				$clean = array();
 				$clean['title'] = $zfi->title;
 				$clean['description'] = $zfi->desc;
 				
 				$this->view->features = $this->_table->addNewFeature($clean);
+				$this->getHelper('redirector')->goto('index');			
 			}
 		}
 	}	

@@ -36,7 +36,7 @@ Zend_Layout::startMvc(array(
 	$root = realpath(dirname(__FILE__) . '/../configs/'); // smelly, could be anything
 $configPath = realpath($root .'/settings.ini'); 
 
-$config = new Zend_Config_Ini($configPath, 'local');
+$config = new Zend_Config_Ini($configPath, 'development');
 
 // setup Zend_Db_Table
 $params = array( 'host'     => $config->database->hostname,

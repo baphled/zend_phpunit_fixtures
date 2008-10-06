@@ -12,16 +12,33 @@
 
 class Features extends Zend_Db_Table_Abstract {
 	
+	/**
+	 * @var String $_name Name of table 
+	 */
 	protected $_name = 'features';
 	
+	/**
+	 * Adds new feature to features list
+	 *
+	 * @param Array $data
+	 * @return bool	True on success, false on failure
+	 * 
+	 * @todo add user_id into functionality, once userapi is complete.
+	 * 
+	 */
 	function addNewFeature($data){
 		if(!is_array($data)){
 			throw new ErrorException('Must be an array');
 		}
-		$params = array('title','userid');
+		$params = array('title','description');
 		return CrudHandler::add($data,$params,$this);
 	}
 	
+	/**
+	 * Enter description here...
+	 *
+	 * @param unknown_type $id
+	 */
 	function show($id){		
 		return $this->find($id)->current();
 	}
