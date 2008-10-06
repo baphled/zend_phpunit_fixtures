@@ -23,6 +23,35 @@ class Features_FunctionsController extends Zend_Controller_Action {
 		$this->view->functions = $this->_table->fetchAll();
 	}
 	
+	
+	public function addAction() {
+		$request = $this->getRequest();
+		if($request->isPost())	{
+			$filters = array(
+				'title' => 'StripTags',
+				'desc' => 'StripTags'
+			);
+			
+			$validation = array(
+				'title' => array(),
+				'desc' => array()
+			);
+			
+			$zfi = new Zend_Filter_Input($filters, $validation, $request->getPost());
+			
+			if($zfi->isValid()) {				
+				$clean = array();
+				$clean['title'] = $zfi->title;
+				$clean['description'] = $zfi->desc;
+				
+				$this->view->functions = $this->_table->addNewFunction($clean);
+				$this->getHelper('redirector')->goto('index');			
+			}
+		}
+	}	
+	
+	
+	
 	public function editAction() {
 		$request = $this->getRequest();
 		$id = $request->getParam('id');
@@ -62,5 +91,8 @@ class Features_FunctionsController extends Zend_Controller_Action {
 		$this->getHelper('redirector')->goto('index');		
 	}	
 }
-?>
+
+
+
+
 
