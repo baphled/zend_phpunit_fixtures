@@ -162,5 +162,62 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($result);		
 	}
 
+	/*
+	 * The field "addedbydate" is now to be added to the list
+	 * of fields. New tests for this are appended below. Some of the
+	 * tests above are relevant, but none failed so none of the above
+	 * tests have been altered.
+	 */
+	function testParamFeatureAddedDateMissing() {
+		$data = array('userid'=>'1',
+					  'title'=>'new feature',
+					  'description' => 'To test a new feature'
+				      );
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
+	
+	function testParamFeatureIfAddedDateIsNull() {
+		$data = array('userid'=>'1',
+					  'title'=>'new feature',
+					  'description' => 'To test a new feature',
+					  'addeddate' => NULL
+				      );
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
 
+	function testParamFeatureIfAddedDateIsEmpty() {
+		$data = array('userid'=>'1',
+					  'title'=>'new feature',
+					  'description' => 'To test a new feature',
+					  'addeddate' => ''
+				      );
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
+	
+	
+	function testParamFeatureIfAddedDateNotCorrectFormat() {
+		$data = array('userid'=>'1',
+					  'title'=>'new feature',
+					  'description' => 'To test a new feature',
+					  'addeddate' => 'Mary had a little lamb'
+				      );
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
+	
+	
+	
+	
+
+	function testParamFeatureIfAddedDateIsString() {
+		$data = $this->_featureFixtures->getTestData('userid',13);
+		$this->_feature->addNewFeature($data);
+		
+	}
+	
+	
+	
 }

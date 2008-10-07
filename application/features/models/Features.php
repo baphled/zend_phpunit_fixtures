@@ -30,7 +30,7 @@ class Features extends Zend_Db_Table_Abstract {
 		if(!is_array($data)){
 			throw new ErrorException('Must be an array');
 		}
-		$params = array('userid','title','description');
+		$params = array('userid','title','description','addeddate');
 		return CrudHandler::add($data,$params,$this);
 	}
 	
