@@ -18,6 +18,7 @@
  * Date:19/08/08
  * Made getParam private, seeing as it should
  * only be used internally.
+ * 
  */
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload();
@@ -71,7 +72,7 @@ class TestConfigSettings {
      * 
      * @access  public
      * @param   String $env   Environment used for our tests.
-     * @param   String $path  Configurations path (relative to working directory.
+     * @param   String $path  Configurations path (relative to working directory).
      * @param   String $file  Configuration file name.
      * 
      */
@@ -93,8 +94,7 @@ class TestConfigSettings {
     	$flag = false;
     	self::setUpConfigEnv('general');
     	$tmz = self::$_config->timezone;
-        $tmzList = DateTimeZone::listIdentifiers();
-        foreach($tmzList as $timezone) {
+        foreach(DateTimeZone::listIdentifiers() as $timezone) {
             if($timezone === $tmz) {
                 $flag = true;
             }

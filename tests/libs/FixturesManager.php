@@ -8,16 +8,17 @@
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
  * @copyright 2008
- * @subpackage TestSuite
  * @package Zend_PHPUnit_Scaffolding
  *
  * $LastChangedBy$
+ * 
  * Date: 04/09/2008
  * A large amount of refactoring has been done here, namely to improve
  * performance and design, we introduced dropTable int our buildFixtureTable
  * function earlier, which didn't help things much, though out DB based tests
  * work, this leaves our other tests failing, so we have reintroduced the same
  * method at the tearDown method of our class.
+ * 
  * Date: 02/09/2008
  * Refactored _validateDataType, we were getting errors when checking
  * that a data type had lengths on arrays with none. We are now able
@@ -90,6 +91,7 @@ class FixturesManager {
     /**
      * Zend DB, used to connect to our DB
      * @access private
+     * @var Zend_DB
      * 
     */
     private $_db;
@@ -176,7 +178,7 @@ class FixturesManager {
      * Constructs insertion query.
      *
      * @access  private
-     * @param   Array $insertDataType
+     * @param   Array   $insertDataType
      * @param   String  $tableName
      * @return  String
      * 
@@ -205,8 +207,9 @@ class FixturesManager {
 	 * so we need to make sure we only have 1 array.
 	 *
 	 * @access public
-	 * @param Array    $dataType
-	 * @return String Portion of SQL, which will be used to construct query.
+	 * @param  Array   $dataTypeInfo   Our data type array, which will be used to create our SQL.
+	 * @param  String  $tablename      The name of our DB table.
+	 * @return String  $stmt           Portion of SQL, which will be used to construct query.
 	 * 
 	 */
      public function convertDataType($dataTypeInfo,$tablename='default') {
@@ -230,9 +233,9 @@ class FixturesManager {
 	 * Builds our fixtures DB table
 	 *
 	 * @access public
-	 * @param Array $dataType
-	 * @param String $tableName
-	 * @return Bool
+	 * @param  Array   $dataType       Our data type array, which will be used to create our SQL.
+	 * @param  String  $tableName      The name of our DB table.
+	 * @return Bool                    True on success, false on failure.
 	 * 
 	 */
 	public function setupTable($dataType,$tableName) {
@@ -257,9 +260,9 @@ class FixturesManager {
 	 * the selected test table.
 	 *
 	 * @access public
-	 * @param Array $testData
-	 * @param String $table
-	 * @return Bool
+	 * @param  Array   $testData   Our data type array, which will be used to create our SQL.
+	 * @param  String  $table      The name of the DB table.
+	 * @return Bool                True on success, false on failure.
 	 * 
 	 */
 	public function insertTestData($testData,$table) {
@@ -280,8 +283,8 @@ class FixturesManager {
 	 * actually exists with our test db.
 	 *
 	 * @access public
-	 * @param String $tableName
-	 * @return bool
+	 * @param  String $tableName  The DB table name.
+	 * @return Bool               True on success, false on failure.
 	 * 
 	 */
 	public function tableExists($tableName) {
@@ -312,7 +315,7 @@ class FixturesManager {
 	 * Truncates our fixtures table.
 	 * 
 	 * @access public
-	 * @param String $name    Our fixture table name
+	 * @param  String $name    Our fixture table name
 	 * @return bool
 	 * 
 	 */
@@ -363,7 +366,7 @@ class FixturesManager {
 	 * Deletes a specific table.
 	 * 
 	 * @access public
-	 * @param $name    Tablename
+	 * @param  $name    Tablename
 	 * 
 	 */
 	public function dropTable($name) {
@@ -374,12 +377,10 @@ class FixturesManager {
     /**
      * Does the checking for our method call.
      *
-     * @access public
-     * @param String                $call      The called method.
-     * @param PHPUnit_Fixture_DB    $fixture
-     * @return bool
-     * 
-     * @todo could be done better but this seems fine for the moment.
+     * @access  public
+     * @param   String                $call      The called method.
+     * @param   PHPUnit_Fixture_DB    $fixture
+     * @return  bool
      * 
      */
     public function fixtureMethodCheck($call,$fixture) {

@@ -3,9 +3,9 @@
  * DevelopmentHandler
  * 
  * Used to generate our test data DB for development.
- * Seeing as this process can be combersome, we have
+ * Seeing as this process can be cumbersome, I have
  * created this class to deal with the basic creation
- * of our DB.
+ * of our DB and manipulation of test data.
  * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
@@ -41,8 +41,8 @@ class DevelopmentHandler {
 	 * Runs our method calls
 	 * 
 	 * @access private
-	 * @param String $call
-	 * @param PHPUnit_Fixture_DB $fixture
+	 * @param  String $call
+	 * @param  PHPUnit_Fixture_DB $fixture
 	 * @return bool $result
 	 * 
 	 * @todo Functionality is scarily simular to PHPUnit_Fixture_DB's callMethod
@@ -61,8 +61,8 @@ class DevelopmentHandler {
 	 * Builds our development database.
 	 * 
 	 * @access public
-	 * @param PHPUnit_Fixture_DB $fixture
-	 * @return  bool
+	 * @param  PHPUnit_Fixture_DB $fixture
+	 * @return bool
 	 * 
 	 */
 	public function build($fixture) {
@@ -73,7 +73,7 @@ class DevelopmentHandler {
      * Populates our test table with our test data.
      *
      * @access public
-     * @param PHPUnit_Fixture_DB $fixture
+     * @param  PHPUnit_Fixture_DB $fixture
      * @return bool
      *  
      */
@@ -92,8 +92,6 @@ class DevelopmentHandler {
 	   if($this->_fixMan->tablesPresent()) {
               return $this->_fixMan->dropTables();
         }
-        else {
-        	return false;
-        }
-	}
+        return false;
+    }
 }
