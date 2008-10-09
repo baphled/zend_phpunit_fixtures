@@ -17,7 +17,7 @@ class Functions extends Zend_Db_Table_Abstract {
 		if (!is_array($data)){
 			throw new ErrorException('Must be an array');
 		}
-		$params = array('title','description');
+		$params = array('title','description','userid');
 		return CrudHandler::add($data,$params,$this);
 	}
 	
