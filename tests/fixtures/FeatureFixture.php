@@ -22,11 +22,15 @@ class FeatureFixture extends PHPUnit_Fixture_DB {
 					 'description' => array('type'=>'string','length'=>255, 'null', FALSE),
 					 'addeddate' => array('type'=>'date', 'null'=> FALSE)
 	);
-	
+
+	/*
 	protected $_testData = array(
-						array('id' => 1, 'userid' => 1,'title' => 'new feature','description' => 'To test a new feature','addeddate'=>'2008-10-07'),
-						array('id' => 2, 'userid' => 23,'title' => 'anuva feature','description' => 'feature description','addeddate'=>'2008-10-07'),
-						array('id' => 3, 'userid'=> 13,'title' => 'second feature','description' => 'second feature', 'addeddate'=>'2008-10-07'),						
+						array('id' => NULL, 'userid' => 1, 'title' => 'new feature', 'description' => 'To test a new feature', 'addeddate'=> 'to be updated with todays date' ),
+						array('id' => NULL, 'userid' => 23,'title' => 'anuva feature','description' => 'feature description','addeddate'=>  'to be updated with todays date' ),
+						array('id' => NULL, 'userid'=> 13,'title' => 'second feature','description' => 'second feature', 'addeddate'=> 'to be updated with todays date' ),
+						array('id' => NULL, 'userid'=> 8,'title' => 'Love feature','description' => 'Pizza feature', 'addeddate'=> 3 )						
 						);
+	*/
+	
 }
 ?>

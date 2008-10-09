@@ -27,8 +27,12 @@ class Features extends Zend_Db_Table_Abstract {
 	 * 
 	 */
 	function addNewFeature($data){
-		if(!is_array($data)){
+		if (!is_array($data)) {
 			throw new ErrorException('Must be an array');
+		}
+		if (!$this->_validateTodayYYYYHyphenMMHyphenDDFormat($data))
+		{
+			throw new ErrorException('Must be a valid date format of YYYY-MM-DD');
 		}
 		$params = array('userid','title','description','addeddate');
 		return CrudHandler::add($data,$params,$this);
@@ -54,6 +58,20 @@ class Features extends Zend_Db_Table_Abstract {
 	
 	function deleteFeature($id){
 		return CrudHandler::delete($id,$this);
+	}
+	
+	private function _validateTodayYYYYHyphenMMHyphenDDFormat($data)
+	{
+		if (!array_key_exists('addeddate', $data)) {
+			throw new ErrorException('Key: addeddate does not exist in the array');
+		}
+		if (!is_string($data['addeddate'])) {
+			throw new ErrorException('The date should be a string type.');
+		}
+		if ($data['addeddate'] == date('Y-m-d') ) {
+			return true;
+		}
+		return false;
 	}
 	
 }

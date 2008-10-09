@@ -20,37 +20,79 @@ require_once dirname(__FILE__) . '/../../libs/TestHelper.php';
 class FeatureTest extends PHPUnit_Framework_TestCase {
 	
 	private $_feature;
-	
-	private function _initialiseCompleteFeature(){
-		$data = $this->_featureFixtures->getTestData('userid',1);
-		return $this->_feature->addNewFeature($data);	
-	}
-	
+
 	public function __construct() {			
 		$this->setName ( 'FeatureTest Case' );
 		$this->_featureFixtures = new FeatureFixture();
-		
-		$this->_fixtures = array(
-			'userFixture'	  => array('id'	=> 1,'fname' => 'nadjaha',	'lname' => 'wohedally','position' => 'developer'),
-			'noUserIDFeature' => array(	'title' => 'second feature','description' => 'second feature'));
 	}
 	
 	public function setUp() {
 		parent::setUp ();
 		$this->_featureFixtures->setup();
+		$this->_date = date('Ymd');
 		$this->_feature = new Features();
 	}
-	
+
 	public function tearDown() {
 		$this->_feature = null;
 		$this->_featureFixtures = null;
 		parent::tearDown();
 	}
 	
+	/**
+	 * Helper functions.
+	 */
+	function _setupSingleFixtures() {
+		$this->_featureFixtures->autoGenerateTestData(1);
+	}
+	
+	function _getTestData() {
+		$this->_setupSingleFixtures();
+		return $this->_featureFixtures->getTestData();
+	}
+	
+	private function _initialiseCompleteFeature(){
+		$data = $this->_getTestData();
+		return $this->_feature->addNewFeature($data[0]);	
+	}
+	
+	private function _getDummyData() {
+		return array('userid'=>'1',
+					  'title'=>'new feature',
+					  'description' => 'To test a new feature'
+				      );
+	}
+
+	/**
+	 * Auto increments ID
+	 */
+	function _returnFeatureData() {
+		$this->_setupSingleFixtures();
+		return $this->_featureFixtures->retrieveTestDataResults();
+	}
+	
+	private function _returnDataAndAddFeature(){
+		$data = $this->_returnFeatureData();
+		$this->_feature->addNewFeature($data[0]);
+		return $data;
+	}
+	
+	/*
+	 * Helper End.
+	 */
+	
 	public function testConstructor(){
 		$this->assertNotNull($this->_feature);
 	}
 	
+	private function _setDate($date) {
+		if (!empty($date)) {
+			return new Zend_Date($date, Zend_Date::ISO_8601);
+		}
+		else {
+			throw new ErrorException('Date is not specified.');
+		}
+	} 
 	/**
 	 * check if param set is valid
 	 */
@@ -89,6 +131,10 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(1,$result);
 	}
 	
+	/**
+	 * @todo refactor!!!
+	 *
+	 */
 	function testAddNewFeatureThrowsExceptionOnNoUserId(){
 		$data = $this->_fixtures['noUserIDFeature'];
 		$this->setExpectedException('ErrorException');
@@ -96,15 +142,14 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testAddNewFeatureReturnsIntegerOnSuccess(){
-		$data1 = $this->_featureFixtures->getTestData('userid',1);
-		$data2 = $this->_featureFixtures->getTestData('userid',13);
-		$this->_feature->addNewFeature($data1);
-		$this->assertEquals(3,$this->_feature->addNewFeature($data2));
+		$this->_featureFixtures->autoGenerateTestData(2);
+		$data = $this->_featureFixtures->getTestData();
+		$this->_feature->addNewFeature($data[0]);
+		$this->assertEquals(2,$this->_feature->addNewFeature($data[1]));
 	}
 	
 	function testViewFeatureById(){
-		$data = $this->_featureFixtures->getTestData('userid',1);
-		$this->_feature->addNewFeature($data);
+		$this->_returnDataAndAddFeature();
 		$result = $this->_feature->show(1);
 		$this->assertNotNull($result);
 	}
@@ -115,44 +160,40 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	*/
 	function testAddNewFeatureDoesNotAllowDuplicateData() {
-		$this->_initialiseCompleteFeature();
-		$feature = $this->_featureFixtures->getTestData('userid',23);
-		$result = $this->_feature->_featureExists($feature);
+		$data = $this->_returnFeatureData();
+		$result = $this->_feature->_featureExists($data[0]);
 		$this->assertEquals(FALSE,$result);
 	}
 	
 	function testFeatureExistReturnsTrueOnFeatureDuplication(){
-		$data = $this->_featureFixtures->getTestData('userid',1);
-		$this->_feature->addNewFeature($data);
-		$result = $this->_feature->_featureExists($data);
+		$data = $this->_returnDataAndAddFeature();
+		$result = $this->_feature->_featureExists($data[0]);
 		$this->assertEquals(True,$result);
 	}
 	
-	function testUserIdThrowExceptionIfNotNull(){
+	function testUserIdThrowExceptionNull(){
 		$id = null;
+		$data = $this->_returnFeatureData();
 		$this->setExpectedException('ErrorException');
-		$this->_feature->updateFeature($id,$this->_featureFixtures->getTestData('userid',1));
+		$this->_feature->updateFeature($id,$data[0]);
 		
 	}
 	
 	function testUpdateFeaturesReturnTrueOnSuccess(){
-		$data = $this->_featureFixtures->getTestData('userid',1);
-		$this->_feature->addNewFeature($data);
-		$data['title'] = 'shitty ting';
-		$result = $this->_feature->updateFeature(1,$data);
+		$this->_returnDataAndAddFeature();
+		$data[0]['title'] = 'shitty ting';
+		$result = $this->_feature->updateFeature(1,$data[0]);
 		$this->assertTrue($result);
 	}
 	
 	function testUpdateFeaturesReturnFalseOnFailure(){
-		$data = $this->_featureFixtures->getTestData('userid',1);
-		$this->_feature->addNewFeature($data);
-		$result = $this->_feature->updateFeature(1,$data);
+		$data = $this->_returnDataAndAddFeature();
+		$result = $this->_feature->updateFeature(1,$data[0]);
 		$this->assertFalse($result);		
 	}
 	
 	function testDeleteFeatureReturnTrueOnSuccess(){
-		$data = $this->_featureFixtures->getTestData('userid',1);
-		$this->_feature->addNewFeature($data);
+		$this->_returnDataAndAddFeature();
 		$result = $this->_feature->deleteFeature(1);
 		$this->assertTrue($result);
 	}
@@ -162,6 +203,7 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($result);		
 	}
 
+
 	/*
 	 * The field "addedbydate" is now to be added to the list
 	 * of fields. New tests for this are appended below. Some of the
@@ -169,53 +211,36 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	 * tests have been altered.
 	 */
 	function testParamFeatureAddedDateMissing() {
-		$data = array('userid'=>'1',
-					  'title'=>'new feature',
-					  'description' => 'To test a new feature'
-				      );
 		$this->setExpectedException('ErrorException');
-		$this->_feature->addNewFeature($data);
+		$this->_feature->addNewFeature($this->_getDummyData());
 	}
 	
 	function testParamFeatureIfAddedDateIsNull() {
-		$data = array('userid'=>'1',
-					  'title'=>'new feature',
-					  'description' => 'To test a new feature',
-					  'addeddate' => NULL
-				      );
+		$data = $this->_getDummyData();
+		$data['addeddate'] = NULL;
 		$this->setExpectedException('ErrorException');
 		$this->_feature->addNewFeature($data);
 	}
-
-	function testParamFeatureIfAddedDateIsEmpty() {
-		$data = array('userid'=>'1',
-					  'title'=>'new feature',
-					  'description' => 'To test a new feature',
-					  'addeddate' => ''
-				      );
-		$this->setExpectedException('ErrorException');
-		$this->_feature->addNewFeature($data);
-	}
-	
 	
 	function testParamFeatureIfAddedDateNotCorrectFormat() {
-		$data = array('userid'=>'1',
-					  'title'=>'new feature',
-					  'description' => 'To test a new feature',
-					  'addeddate' => 'Mary had a little lamb'
-				      );
+		$data = $this->_getDummyData();
+		$data['addeddate'] = 'Mary had a little lamb';
+		$this->setExpectedException('ErrorException');
+		$this->_feature->addNewFeature($data);
+	}
+ 	
+	function testAddedDateIsString() {
+		$data = $this->_returnFeatureData();
 		$this->setExpectedException('ErrorException');
 		$this->_feature->addNewFeature($data);
 	}
 	
-	
-	
-	
-
-	function testParamFeatureIfAddedDateIsString() {
-		$data = $this->_featureFixtures->getTestData('userid',13);
-		$this->_feature->addNewFeature($data);
-		
+	function testAddedDateNotModifiedOnUpdate() {
+		$this->_initialiseCompleteFeature();
+		$data = array('title' => 'New title Rui');
+		$result = $this->_feature->updateFeature(1,$data);
+		$showResult = $this->_feature->show(1);
+		$this->assertEquals('2008-10-09', $showResult->addeddate);
 	}
 	
 	
