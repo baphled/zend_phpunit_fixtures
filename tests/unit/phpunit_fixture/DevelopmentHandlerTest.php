@@ -119,7 +119,6 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 		$this->_blankFix->setName('another');
 		$this->setExpectedException('ErrorException');
 		$result = $this->_devHandler->populate($this->_blankFix);
-		$this->assertFalse($result);
 	}
 	
 	function testPopulateThrowsExceptionIfFixtureNotASubclassOfPHPUnitFixtureDB() {
