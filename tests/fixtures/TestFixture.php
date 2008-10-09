@@ -11,7 +11,7 @@
  * @subpackage TestSuite
  *
  * $LastChangedBy$
- * 01/09/2008
+ * Date: 01/09/2008
  * Created to test our fixture(Manager) classes
  */
 
