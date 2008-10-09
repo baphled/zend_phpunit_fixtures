@@ -60,7 +60,7 @@ class DataTypeIs {
      */
     static function aDate($dataType,$field,$obj) {
        if('date' === $dataType) {
-            $obj->setResult($field, date('Ymd'));
+            $obj->setResult($field, date('Y-m-d'));
        }
     }
 
