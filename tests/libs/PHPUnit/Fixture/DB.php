@@ -6,6 +6,9 @@
  * us to populate, setup & drop our fixture DB tables &
  * test data.
  * 
+ * Date: 08/10/08
+ * Made abstract as it should only be subclassed.
+ * 
  * Date: 23/09/08
  * Refactored DB centric functionality from PHPUnit_Fixture
  * to this class, which will solely deal with test data DB
@@ -22,7 +25,7 @@
  *
  */
 
-class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
+abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
 	 
     /**
      * Stores the fixtures table name
@@ -43,13 +46,20 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      */
     private $_fixMan;
     
-    public function __construct() {
+    /**
+     * Initialises our fixture manager.
+     * @access public
+     * 
+     */
+    final public function __construct() {
         $this->_fixMan = new FixturesManager();
     }
 
     /**
      * Drops all test data DB's when object is destructed.
      * Used to keep our DB in its original format.
+     * 
+     * @access public
      * 
      */
     public function __destruct() {
@@ -67,9 +77,9 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
     /**
      * Used to call our CRUD methods
      * 
-     * @access private
-     * @param String    $call   The call we want to make.
-     * @return bool
+     * @access  private
+     * @param   String    $call   The call we want to make.
+     * @return  bool
      * 
      */
     private function _callMethod($call) {
@@ -86,6 +96,7 @@ class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
     /**
      * Returns the fixtures table name.
      *
+     * @access public
      * @return String
      * 
      */

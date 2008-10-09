@@ -66,23 +66,21 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	public function setUp() {
-		parent::setUp ();
-		$this->_fixture = new PHPUnit_Fixture();
+		parent::setUp();
 		$this->_testFix = new TestFixture();
 		$this->_invalidFieldFixture = new InvalidFieldTypeFixture();
 		$this->_basicFix = new BasicFixture();
 	}
 	
 	public function tearDown() {
-		$this->_fixture = null;
 		$this->_testFix = null;
 		$this->_invalidFieldFixture = null;
 		$this->_basicFix = null;
-		parent::tearDown ();
+		parent::tearDown();
 	}
 	
 	function testConstructor() {
-		$this->assertNotNull($this->_fixture);
+		$this->assertNotNull($this->_basicFix);
 	}
 	
 	/**
@@ -106,7 +104,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testTestDataCountReturnsZeroIfNoFixturesArePresent() {
-        $result = $this->_fixture->testDataCount();
+        $result = $this->_basicFix->testDataCount();
         $this->assertEquals(0,$result);
     }
     
@@ -184,7 +182,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
     function testAddTestDataThrowsExceptionIfTestDataIsNotAnArray() {
         $testData = '';
         $this->setExpectedException('ErrorException');
-        $this->_fixture->addTestData($testData);
+        $this->_basicFix->addTestData($testData);
     }
     
     /**
@@ -559,6 +557,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
     	$this->assertTrue($result);
     	$this->assertEquals($expected,$actual);
     }
+    
 	/**
 	 * There will be times when we want to clear our predefined
 	 * test data, possibly when we want to use the same structure
@@ -567,6 +566,23 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	
+    /**
+     * Using the retrieveTestDataResult without an id should produce an exception,
+     * seeing as we would only use this functionality if/when test data has a id field
+     * if this is not the case we throw an exception.
+     */
+    function testRetrieveTestDataResultsThrowsExceptionIfIDFieldDoesNotExists() {
+    	$fields = $this->_testFix->getFields();
+    	unset($fields['id']);
+    	$testData = array(
+    	       array('userid' => 1,'title' => 'new feature','description' => 'To test a new feature','addeddate'=>'2008-10-07')
+    	);
+    	$this->_basicFix->setFields($fields);
+    	$this->_basicFix->addTestData($testData);
+    	$this->setExpectedException('ErrorException');
+    	$this->_basicFix->retrieveTestDataResults();
+    }
+    
 	/**
 	 * Now if we need to be able to retrieve our testData with auto incremented id's, this will
 	 * be used to retrieve test data without actually having to insert the data into our test DB.
@@ -627,6 +643,57 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testConstructorThrowsExceptionIfErrorWithSettingTimeZone() {
 		$this->markTestSkipped('Need a way of actually testing.');
 		$this->setExpectedException('ErrorException');
-		$newFixture = new BasicFixture('blah/blah');
+		new BasicFixture('blah/blah');
+	}
+	
+	/**
+	 * We want a new feature that will allow us to remove a single piece
+	 * of test data from our list, this will be handy in the times when
+	 * invalid test data is placed inside a PHPUnit_Fixture child & we
+	 * want to populate a db with our test data, whilst making sure that our
+	 * insertation only deals with valid data. 
+	 */
+	
+	/**
+	 * First off we want true of false to be returned on success or failure
+	 * 
+	 */
+	function testRemoveTestDataReturnsFalseOnFailure() {
+		$result = $this->_testFix->removeTestData('id',40);
+		$this->assertFalse($result);
+	}
+	
+	function testRemoveTestDataThrowsExceptionIfKeyDoesNotExist() {
+		$this->setExpectedException('ErrorException');
+		$this->_testFix->removeTestData('nid',1);
+	}
+	
+	/**
+	 * The test data only goes up to 7 so we will use 10 as the value,
+	 * doing so will make sure that we can not actually remove invalid test
+	 * data & return false.
+	 * 
+	 */
+	function testRemoveTestDataReturnsFalseIfValueIsInvalid() {
+        $result = $this->_testFix->removeTestData('id',10);
+        $this->assertFalse($result);
+	}
+	
+	function testRemoveTestDataReturnsTrueIfTestDataIsFound() {
+		$result = $this->_testFix->removeTestData('id',1);
+		$this->assertTrue($result);
+	}
+	
+	/**
+	 * we expect our test data to come up to 1 less than what we 
+	 * initially had., so here we want to make sure that the pieces
+     * of test data equal 
+	 *
+	 */
+	function testRemoveTestDataActuallyRemovesExpectedTestData() {
+		$expected = $this->_testFix->testDataCount() -1;
+		$this->_testFix->removeTestData('id',1);
+		$actual = $this->_testFix->testDataCount();
+		$this->assertEquals($expected,$actual);
 	}
 }

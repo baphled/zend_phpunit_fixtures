@@ -2,7 +2,7 @@
 /**
  * PHPUnit_Fixture
  * 
- * Parent Fixture class, used to handle our actual fixtures,
+ * Abstract Fixture class, used to handle our actual fixtures,
  * allowing us to pull specific bits of data, auto-generate
  * new test data & create and insert pre-stated data.
  * 
@@ -12,12 +12,18 @@
  * @package Zend_PHPUnit_Scaffolding
  *
  * $LastChangedBy$
+ * 
+ * Date: 08/10/2008
+ * Made abstract so that we can no long use the class directly.
+ * Also added removeTestData functionality to allow us to remove a
+ * single piece of test data.
+ * 
  * Date: 06/09/2008
- * Improved validateDataType functionality, there as a hole in the
+ * Improved validateDataType functionality, there was a hole in the
  * implementation where, if the fixture had no previous data, it
  * would fail, now rectified.
  * Also implemented retrieveTestDataResults, a nice little function
- * that allows us to retrieve our test data along with populated ids.
+ * that allows us to retrieve our test data along with populated id's.
  * 
  * Date: 02/09/2008
  * Implemented functionality to generate, parse and determine each
@@ -50,7 +56,7 @@
  * & a whole of list of test data which can be used for testing.
  * 
  */
-class PHPUnit_Fixture {
+abstract class PHPUnit_Fixture {
 	
     /**
      * The fixtures table structure
@@ -80,8 +86,7 @@ class PHPUnit_Fixture {
 	private $_result = null;
 	
 	/**
-	 * Sets an instance of FixturesManager &
-	 * setup the timezone ready for later.
+	 * Sets the timezone ready for later.
 	 * 
 	 * @access public
 	 * 
@@ -93,7 +98,7 @@ class PHPUnit_Fixture {
 
 	/**
      * Verify that our test data is of a valid
-     * structure and submit it to our our _testData
+     * structure and adds it to our our _testData
      * property.
      *
      * @access private
@@ -164,9 +169,9 @@ class PHPUnit_Fixture {
      * loop through our fields array, to ascertain the data type
      * of each piece of test data.
      *
-     * @access private
-     * @param int $numOfTestData
-     * @return Array $results
+     * @access  private
+     * @param   Int     $numOfTestData
+     * @return  Array   $results
      * 
      */
     private function _generateTestData($numOfTestData) {
@@ -186,6 +191,46 @@ class PHPUnit_Fixture {
             array_push($results,$this->_result);
         }
         return $results;
+    }
+
+    /**
+     * Verify that field key and values are valid &
+     * already set within the instance.
+     * 
+     * @access private
+     * @param String $key
+     * @param String $value
+     * 
+     */
+    private function _verifyKeyAndValue($key,$value) {
+       if(!is_string($key)) {
+            throw new ErrorException('Test data id must be a string.');
+        }
+        if(!empty($key) && empty($value)) {
+            throw new ErrorException('Must supply a value when submitting a key');
+        }
+    }
+    
+    /**
+     * Determines whether a field actually exists
+     * within a fixture or not.
+     *
+     * @access  private
+     * @param   String  $field
+     * @return  bool    True on success, false on failure.
+     * 
+     */
+    private function _dataTypeFieldExists($field) {
+        try {
+            if($this->getSingleDataTypeField($field)) {
+                return true;
+            }
+        }
+        catch (Exception $e) {
+            print $e->getMessage();
+        }
+        
+        return false;
     }
     
 	/**
@@ -238,28 +283,49 @@ class PHPUnit_Fixture {
 	 * we will return the specific test data in question.
 	 *
 	 * @access public
-	 * @param String $key
-	 * @param String $value
+	 * @param  String $key
+	 * @param  String $value
 	 * @return Array
 	 * 
 	 */
 	public function getTestData($key='',$value='') {
-		if(!is_string($key)) {
-			throw new ErrorException('Test data id must be a string.');
-		}
-		if(!empty($key) && empty($value)) {
-			throw new ErrorException('Must supply a value when submitting a key');
-		}
+		$this->_verifyKeyAndValue($key,$value);
 		return $this->_retrieveTestData($key,$value);
 		
+	}
+	
+	/**
+	 * Removes a single piece of test data from our
+	 * fixture.
+	 *
+	 * @access public
+	 * @param  String  $key
+	 * @param  Mixed   $value
+	 * @return bool
+	 * 
+	 */
+	public function removeTestData($key='',$value='') {
+		$this->_verifyKeyAndValue($key,$value);
+		if($this->_dataTypeFieldExists($key)) {
+			for($i=0;$i<$this->testDataCount();$i++) { 
+				if($this->_testData[$i][$key] === $value) {
+					unset($this->_testData[$i]);
+					return true;
+				}
+			}
+		}
+		else {
+			throw new ErrorException('Invalid field name.');
+		}
+		return false;
 	}
     
     /**
      * Sets our test data to our fixture.
      *
-     * @access public
-     * @param Array $testData
-     * @return bool
+     * @access  public
+     * @param   Array   $testData
+     * @return  bool
      * 
      */
     public function addTestData($testData) {
@@ -297,9 +363,9 @@ class PHPUnit_Fixture {
     /**
      * Gets a single data type field from our fixture.
      *
-     * @access public
-     * @param String $field
-     * @return Array
+     * @access  public
+     * @param   String  $field
+     * @return  Array
      * 
      */
     function getSingleDataTypeField($field) {
@@ -311,13 +377,13 @@ class PHPUnit_Fixture {
         }
         return array($field => $this->_fields[$field]);
     }
-	
+    
 	/**
      * Sets PHPUnit_Fixture's field property.
      *
-     * @access public
-     * @param Array $fields
-     * @return bool
+     * @access  public
+     * @param   Array $fields
+     * @return  bool
      * 
      */
     public function setFields(array $fields) {
@@ -338,7 +404,7 @@ class PHPUnit_Fixture {
     }
     
 	/**
-	 * Basic method, allowsing us to determine
+	 * Basic method, allowing us to determine
 	 * the number of test data we have within
 	 * the fixture.
 	 *
@@ -357,9 +423,9 @@ class PHPUnit_Fixture {
     /**
      * Determines whether our test data already exists
      *
-     * @access public
-     * @param Array $testData
-     * @return bool
+     * @access  public
+     * @param   Array $testData
+     * @return  bool
      * 
      */
     public function testDataExists($testData) {
@@ -378,9 +444,13 @@ class PHPUnit_Fixture {
      *
      * @access public
      * @return Array
+     * 
      */
     public function retrieveTestDataResults() {
         $testData = $this->getTestData();
+        if(!array_key_exists('id',$testData[0])) {
+        	throw new ErrorException('Id does not exists, must have to use this method.');
+        }
         for($i=0;$i<$this->testDataCount();$i++) {
             $testData[$i]['id'] = $i+1;
         }
@@ -391,12 +461,12 @@ class PHPUnit_Fixture {
      * Automatically generates our test data.
      * 
      * Once it generates our data, it then passes it
-     * to _addTestData to append to the _testData
+     * to addTestData to append to the _testData
      * property.
      *
-     * @access public
-     * @param int $numOfTestData
-     * @return bool
+     * @access  public
+     * @param   int     $numOfTestData
+     * @return  bool
      * 
      */
     public function autoGenerateTestData($numOfTestData=10) {

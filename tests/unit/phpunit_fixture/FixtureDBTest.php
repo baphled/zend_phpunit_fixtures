@@ -36,19 +36,13 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		parent::setUp ();
-		$this->_fixturedb = new PHPUnit_Fixture_DB();
         $this->_testFix = new TestFixture();
 		$this->_emptyFix = new EmptyFixture();
 	}
 	
 	public function tearDown() {
-		$this->_phpunitfixturedb = null;
 		$this->_emptyFix = null;
 		parent::tearDown ();
-	}
-	
-	function testConstructor() {
-		$this->assertNotNull($this->_fixturedb);
 	}
     
     /**
@@ -62,7 +56,6 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
     function testPHPUnitFixtureHasFixtureManagerProperty() {
         $this->assertClassHasAttribute('_fixMan','PHPUnit_Fixture_DB');
     }
-
     
     /**
      * We really need some getters for our fixtures properties,
@@ -70,7 +63,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * idea to do so now.
      * 
      */
-    function testgetNameReturnsString() {
+    function testGetNameReturnsString() {
         $result = $this->_testFix->getName();
         $this->assertType('string',$result);
     }
@@ -89,7 +82,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * Now we need to be able to actual set the name.
      * 
      */
-    function testsetNameReturnsTrueOnSucces() {
+    function testsetNameReturnsTrueOnSuccess() {
         $result = $this->_emptyFix->setName('coffee');
         $this->assertTrue($result);
     }
@@ -99,7 +92,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * been set.
      * 
      */
-    function testsetNameActuallySetsNameOnSucces() {
+    function testSetNameActuallySetsNameOnSucces() {
         $table = 'tea';
         $this->_emptyFix->setName($table);
         $this->assertEquals($this->_emptyFix->getName(),$table);
