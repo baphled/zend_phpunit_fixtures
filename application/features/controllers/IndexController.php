@@ -13,6 +13,7 @@ class Features_IndexController extends Zend_Controller_Action {
 
 	public function init() {
 		parent::init();
+		$this->_helper->layout->setLayout('features');
 		$this->_table = new Features();
 	}
 	
