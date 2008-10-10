@@ -20,6 +20,7 @@ class FeatureFixture extends PHPUnit_Fixture_DB {
 					 'userid' => array('type' => 'integer', 'length'=>10, 'null', FALSE),
 				 	 'title' => array('type' =>'string', 'length' => 255, 'null', FALSE),
 					 'description' => array('type'=>'string','length'=>255, 'null', FALSE),
-					 'addeddate' => array('type'=>'date', 'null'=> FALSE)
+					 'addeddate' => array('type'=>'datetime', 'null'=> FALSE),
+					 'moddate' => array('type'=>'datetime', 'null'=> FALSE)
 	);
 }
