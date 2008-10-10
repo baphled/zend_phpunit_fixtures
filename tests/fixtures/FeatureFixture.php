@@ -23,4 +23,11 @@ class FeatureFixture extends PHPUnit_Fixture_DB {
 					 'addeddate' => array('type'=>'datetime', 'null'=> FALSE),
 					 'moddate' => array('type'=>'datetime', 'null'=> FALSE)
 	);
+	
+	//comment out the following for the model tests and uncomment for the controller tests
+	public $_testData = array(
+						array('id' => 1, 'userid' => 1,'title' => 'new feature','description' => 'To test a new feature','addeddate' => '2008-10-10 15:56:03','moddate' => '2008-10-10 15:56:05'),
+						array('id' => 2, 'userid' => 23,'title' => 'anuva feature','description' => 'feature description'),
+						array('id' => 3, 'userid'=> 13,'title' => 'second feature','description' => 'second feature')
+						);
 }

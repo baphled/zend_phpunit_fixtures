@@ -33,6 +33,19 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->assertQueryContentContains('h2', 'Features');
 	}
 	
+	
+	public function testFeaturesUrlHasTitleAsOneOfTheHeading() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('h3', 'Title');
+	}
+	
+	
+	public function testFeaturesUrlHasDescriptionAsOneOfTheHeading() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('h3', 'Description');
+	}
+	
+	
 	public function testDefaultFeaturesUrlShowsErrorMessageIfNoDataExists() {
 		$this->_featureFixtures->truncate();
 		$this->dispatch('/features');	
@@ -61,7 +74,7 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
 	public function testUrlForEditFeatureLink() {
 		$this->dispatch('/features/index/edit/id/1');
-		$this->assertQueryContentContains('h2', 'Edit Feature by ID');		
+		$this->assertQueryContentContains('h1', 'Edit Feature by ID');		
 	}
 	
 	public function testToCheckIfRetrievingFeatureEditDataIsSuccessful() {
@@ -69,4 +82,32 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->assertQueryContentContains('td', 'new feature');		
 	}
 	
+	
+	/*Begining of the tests for the addeddate and the moddate 
+	 * 
+	 * 
+	 */
+
+	public function testFeaturesUrlHasAddeddateAsOneOfTheHeading() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('h3', 'Added Date');
+	}
+	
+	
+	public function testFeaturesUrlHasModdateAsOneOfTheHeading() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('h3', 'Modified Date');
+	}
+	
+	
+	public function testDefaultFeaturesUrlShouldShowListOfFeaturesIfAddedDateExists() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('td', '2008-10-10 15:56:03');								
+	}
+	
+	
+	public function testDefaultFeaturesUrlShouldShowListOfFeaturesIfModDateExists() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('td', '2008-10-10 15:56:05');								
+	}
 }
