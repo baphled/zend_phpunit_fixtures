@@ -62,6 +62,11 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->assertQueryContentContains('a', 'View Functions');
 	}
 	
+	public function testLinksToEditFunctionsPageAreAdded() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('a', 'Edit');
+	}
+	
 	public function testLinksToRelatedFunctionsAreCorrect() {
 		$this->dispatch('/features');
 		$this->assertQuery('td a[href*="index/edit/id/1"]');
@@ -82,6 +87,15 @@ class FeaturesIndexControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 		$this->assertQueryContentContains('td', 'new feature');		
 	}
 	
+	public function testLinksToDeleteFunctionsPageAreAdded() {
+		$this->dispatch('/features');
+		$this->assertQueryContentContains('a', 'Delete');
+	}
+	
+	public function testLinksToDeleteFunctionsAreCorrect() {
+		$this->dispatch('/features');
+		$this->assertQuery('td a[href*="index/delete/id/3"]');
+	}
 	
 	/*Begining of the tests for the addeddate and the moddate 
 	 * 
