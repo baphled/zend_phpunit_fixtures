@@ -106,7 +106,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * if null, throw exception
 	 */
 	public function testAddNewFunctionThrowsExceptionIfNoUserId(){
-		$data = $this->_fixtures['noUserIDFeature'];
+		$data = array(	'title' => 'second function','description' => 'second function');
 		$this->setExpectedException('ErrorException');
 		$this->_functions->addNewFunction($data);
 	}
