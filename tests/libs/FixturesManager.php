@@ -83,7 +83,7 @@
  */
 
 require_once 'Zend/Loader.php';
-Zend_Loader::registerAutoload ();
+Zend_Loader::registerAutoload();
 
 
 class FixturesManager {
@@ -103,10 +103,9 @@ class FixturesManager {
      * @param String $env
      */
 	public function __construct($env=null) {
-		if(null === $env) {
+		if (null === $env) {
 		  TestConfigSettings::setUpConfig();
-		}
-		else {
+		} else {
 			TestConfigSettings::setUpConfigEnv($env);
 		}
 		TestConfigSettings::setUpDBAdapter();
@@ -162,7 +161,7 @@ class FixturesManager {
      * 
      */
     protected function _runFixtureQuery($query) {
-        if (!eregi(' \(',$query)) {             // @todo smells need better verification
+        if (!eregi(' \(', $query)) {             // @todo smells need better verification
             throw new ErrorException('Illegal query.');
         }
         try {
@@ -195,8 +194,8 @@ class FixturesManager {
         	}
         	$values .=  $value .', ';
         }
-        $stmt .= eregi_replace(', $',') ', $insert);
-        $stmt .= eregi_replace(', $',');', $values);
+        $stmt .= eregi_replace(', $', ') ', $insert);
+        $stmt .= eregi_replace(', $', ');', $values);
 
         return $stmt;
     }
@@ -223,11 +222,11 @@ class FixturesManager {
             $data = '';
             $data = $this->_checkDataTypes($dataType);
             $query .= $field .$data .', ';
-		}
+	    }
         // remove the trailing ', ' and replace with ');'
         $stmt .= eregi_replace(', $', ');', $query);
         return $stmt;
-	}
+     }
 	
 	/**
 	 * Builds our fixtures DB table
@@ -384,22 +383,22 @@ class FixturesManager {
      */
     public function fixtureMethodCheck($call,$fixture) {
     	if ($fixture instanceof PHPUnit_Fixture_DB) {
-	    	switch ($call) {
-	            case 'drop':
-	                $result = $this->dropTables();
-	                break;
-	            case 'setup':
-	                $result = $this->setupTable($fixture->getFields(), $fixture->getName());
-	                break;
-	            case 'truncate':
-	                $result = $this->truncateTable($fixture->getName());
-	                break;
-	            case 'populate':
-	                $result = $this->insertTestData($fixture->getTestData(), $fixture->getName());
-	                break;
-	            default:
-	                throw new ErrorException('Invalid fixture method call.');             
-	    	}
+			switch ($call) {
+          		case 'drop':
+              		$result = $this->dropTables();
+              		break;
+				case 'setup':
+				    $result = $this->setupTable($fixture->getFields(), $fixture->getName());
+				    break;
+				case 'truncate':
+				    $result = $this->truncateTable($fixture->getName());
+				    break;
+				case 'populate':
+				    $result = $this->insertTestData($fixture->getTestData(), $fixture->getName());
+				    break;
+				default:
+    				throw new ErrorException('Invalid fixture method call.');             
+			}
     	} else {
     		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DB.');
     	}

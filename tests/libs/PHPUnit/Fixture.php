@@ -249,7 +249,7 @@ abstract class PHPUnit_Fixture {
         }
         if (null === $this->_testData) {
 			return true;
-		} else {
+        } else {
 			$existingTestData = $this->getTestData('id', 1);
 			if (false === $existingTestData) {
 				return true;
