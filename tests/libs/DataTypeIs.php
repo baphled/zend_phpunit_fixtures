@@ -27,9 +27,9 @@ class DataTypeIs {
             if ('id' !== $field) {
                 $obj->setResult($field, rand());
             } else {
-                $obj->setResult($field,NULL);
+            	$obj->setResult($field,NULL);
             }
-        }
+       }
     }
 
     /**
@@ -43,7 +43,7 @@ class DataTypeIs {
      */
     static function aString($dataType, $field, $obj) {
        if ('string' === $dataType) {
-           $obj->setResult($field,'my string');
+           $obj->setResult($field, 'my string');
        }
     }
 

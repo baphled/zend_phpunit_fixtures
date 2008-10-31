@@ -50,8 +50,8 @@ class DevelopmentHandler {
 	 */
 	private function _runTableMethod($call, $fixture) {
 	   if ($fixture instanceof PHPUnit_Fixture_DB) {
-            return $this->_fixMan->fixtureMethodCheck($call, $fixture);    
-       } else {
+            return $this->_fixMan->fixtureMethodCheck($call, $fixture);
+	   } else {
         	throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
        }
 	}
@@ -90,7 +90,7 @@ class DevelopmentHandler {
 	public function drop() {
 	   if ($this->_fixMan->tablesPresent()) {
               return $this->_fixMan->dropTables();
-        }
+	   }
         return false;
-    }
+	}
 }
