@@ -56,7 +56,8 @@
  * & a whole of list of test data which can be used for testing.
  * 
  */
-abstract class PHPUnit_Fixture {
+abstract class PHPUnit_Fixture
+{
 	
     /**
      * The fixtures table structure
@@ -129,10 +130,10 @@ abstract class PHPUnit_Fixture {
      */
     private function _parseSchema($field, $values) {
        foreach ($values as $value) {
-            DataTypeIs::anInt($value,$field,$this);
-            DataTypeIs::aString($value,$field,$this);
-            DataTypeIs::aDate($value,$field,$this);
-            DataTypeIs::aDateTime($value,$field,$this);
+            DataTypeIs::anInt($value, $field, $this);
+            DataTypeIs::aString($value, $field, $this);
+            DataTypeIs::aDate($value, $field, $this);
+            DataTypeIs::aDateTime($value, $field, $this);
         }
     }
 
@@ -148,16 +149,15 @@ abstract class PHPUnit_Fixture {
      *       throw an exception if no test data is found.
      * 
      */
-    private function _retrieveTestData($key,$value) {
-       if(0 !== $this->testDataCount()) {
-            if(!empty($key) && !empty($value)) {
+    private function _retrieveTestData($key, $value) {
+       if (0 !== $this->testDataCount()) {
+            if (!empty($key) && !empty($value)) {
                 foreach($this->_testData as $data) {
-                    if($data[$key] === $value) {
+                    if ($data[$key] === $value) {
                        return $data;
                     }
                 }
-            }
-            else {
+            } else {
                 return $this->_testData;                
             }
         }
@@ -175,20 +175,20 @@ abstract class PHPUnit_Fixture {
      * 
      */
     private function _generateTestData($numOfTestData) {
-        if(0 === count($this->_fields)) {
+        if (0 === count($this->_fields)) {
             throw new ErrorException('Fields not defined, can not generate without it.');
         }
-        if(!is_int($numOfTestData)) {
+        if (!is_int($numOfTestData)) {
             throw new ErrorException('Must supply number of test data using an integer.');
         }
         $results = array();
         $this->_result = array();
-        for($i=0;$i<$numOfTestData;$i++) {
+        for ($i=0;$i<$numOfTestData;$i++) {
             foreach ($this->getFields() as $field=>$values) {
                 DataTypeChecker::checkDataType($values);
                 $this->_parseSchema($field, $values);
             }
-            array_push($results,$this->_result);
+            array_push($results, $this->_result);
         }
         return $results;
     }
@@ -203,10 +203,10 @@ abstract class PHPUnit_Fixture {
      * 
      */
     private function _verifyKeyAndValue($key,$value) {
-       if(!is_string($key)) {
+       if (!is_string($key)) {
             throw new ErrorException('Test data id must be a string.');
         }
-        if(!empty($key) && empty($value)) {
+        if (!empty($key) && empty($value)) {
             throw new ErrorException('Must supply a value when submitting a key');
         }
     }
@@ -222,7 +222,7 @@ abstract class PHPUnit_Fixture {
      */
     private function _dataTypeFieldExists($field) {
         try {
-            if($this->getSingleDataTypeField($field)) {
+            if ($this->getSingleDataTypeField($field)) {
                 return true;
             }
         }
@@ -245,19 +245,18 @@ abstract class PHPUnit_Fixture {
 	 * 
 	 */
 	public function validateTestData($testData) {
-        if(false === $testData) {
+        if (false === $testData) {
             throw  new ErrorException('Invalid test data type.');
         }
-        if(null === $this->_testData) {
+        if (null === $this->_testData) {
 			return true;
-		}
-		else {
+		} else {
 			$existingTestData = $this->getTestData('id',1);
-			if(false === $existingTestData) {
+			if (false === $existingTestData) {
 				return true;
 			}
 			foreach ($testData as $key=>$value) {
-				if(!array_key_exists($key, $existingTestData)) {
+				if (!array_key_exists($key, $existingTestData)) {
 				    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
 				}
 			}
@@ -288,9 +287,9 @@ abstract class PHPUnit_Fixture {
 	 * @return Array
 	 * 
 	 */
-	public function getTestData($key='',$value='') {
-		$this->_verifyKeyAndValue($key,$value);
-		return $this->_retrieveTestData($key,$value);
+	public function getTestData($key='', $value='') {
+		$this->_verifyKeyAndValue($key, $value);
+		return $this->_retrieveTestData($key, $value);
 		
 	}
 	
@@ -304,11 +303,11 @@ abstract class PHPUnit_Fixture {
 	 * @return bool
 	 * 
 	 */
-	public function removeTestData($key='',$value='') {
-		$this->_verifyKeyAndValue($key,$value);
-		if($this->_dataTypeFieldExists($key)) {
-			for($i=0;$i<$this->testDataCount();$i++) { 
-				if($this->_testData[$i][$key] === $value) {
+	public function removeTestData($key='', $value='') {
+		$this->_verifyKeyAndValue($key, $value);
+		if ($this->_dataTypeFieldExists($key)) {
+			for ($i=0;$i<$this->testDataCount();$i++) { 
+				if ($this->_testData[$i][$key] === $value) {
 					unset($this->_testData[$i]);
 					return true;
 				}
@@ -329,14 +328,13 @@ abstract class PHPUnit_Fixture {
      * 
      */
     public function addTestData($testData) {
-        if(!is_array($testData)) {
+        if (!is_array($testData)) {
             throw new ErrorException('Test data must be in an array format.');
         } 
         foreach ($testData as $data) {
-            if(is_array($data)) {
+            if (is_array($data)) {
                 $this->_verifyTestData($data);
-            }
-            else {
+            } else {
                 $this->_testData = $testData;
                 break;
             }
@@ -352,10 +350,9 @@ abstract class PHPUnit_Fixture {
 	 * 
 	 */
 	public function getFields() {
-		if(0 === count($this->_fields)) {
+		if( 0 === count($this->_fields)) {
 			throw new ErrorException('No fixture fields present.');
-		}
-		else {
+		} else {
 			return $this->_fields;
 		}
 	}
@@ -369,13 +366,13 @@ abstract class PHPUnit_Fixture {
      * 
      */
     function getSingleDataTypeField($field) {
-        if(!is_string($field)) {
+        if (!is_string($field)) {
             throw new ErrorException('Field name must be a string.');
         }
-        if(!array_key_exists($field,$this->_fields)) {
+        if (!array_key_exists($field, $this->_fields)) {
             throw new ErrorException('Field id does not exist.');
         }
-        return array($field => $this->_fields[$field]);
+        return array($field=>$this->_fields[$field]);
     }
     
 	/**
@@ -387,14 +384,14 @@ abstract class PHPUnit_Fixture {
      * 
      */
     public function setFields(array $fields) {
-        if(0 === count($fields)) {
+        if (0 === count($fields)) {
             throw new ErrorException('Illegal field format.');
         }
         foreach ($fields as $name=>$data) {
                 if(!is_string($name)) {
                     throw new ErrorException('Field name must be a string.');
                 }
-                if(!is_array($data)) {
+                if (!is_array($data)) {
                     throw new ErrorException('Data must be in an associative array.');
                 }
                 DataTypeChecker::validateDataTypeFields($data);
@@ -414,7 +411,7 @@ abstract class PHPUnit_Fixture {
 	 */
 	public function testDataCount() {
 		$result = 0;
-		if(isset($this->_testData)) {
+		if (isset($this->_testData)) {
 			$result = count($this->_testData);
 		}
 		return $result;
@@ -429,9 +426,9 @@ abstract class PHPUnit_Fixture {
      * 
      */
     public function testDataExists($testData) {
-        if($this->testDataCount() > 0 ) {
-            for($i=0;$i<$this->testDataCount();$i++) {
-                if($this->_testData[$i] == $testData[$i]) {
+        if ($this->testDataCount() > 0 ) {
+            for ($i=0;$i<$this->testDataCount();$i++) {
+                if ($this->_testData[$i] == $testData[$i]) {
                     return true;
                 }
             }
@@ -448,10 +445,10 @@ abstract class PHPUnit_Fixture {
      */
     public function retrieveTestDataResults() {
         $testData = $this->getTestData();
-        if(!array_key_exists('id',$testData[0])) {
+        if (!array_key_exists('id',$testData[0])) {
         	throw new ErrorException('Id does not exists, must have to use this method.');
         }
-        for($i=0;$i<$this->testDataCount();$i++) {
+        for ($i=0;$i<$this->testDataCount();$i++) {
             $testData[$i]['id'] = $i+1;
         }
         return $testData;
@@ -472,7 +469,7 @@ abstract class PHPUnit_Fixture {
     public function autoGenerateTestData($numOfTestData=10) {
         try {
             $result = $this->_generateTestData($numOfTestData);
-            if(0 === count($result)) {
+            if (0 === count($result)) {
                 throw new ErrorException('Unable to generate test data.');
             }
             $this->addTestData($result);
