@@ -63,7 +63,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      */
     public function __destruct() {
     	try {
-	        if( $this->_fixMan->tablesPresent()) {
+	        if ($this->_fixMan->tablesPresent()) {
 	              $this->drop();
 	        }
 	        $this->_fixMan = null;

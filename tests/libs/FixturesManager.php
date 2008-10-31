@@ -223,7 +223,7 @@ class FixturesManager {
             $data = '';
             $data = $this->_checkDataTypes($dataType);
             $query .= $field .$data .', ';
-        }
+		}
         // remove the trailing ', ' and replace with ');'
         $stmt .= eregi_replace(', $', ');', $query);
         return $stmt;
@@ -399,9 +399,8 @@ class FixturesManager {
 	                break;
 	            default:
 	                throw new ErrorException('Invalid fixture method call.');             
-	        }
-    	}
-    	else {
+	    	}
+    	} else {
     		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DB.');
     	}
         return $result;

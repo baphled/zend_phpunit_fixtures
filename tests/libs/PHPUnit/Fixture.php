@@ -107,7 +107,7 @@ abstract class PHPUnit_Fixture {
      */
     private function _verifyTestData($testData) {
        try {
-            $this->validateTestData($testData,$this);
+            $this->validateTestData($testData, $this);
             $this->_testData[] = $testData;
        }
        catch(ErrorException $e) {
@@ -133,7 +133,7 @@ abstract class PHPUnit_Fixture {
             DataTypeIs::aString($value, $field, $this);
             DataTypeIs::aDate($value, $field, $this);
             DataTypeIs::aDateTime($value, $field, $this);
-        }
+       }
     }
 
     /**
@@ -151,7 +151,7 @@ abstract class PHPUnit_Fixture {
     private function _retrieveTestData($key, $value) {
        if (0 !== $this->testDataCount()) {
             if (!empty($key) && !empty($value)) {
-                foreach($this->_testData as $data) {
+                foreach ($this->_testData as $data) {
                     if ($data[$key] === $value) {
                        return $data;
                     }
@@ -159,8 +159,8 @@ abstract class PHPUnit_Fixture {
             } else {
                 return $this->_testData;                
             }
-        }
-        return false;
+       }
+       return false;
     }
     
     /**
@@ -204,10 +204,10 @@ abstract class PHPUnit_Fixture {
     private function _verifyKeyAndValue($key,$value) {
        if (!is_string($key)) {
             throw new ErrorException('Test data id must be a string.');
-        }
-        if (!empty($key) && empty($value)) {
-            throw new ErrorException('Must supply a value when submitting a key');
-        }
+       }
+       if (!empty($key) && empty($value)) {
+       		throw new ErrorException('Must supply a value when submitting a key');
+       }
     }
     
     /**
@@ -250,7 +250,7 @@ abstract class PHPUnit_Fixture {
         if (null === $this->_testData) {
 			return true;
 		} else {
-			$existingTestData = $this->getTestData('id',1);
+			$existingTestData = $this->getTestData('id', 1);
 			if (false === $existingTestData) {
 				return true;
 			}
@@ -311,8 +311,7 @@ abstract class PHPUnit_Fixture {
 					return true;
 				}
 			}
-		}
-		else {
+		} else {
 			throw new ErrorException('Invalid field name.');
 		}
 		return false;
@@ -349,7 +348,7 @@ abstract class PHPUnit_Fixture {
 	 * 
 	 */
 	public function getFields() {
-		if( 0 === count($this->_fields)) {
+		if (0 === count($this->_fields)) {
 			throw new ErrorException('No fixture fields present.');
 		} else {
 			return $this->_fields;
@@ -387,7 +386,7 @@ abstract class PHPUnit_Fixture {
             throw new ErrorException('Illegal field format.');
         }
         foreach ($fields as $name=>$data) {
-                if(!is_string($name)) {
+                if (!is_string($name)) {
                     throw new ErrorException('Field name must be a string.');
                 }
                 if (!is_array($data)) {
@@ -444,7 +443,7 @@ abstract class PHPUnit_Fixture {
      */
     public function retrieveTestDataResults() {
         $testData = $this->getTestData();
-        if (!array_key_exists('id',$testData[0])) {
+        if (!array_key_exists('id', $testData[0])) {
         	throw new ErrorException('Id does not exists, must have to use this method.');
         }
         for ($i=0;$i<$this->testDataCount();$i++) {
