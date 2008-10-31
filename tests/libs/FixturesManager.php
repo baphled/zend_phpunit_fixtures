@@ -10,7 +10,7 @@
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
  *
- * $LastChangedBy$
+ * $LastChangedBy: yomi $
  * 
  * Date: 04/09/2008
  * A large amount of refactoring has been done here, namely to improve

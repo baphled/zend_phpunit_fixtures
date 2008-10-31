@@ -12,7 +12,7 @@
  * @package Zend_PHPUnit_Scaffolding
  * @subpackage DataTypeChecker
  *
- * $LastChangedBy$
+ * $LastChangedBy: yomi $
  * Date: 02/09/2008
  * Built class on realisation that functionality for FixturesManager
  * did not need to be there as they are more data related.

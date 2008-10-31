@@ -11,7 +11,7 @@
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
  *
- * $LastChangedBy$
+ * $LastChangedBy: yomi $
  * 
  * Date: 08/10/2008
  * Made abstract so that we can no long use the class directly.
