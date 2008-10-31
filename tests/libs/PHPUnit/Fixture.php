@@ -56,8 +56,7 @@
  * & a whole of list of test data which can be used for testing.
  * 
  */
-abstract class PHPUnit_Fixture
-{
+abstract class PHPUnit_Fixture {
 	
     /**
      * The fixtures table structure
