@@ -125,10 +125,10 @@ class FixturesManager {
     private function _checkDataTypes($dataType) {
     	$data = '';
         foreach ($dataType as $key=>$value) {
-            $data .= DataTypeChecker::checkDataTypeValues($key,$value);
-            $data .= DataTypeChecker::checkDataTypeValuesLength($key,$value);
-            $data .= DataTypeChecker::checkDataTypeValueNull($key,$value);
-            $data .= DataTypeChecker::checkDataTypeDefault($key,$value);
+            $data .= DataTypeChecker::checkDataTypeValues($key, $value);
+            $data .= DataTypeChecker::checkDataTypeValuesLength($key, $value);
+            $data .= DataTypeChecker::checkDataTypeValueNull($key, $value);
+            $data .= DataTypeChecker::checkDataTypeDefault($key, $value);
             $data .= DataTypeChecker::checkDataTypePrimaryKey($key);
         }
         return $data;
@@ -143,10 +143,10 @@ class FixturesManager {
      * @param String $table
      * 
      */
-    private function _parseTestData($testData,$table) {
-       DataTypeChecker::checkTestDataAndTableName($testData,$table);
-       foreach($testData as $data) {
-            $query = $this->_constructInsertQuery($data,$table);
+    private function _parseTestData($testData, $table) {
+       DataTypeChecker::checkTestDataAndTableName($testData, $table);
+       foreach ($testData as $data) {
+            $query = $this->_constructInsertQuery($data, $table);
             $this->_runFixtureQuery($query);                
        }
     }
@@ -162,7 +162,7 @@ class FixturesManager {
      * 
      */
     protected function _runFixtureQuery($query) {
-        if(!eregi(' \(',$query)) {             // @todo smells need better verification
+        if (!eregi(' \(',$query)) {             // @todo smells need better verification
             throw new ErrorException('Illegal query.');
         }
         try {
@@ -183,20 +183,20 @@ class FixturesManager {
      * @return  String
      * 
      */    
-    protected function _constructInsertQuery($insertTestData,$tableName) {
-        DataTypeChecker::checkTestDataAndTableName($insertTestData,$tableName);
+    protected function _constructInsertQuery($insertTestData, $tableName) {
+        DataTypeChecker::checkTestDataAndTableName($insertTestData, $tableName);
         $stmt = 'INSERT INTO ' .$tableName;
         $insert = '(';
         $values = 'VALUES ( ';
-        foreach($insertTestData as $key=>$value) {
+        foreach ($insertTestData as $key=>$value) {
         	$insert .= $key .', ';
-        	if(is_string($value)) {
+        	if (is_string($value)) {
         		$value = $this->_db->quote($value);
         	}
         	$values .=  $value .', ';
         }
-        $stmt .= eregi_replace(', $',') ',$insert);
-        $stmt .= eregi_replace(', $',');',$values);
+        $stmt .= eregi_replace(', $',') ', $insert);
+        $stmt .= eregi_replace(', $',');', $values);
 
         return $stmt;
     }
@@ -212,20 +212,20 @@ class FixturesManager {
 	 * @return String  $stmt           Portion of SQL, which will be used to construct query.
 	 * 
 	 */
-     public function convertDataType($dataTypeInfo,$tablename='default') {
-		if(!is_array($dataTypeInfo)) {
+     public function convertDataType($dataTypeInfo, $tablename='default') {
+		if (!is_array($dataTypeInfo)) {
 			throw new ErrorException('DataType is invalid.');
 		}
         $stmt = 'CREATE TABLE ' .$tablename .' (';
         $query = '';
-	    foreach($dataTypeInfo as $field=>$dataType) {
+	    foreach ($dataTypeInfo as $field=>$dataType) {
             DataTypeChecker::checkDataType($dataType);
             $data = '';
             $data = $this->_checkDataTypes($dataType);
             $query .= $field .$data .', ';
         }
         // remove the trailing ', ' and replace with ');'
-        $stmt .= eregi_replace(', $',');',$query);
+        $stmt .= eregi_replace(', $', ');', $query);
         return $stmt;
 	}
 	
@@ -238,13 +238,13 @@ class FixturesManager {
 	 * @return Bool                    True on success, false on failure.
 	 * 
 	 */
-	public function setupTable($dataType,$tableName) {
+	public function setupTable($dataType, $tableName) {
 		$query = '';
-		if(empty($tableName)) {
+		if (empty($tableName)) {
 			throw new ErrorException('Table must have a name');
 		}
 		try {
-		  $query = $this->convertDataType($dataType,$tableName);
+		  $query = $this->convertDataType($dataType, $tableName);
 		  $this->_runFixtureQuery($query);
 		  return true;
 		}
@@ -265,9 +265,9 @@ class FixturesManager {
 	 * @return Bool                True on success, false on failure.
 	 * 
 	 */
-	public function insertTestData($testData,$table) {
+	public function insertTestData($testData, $table) {
 		try {
-			$this->_parseTestData($testData,$table);
+			$this->_parseTestData($testData, $table);
 		}
 		catch(PDOException $e) {
 			throw new PDOException($e->getMessage());
@@ -288,10 +288,10 @@ class FixturesManager {
 	 * 
 	 */
 	public function tableExists($tableName) {
-		if(empty($tableName)) {
+		if (empty($tableName)) {
 			throw new ErrorException('Table name can not be empty');
 		}
-		if(in_array($tableName,$this->_db->listTables())) {
+		if (in_array($tableName, $this->_db->listTables())) {
 			return true;
 		}
 		return false;
@@ -305,7 +305,7 @@ class FixturesManager {
      * 
      */
     public function tablesPresent() {
-        if($this->_db->listTables()) {
+        if ($this->_db->listTables()) {
             return true;
         }
         return false;
@@ -320,15 +320,14 @@ class FixturesManager {
 	 * 
 	 */
     public function truncateTable($name) {
-        if(!is_string($name)) {
+        if (!is_string($name)) {
             throw new ErrorException('Tablename must be a string.');
         }
         try {
-	        if($this->tableExists($name)) {
+	        if ($this->tableExists($name)) {
 	        	$sql = 'TRUNCATE TABLE ' .$name;
 	        	$this->_db->getConnection()->exec($sql);
-	        }
-	        else {
+	        } else {
 	        	throw new ErrorException($name .' does not exist.');
 	        }
         }
@@ -348,7 +347,7 @@ class FixturesManager {
 	 */
 	public function dropTables() {
 		$fixtures = $this->_db->listTables();
-		if(count($fixtures) === 0) {
+		if (count($fixtures) === 0) {
 			throw new ErrorException('No fixture tables to drop.');
 		}
 		try {
@@ -384,19 +383,19 @@ class FixturesManager {
      * 
      */
     public function fixtureMethodCheck($call,$fixture) {
-    	if($fixture instanceof PHPUnit_Fixture_DB) {
-	    	switch($call) {
+    	if ($fixture instanceof PHPUnit_Fixture_DB) {
+	    	switch ($call) {
 	            case 'drop':
 	                $result = $this->dropTables();
 	                break;
 	            case 'setup':
-	                $result = $this->setupTable($fixture->getFields(),$fixture->getName());
+	                $result = $this->setupTable($fixture->getFields(), $fixture->getName());
 	                break;
 	            case 'truncate':
 	                $result = $this->truncateTable($fixture->getName());
 	                break;
 	            case 'populate':
-	                $result = $this->insertTestData($fixture->getTestData(),$fixture->getName());
+	                $result = $this->insertTestData($fixture->getTestData(), $fixture->getName());
 	                break;
 	            default:
 	                throw new ErrorException('Invalid fixture method call.');             

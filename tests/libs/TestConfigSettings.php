@@ -41,7 +41,7 @@ class TestConfigSettings {
 	 * @return $configPath     The whole configuration path in string format.
 	 * 
 	 */
-    static function _setPath($path,$file) {
+    static function _setPath($path, $file) {
         $root = realpath(dirname(__FILE__) . $path); // smelly, could be anything
         $configPath = realpath($root . '/'.$file);
         
@@ -57,8 +57,8 @@ class TestConfigSettings {
 	 * @param  String $file Configuration file name.
 	 * 
 	 */
-    static public function setUpConfig($path='/../../configs',$file='settings.ini') {
-        $configPath = self::_setPath($path,$file);
+    static public function setUpConfig($path='/../../configs', $file='settings.ini') {
+        $configPath = self::_setPath($path, $file);
         self::setUpConfigEnv('general');
         $general = self::$_config;
         self::$_config = new Zend_Config_Ini( $configPath, $general->environment);
@@ -76,8 +76,8 @@ class TestConfigSettings {
      * @param   String $file  Configuration file name.
      * 
      */
-    static public function setUpConfigEnv($env='development',$path='/../../configs',$file='/settings.ini') {
-        $configPath = self::_setPath($path,$file);        
+    static public function setUpConfigEnv($env='development', $path='/../../configs', $file='/settings.ini') {
+        $configPath = self::_setPath($path, $file);        
         self::$_config = new Zend_Config_Ini( $configPath, $env);
         Zend_Registry::set('config',self::$_config);
     }
@@ -94,12 +94,12 @@ class TestConfigSettings {
     	$flag = false;
     	self::setUpConfigEnv('general');
     	$tmz = self::$_config->timezone;
-        foreach(DateTimeZone::listIdentifiers() as $timezone) {
-            if($timezone === $tmz) {
+        foreach (DateTimeZone::listIdentifiers() as $timezone) {
+            if ($timezone === $tmz) {
                 $flag = true;
             }
         }
-        if($flag === false) {
+        if ($flag === false) {
             throw new ErrorException('Time zone invalid.');
         }
         return $tmz;
@@ -131,7 +131,7 @@ class TestConfigSettings {
      */
     static public function setUpDBAdapter() {
     	$config = self::$_config;
-    	if(null === $config->type ) {
+    	if (null === $config->type ) {
     		$adapter = 'PDO_MYSQL';
     	}
         $params = self::getDBParams($config);

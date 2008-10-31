@@ -22,12 +22,11 @@ class DataTypeIs {
      * @param PHPUnit_Fixture $obj
      * 
      */
-    static function anInt($dataType,$field, PHPUnit_Fixture $obj) {
-       if('integer' === $dataType) {
-            if('id' !== $field) {
+    static function anInt($dataType, $field, PHPUnit_Fixture $obj) {
+       if ('integer' === $dataType) {
+            if ('id' !== $field) {
                 $obj->setResult($field, rand());
-            }
-            else {
+            } else {
                 $obj->setResult($field,NULL);
             }
         }
@@ -42,8 +41,8 @@ class DataTypeIs {
      * @param PHPUnit_Fixture $obj
      * 
      */
-    static function aString($dataType,$field,$obj) {
-       if('string' === $dataType) {
+    static function aString($dataType, $field, $obj) {
+       if ('string' === $dataType) {
            $obj->setResult($field,'my string');
        }
     }
@@ -58,8 +57,8 @@ class DataTypeIs {
      * @param PHPUnit_Fixture $obj
      * 
      */
-    static function aDate($dataType,$field,$obj) {
-       if('date' === $dataType) {
+    static function aDate($dataType, $field, $obj) {
+       if ('date' === $dataType) {
             $obj->setResult($field, date('Y-m-d'));
        }
     }
@@ -74,8 +73,8 @@ class DataTypeIs {
      * @param PHPUnit_Fixture $obj
      * 
      */
-    static function aDateTime($dateType,$field,$obj) {
-       if('datetime' === $dateType) {
+    static function aDateTime($dateType, $field, $obj) {
+       if ('datetime' === $dateType) {
             $obj->setResult($field, date(DATE_RFC822));
        }    
     }

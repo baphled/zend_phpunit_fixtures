@@ -26,7 +26,6 @@ require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
 class DataTypeChecker {
-	
     /**
      * Checks that our datatype is an array and that our table
      * is a valid string, if this is not the case we need to throw
@@ -37,11 +36,11 @@ class DataTypeChecker {
      * @param String $tableName
      * 
      */
-    static function checkTestDataAndTableName($insertDataType,$tableName) {
-        if(!is_array($insertDataType)) {
+    static function checkTestDataAndTableName($insertDataType, $tableName) {
+        if (!is_array($insertDataType)) {
             throw new ErrorException('Test data must be in array format.');
         }
-        if(!is_string($tableName) || empty($tableName)) {
+        if (!is_string($tableName) || empty($tableName)) {
             throw new ErrorException('Table name must be a string.');
         }
     }
@@ -55,9 +54,9 @@ class DataTypeChecker {
      * @return String  $typeSegment    Returns a the SQL equalient to our type.
      * 
      */
-    static function checkDataTypeValues($key,$value) {
+    static function checkDataTypeValues($key, $value) {
         $typeSegment = '';
-        if('type' === $key) {
+        if ('type' === $key) {
         	switch ($value) {
         		case 'string':
         			$typeSegment = ' VARCHAR';
@@ -85,9 +84,9 @@ class DataTypeChecker {
      * @return String
      * 
      */
-    static function checkDataTypeValuesLength($key,$value) {
+    static function checkDataTypeValuesLength($key, $value) {
         $data = '';
-        if('length' === $key) {
+        if ('length' === $key) {
             $data .= '(' .$value .')';
         }
         return $data;
@@ -105,11 +104,10 @@ class DataTypeChecker {
      */
     static function checkDataTypeValueNull($key,$value) {
         $data = '';
-        if('null' === $key) {
-            if(TRUE === $value) {
+        if ('null' === $key) {
+            if (TRUE === $value) {
                 $data .= ' NULL';
-            }
-            elseif(FALSE === $value) {
+            } elseif (FALSE === $value) {
                 $data .= ' NOT NULL';
             }
         }
@@ -125,14 +123,13 @@ class DataTypeChecker {
      * @param String $value
      * @return String
      */
-    static function checkDataTypeDefault($key,$value) {
+    static function checkDataTypeDefault($key, $value) {
         $data = null;
-        if('default' === $key) {
+        if ('default' === $key) {
             $data = ' DEFAULT ';
-            if('' === $value) {
+            if ('' === $value) {
                $data .= '""'; 
-            }
-            else {
+            } else {
                $data .= '"' .$value .'"';
             }
         }
@@ -150,7 +147,7 @@ class DataTypeChecker {
      */
     static function checkDataTypePrimaryKey($key) {
         $data = '';
-        if('key' === $key) {
+        if ('key' === $key) {
             $data .= ' PRIMARY KEY AUTO_INCREMENT';    
         }
         return $data;
@@ -165,12 +162,12 @@ class DataTypeChecker {
      * 
      */
     static function checkDataType($dataType) {
-    	if(!is_array($dataType)) {
+    	if (!is_array($dataType)) {
     		throw new ErrorException('Data type must be an array.');
     	}
-    	if(array_key_exists('type', $dataType)) {
-	    	if('date' === $dataType['type'] || 'datetime' === $dataType['type']) {         // throws exception, when type key not present
-	        	if(array_key_exists('length',$dataType)) {
+    	if (array_key_exists('type', $dataType)) {
+	    	if ('date' === $dataType['type'] || 'datetime' === $dataType['type']) {         // throws exception, when type key not present
+	        	if (array_key_exists('length',$dataType)) {
 	        		throw new ErrorException('Invalid data format.');
 	        	}
 	        }
@@ -189,13 +186,12 @@ class DataTypeChecker {
      */
     static function checkFieldsType($dataType) {
        DataTypeChecker::checkDataType($dataType);
-       if($dataType['type'] === 'integer' || $dataType['type'] ===  'string' ) {
-            if(!array_key_exists('length',$dataType)) {
+       if ( $dataType['type'] === 'integer' || $dataType['type'] ===  'string' ) {
+            if (!array_key_exists('length',$dataType)) {
                 throw new ErrorException('String & Integer must have a length specified.');
             }
-       }
-       elseif('date' === $dataType['type'] || 'datetime' === $dataType['type']) {}
-       else {
+       } elseif ('date' === $dataType['type'] || 'datetime' === $dataType['type']) {
+       } else {
             throw new ErrorException('Invalid data type.');
        }
     }
@@ -209,10 +205,10 @@ class DataTypeChecker {
      */
     static function checkFieldsNullProperty($dataType) {
        if(array_key_exists('null',$dataType)) {
-            if(!is_bool($dataType['null'])) {
+            if (!is_bool($dataType['null'])) {
                 throw new ErrorException('Null must be set to a boolean value.');
             }
-            if(array_key_exists('default',$dataType)) {
+            if (array_key_exists('default',$dataType)) {
                 throw new ErrorException('Can not use keyword default along with null.');
             }
        }

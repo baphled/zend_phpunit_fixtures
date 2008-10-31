@@ -48,13 +48,12 @@ class DevelopmentHandler {
 	 * @todo Functionality is scarily simular to PHPUnit_Fixture_DB's callMethod
 	 * 
 	 */
-	private function _runTableMethod($call,$fixture) {
-	   if($fixture instanceof PHPUnit_Fixture_DB) {
-            return $this->_fixMan->fixtureMethodCheck($call,$fixture);    
-        }
-        else {
+	private function _runTableMethod($call, $fixture) {
+	   if ($fixture instanceof PHPUnit_Fixture_DB) {
+            return $this->_fixMan->fixtureMethodCheck($call, $fixture);    
+       } else {
         	throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
-        }
+       }
 	}
 	
 	/**
@@ -66,7 +65,7 @@ class DevelopmentHandler {
 	 * 
 	 */
 	public function build($fixture) {
-		return $this->_runTableMethod('setup',$fixture);
+		return $this->_runTableMethod('setup', $fixture);
 	}
 
     /**
@@ -78,7 +77,7 @@ class DevelopmentHandler {
      *  
      */
     public function populate($fixture) {
-        return $this->_runTableMethod('populate',$fixture);
+        return $this->_runTableMethod('populate', $fixture);
     }
     
 	/**
@@ -89,7 +88,7 @@ class DevelopmentHandler {
 	 * 
 	 */
 	public function drop() {
-	   if($this->_fixMan->tablesPresent()) {
+	   if ($this->_fixMan->tablesPresent()) {
               return $this->_fixMan->dropTables();
         }
         return false;

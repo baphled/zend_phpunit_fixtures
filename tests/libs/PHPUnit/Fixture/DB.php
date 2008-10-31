@@ -26,7 +26,6 @@
  */
 
 abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
-	 
     /**
      * Stores the fixtures table name
      *
@@ -64,7 +63,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      */
     public function __destruct() {
     	try {
-	        if($this->_fixMan->tablesPresent()) {
+	        if( $this->_fixMan->tablesPresent()) {
 	              $this->drop();
 	        }
 	        $this->_fixMan = null;
@@ -84,7 +83,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      */
     private function _callMethod($call) {
         try {
-            $result = $this->_fixMan->fixtureMethodCheck($call,$this);
+            $result = $this->_fixMan->fixtureMethodCheck($call, $this);
         }
         catch(Exception $e) {
         	$result = false;
@@ -113,7 +112,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * 
      */
     public function setName($tableName) {
-        if(!is_string($tableName)) {
+        if (!is_string($tableName)) {
             throw new ErrorException('Table name must be a string');
         }
         $this->_table = $tableName;
@@ -132,7 +131,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * 
      */
     public function setup() {
-        if(0 === count($this->_fields)) {
+        if (0 === count($this->_fields)) {
             throw new ErrorException('No table fields present.');
         }
        return $this->_callMethod('setup');
@@ -146,7 +145,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * 
      */
     public function populate() {
-        if(!$this->_fixMan->tableExists($this->_table)) {
+        if (!$this->_fixMan->tableExists($this->_table)) {
             throw new ErrorException('Fixtures table is not present.');
         }
         return $this->_callMethod('populate');
