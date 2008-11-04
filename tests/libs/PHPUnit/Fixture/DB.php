@@ -25,7 +25,7 @@
  *
  */
 
-abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
+abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture_Transactions {
     /**
      * Stores the fixtures table name
      *
@@ -35,15 +35,6 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      */
     protected $_table = null;
     
-    /**
-     * Our fixture manager, used to handle 
-     * the meat of fixture interactions.
-     *
-     * @access private
-     * @var FixtureManager
-     * 
-     */
-    private $_fixMan;
     
     /**
      * Initialises our fixture manager.
@@ -51,7 +42,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      * 
      */
     final public function __construct() {
-        $this->_fixMan = new FixturesManager();
+    	parent::__construct();
     }
 
     /**
@@ -71,25 +62,6 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
     	catch(Exception $e) {
     		echo $e->getMessage();
     	}
-    }
-    
-    /**
-     * Used to call our CRUD methods
-     * 
-     * @access  private
-     * @param   String    $call   The call we want to make.
-     * @return  bool
-     * 
-     */
-    private function _callMethod($call) {
-        try {
-            $result = $this->_fixMan->fixtureMethodCheck($call, $this);
-        }
-        catch(Exception $e) {
-        	$result = false;
-            $e->getMessage();
-        }
-        return $result;
     }
     
     /**
@@ -161,16 +133,5 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture {
      */
     public function drop() {
         return $this->_callMethod('drop');
-    }
-    
-    /**
-     * Wrapper function for truncating our test tables.
-     * 
-     * @access public
-     * @return bool
-     * 
-     */
-    public function truncate() {
-        return $this->_callMethod('truncate');
     }
 }
