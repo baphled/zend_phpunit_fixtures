@@ -39,7 +39,7 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     public function __destruct() {
     	try {
 	        if ($this->_fixMan->tablesPresent()) {
-	              $this->truncate();
+	        	$this->_fixMan->truncateTable();
 	        }
 	        $this->_fixMan = null;
     	}
