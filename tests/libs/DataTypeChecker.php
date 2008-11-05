@@ -23,7 +23,7 @@
  */
 
 require_once 'Zend/Loader.php';
-Zend_Loader::registerAutoload ();
+Zend_Loader::registerAutoload();
 
 class DataTypeChecker {
     /**
@@ -167,12 +167,11 @@ class DataTypeChecker {
     	}
     	if (array_key_exists('type', $dataType)) {
 	    	if ('date' === $dataType['type'] || 'datetime' === $dataType['type']) {         // throws exception, when type key not present
-	        	if (array_key_exists('length',$dataType)) {
+	        	if (array_key_exists('length', $dataType)) {
 	        		throw new ErrorException('Invalid data format.');
 	        	}
-	        }
-    	}
-        else {
+	    	}
+    	} else {
             throw new ErrorException('Must supply a valid data type.');
         }
     }
@@ -187,7 +186,7 @@ class DataTypeChecker {
     static function checkFieldsType($dataType) {
        DataTypeChecker::checkDataType($dataType);
        if ( $dataType['type'] === 'integer' || $dataType['type'] ===  'string' ) {
-            if (!array_key_exists('length',$dataType)) {
+            if (!array_key_exists('length', $dataType)) {
                 throw new ErrorException('String & Integer must have a length specified.');
             }
        } elseif ('date' === $dataType['type'] || 'datetime' === $dataType['type']) {
@@ -204,11 +203,11 @@ class DataTypeChecker {
      * 
      */
     static function checkFieldsNullProperty($dataType) {
-       if(array_key_exists('null',$dataType)) {
+       if (array_key_exists('null', $dataType)) {
             if (!is_bool($dataType['null'])) {
                 throw new ErrorException('Null must be set to a boolean value.');
             }
-            if (array_key_exists('default',$dataType)) {
+            if (array_key_exists('default', $dataType)) {
                 throw new ErrorException('Can not use keyword default along with null.');
             }
        }

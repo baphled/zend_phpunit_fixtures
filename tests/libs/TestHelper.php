@@ -1,4 +1,4 @@
-<?php
+<?php 
 set_include_path('.' . PATH_SEPARATOR .
 				dirname(__FILE__) .  PATH_SEPARATOR .
 				realpath(dirname(__FILE__) . '/../libs' . PATH_SEPARATOR) .
