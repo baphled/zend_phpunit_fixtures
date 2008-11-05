@@ -318,14 +318,18 @@ class FixturesManager {
 	 * @return bool
 	 * 
 	 */
-    public function truncateTable($name) {
+    public function truncateTable($name='') {
         if (!is_string($name)) {
             throw new ErrorException('Tablename must be a string.');
         }
         try {
-	        if ($this->tableExists($name)) {
-	        	$sql = 'TRUNCATE TABLE ' .$name;
-	        	$this->_db->getConnection()->exec($sql);
+	        if ('' === $name) {
+		        $tables = $this->_db->listTables();
+				foreach ($tables as $table) {
+					$this->_truncate($table);
+				}
+			} elseif ($this->tableExists($name)) {
+	        	$this->_truncate($name);
 	        } else {
 	        	throw new ErrorException($name .' does not exist.');
 	        }
@@ -337,6 +341,11 @@ class FixturesManager {
         return true;
     }
 	
+    private function _truncate($name) {
+    	$sql = 'TRUNCATE TABLE ' .$name;
+       	$this->_db->getConnection()->exec($sql);
+    }
+    
 	/**
 	 * Deletes all our fixtures tables.
 	 *
@@ -392,6 +401,9 @@ class FixturesManager {
 				    break;
 				case 'truncate':
 				    $result = $this->truncateTable($fixture->getName());
+				    break;
+			    case 'clean':
+				    $result = $this->truncateTable();
 				    break;
 				case 'populate':
 				    $result = $this->insertTestData($fixture->getTestData(), $fixture->getName());
