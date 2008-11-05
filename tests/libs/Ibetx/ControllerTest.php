@@ -13,7 +13,7 @@
 
 class Ibetx_ControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
-	private $_client;
+	protected $_client;
 	
 	/**
 	 * instantiate the Api Client
@@ -21,5 +21,21 @@ class Ibetx_ControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	 */
 	public function __construct() {
 		$this->_client = new Ibetx_Api_Client(); 
+		parent::__construct();
+	}
+
+	/**
+	 * Prepares the environment before running a test.
+	 */
+	protected function setUp() {
+		$this->bootstrap = array ($this, 'appBootstrap' );
+		parent::setUp();
+	}
+	
+	/**
+	 * Prepares the environment before running a test.
+	 */
+	public function appBootstrap() {		
+		$this->frontController->registerPlugin(new Initializer('local'));		
 	}
 }
