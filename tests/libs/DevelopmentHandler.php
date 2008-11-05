@@ -30,7 +30,7 @@ class DevelopmentHandler {
 	 * environment.
 	 * 
 	 * @access public
-	 * @param String $env Our testing environment.
+	 * @param String 				$env 		Our testing environment.
 	 * 
 	 */
 	public function __construct($env='development') {
@@ -41,8 +41,8 @@ class DevelopmentHandler {
 	 * Runs our method calls
 	 * 
 	 * @access private
-	 * @param  String $call
-	 * @param  PHPUnit_Fixture_DB $fixture
+	 * @param  String 				$call		The call we want to make
+	 * @param  PHPUnit_Fixture_DB 	$fixture	Our test fixture.
 	 * @return bool $result
 	 * 
 	 * @todo Functionality is scarily simular to PHPUnit_Fixture_DB's callMethod
@@ -60,7 +60,7 @@ class DevelopmentHandler {
 	 * Builds our development database.
 	 * 
 	 * @access public
-	 * @param  PHPUnit_Fixture_DB $fixture
+	 * @param  PHPUnit_Fixture_DB $fixture	Our test fixture.
 	 * @return bool
 	 * 
 	 */
@@ -72,7 +72,7 @@ class DevelopmentHandler {
      * Populates our test table with our test data.
      *
      * @access public
-     * @param  PHPUnit_Fixture_DB $fixture
+     * @param  PHPUnit_Fixture_DB $fixture	Our test fixture.
      * @return bool
      *  
      */
@@ -92,5 +92,17 @@ class DevelopmentHandler {
               return $this->_fixMan->dropTables();
 	   }
         return false;
+	}
+	
+	/**
+	 * Truncates our test table with our test data
+	 *
+	 * @access 	public
+	 * @param 	PHPUnit_Fixture $fixture	Our test fixture.
+	 * @return 	bool						True for success, false for failure.
+	 * 
+	 */
+	public function truncate($fixture) {
+		return $this->_runTableMethod('clean', $fixture);
 	}
 }
