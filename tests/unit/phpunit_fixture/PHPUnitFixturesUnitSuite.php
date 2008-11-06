@@ -14,7 +14,7 @@
 require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
 
 require_once 'FixturesManagerTest.php';
-require_once 'PHPUnitFixtureDynamicDBTest.php';
+require_once 'PHPUnitFixturesDynamicDBTest.php';
 require_once 'DevelopmentHandlerTest.php';
 require_once 'FixtureTest.php';
 require_once 'FixtureDBTest.php';
@@ -36,7 +36,7 @@ class PHPUnitFixturesUnitSuite extends PHPUnit_Framework_TestSuite {
 		$this->addTestSuite ( 'DevelopmentHandlerTest' );
 		$this->addTestSuite ( 'FixturesManagerTest' );
 		$this->addTestSuite ( 'FixtureTest' );
-		$this->addTestSuite ( 'PHPUnitFixtureTransactionsTest' );
+		$this->addTestSuite ( 'PHPUnitFixturesDynamicDBTest' );
 		$this->addTestSuite ( 'FixtureDBTest' );
 	}
 	

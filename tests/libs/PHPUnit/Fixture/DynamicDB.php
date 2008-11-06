@@ -25,8 +25,12 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      */
     protected $_fixMan;
     
+    protected $_config;
+    
 	public function __construct() {
 		$this->_fixMan = new FixturesManager();
+		TestConfigSettings::setUpConfig();
+		$this->_config = Zend_Registry::get('config');
 	}
 	
 	/**
@@ -77,5 +81,49 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     public function truncate() {
         return $this->_callMethod('truncate');
     }
+    /**
+     * Gets our URI, which we'll need to retrieve our SQL schema
+     * 
+     * Determines whether a URL has been passed, if
+     * it hasn't we will use the one within the configuration file.
+     *
+     * @param 	String $url
+     * @return 	String $uri
+     * 
+     */
+    private function _getURI($url='') {
+    	if (empty($url)) {
+    		if (!isset($this->_config->schema->url) || empty($this->_config->schema->url)) {
+    			throw new Zend_Exception('Must submit a URL, via param or schema.url');    			
+    		}
+    		$url = $this->_config->schema->url;
+    	}
+    	$uri = Zend_Uri::factory($url);
+    	if ('http' !== $uri->getScheme()) {
+    		throw new Zend_Exception('URL must have a HTTP prefix.');
+    	}
+    	return $uri;
+    }
+    
+    public function retrieveSQLSchema($url='') {
+    	$uri = $this->_getURI($url);
+    	$response = $this->_getResponse($uri);
+    	if(200 === $response->getStatus()) {
+    		return true;
+    	}
+    	return false;
+    }
+    
+    private function _getResponse($uri) {
+    	try {
+	    	if (isset($uri) && $uri->valid()) {
+	    		$client = new Zend_Http_Client($uri, array('maxredirects'=>0, 'timeout'=>15));
+	    		$response = $client->request();
+	    		return $response;
+	    	}
+    	}
+    	catch(Zend_Http_Client_Adapter_Exception $e) {
+    		throw new Zend_Exception($e->getMessage());
+    	}
+    }
 }
-?>

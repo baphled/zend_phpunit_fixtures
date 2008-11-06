@@ -25,7 +25,7 @@
  *
  */
 
-abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture_Transactions {
+abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture_DynamicDB {
     /**
      * Stores the fixtures table name
      *
