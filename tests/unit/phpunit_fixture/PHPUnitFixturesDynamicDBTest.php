@@ -102,7 +102,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveSQLSchemaReturnsTrueIfURIIsSetAndIsValid() {
-		$this->assertTrue($this->_dynamicDB->retrieveSQLSchema());
+		$this->assertNotNull($this->_dynamicDB->retrieveSQLSchema());
 	}
 	
 	/**
@@ -113,5 +113,22 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 		$this->setExpectedException('Zend_Exception');
 		$this->_dynamicDB->retrieveSQLSchema('http://blah.com');
 	}
+	
+	/**
+	 * We'll need to parse our HTML body so that we only actually have the pieces
+	 * of data relevant to us (<td class="ddl_field"><pre> & </td>) 
+	 */
+	function testRetrieveSQLSchemaReturnsAnArrayOnSuccess() {
+		$this->assertType('array', $this->_dynamicDB->retrieveSQLSchema());
+	}
+	
+	/**
+	 * Now we want to make sure that we have more than 1 entry in our schema results
+	 * 
+	 */
+	function testRetrieveSQLSchemaReturnsMoreThanOneResultInArray() {
+		$this->assertGreaterThan(1, count($this->_dynamicDB->retrieveSQLSchema()));
+		var_dump($this->_dynamicDB->retrieveSQLSchema());
+	}
+	
 }
-

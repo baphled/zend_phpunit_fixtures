@@ -12,6 +12,8 @@
  * @package Zend_PHPUnit_Scaffolding
  * @subpackage PHPUnit_Fixture_Transactions
  * 
+ * @TODO Finish implementing retrieving our list of SQL schemas.
+ * 
  */
 class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
 	
@@ -81,12 +83,14 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     public function truncate() {
         return $this->_callMethod('truncate');
     }
+    
     /**
      * Gets our URI, which we'll need to retrieve our SQL schema
      * 
      * Determines whether a URL has been passed, if
      * it hasn't we will use the one within the configuration file.
      *
+     * @access private
      * @param 	String $url
      * @return 	String $uri
      * 
@@ -104,26 +108,64 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	}
     	return $uri;
     }
-    
-    public function retrieveSQLSchema($url='') {
-    	$uri = $this->_getURI($url);
-    	$response = $this->_getResponse($uri);
+
+    /**
+     * Gets our HTML for us.
+     *
+     * @access private
+     * @param Zend_Response $response
+     * @return String
+     */
+    private function _getHTML($response) {
     	if(200 === $response->getStatus()) {
-    		return true;
+    		$doc = Zend_Search_Lucene_Document_Html::loadHTML($response->getBody());
+    		return $doc->getHTML();
     	}
     	return false;
     }
     
+    /**
+     * Gets our HTTP response, if an error occurs we throw and exception
+     *
+     * @access private
+     * @param String $uri
+     * @return Zend_Http_Response
+     * 
+     */
     private function _getResponse($uri) {
     	try {
 	    	if (isset($uri) && $uri->valid()) {
 	    		$client = new Zend_Http_Client($uri, array('maxredirects'=>0, 'timeout'=>15));
 	    		$response = $client->request();
-	    		return $response;
 	    	}
     	}
     	catch(Zend_Http_Client_Adapter_Exception $e) {
     		throw new Zend_Exception($e->getMessage());
     	}
+    	return $response;
+    }
+    
+    /**
+     * Retrieves our SQL schema for us.
+     *
+     * @access public
+     * @param String $url
+     * @return Array	$result		False on failure.
+     * 
+     */
+    public function retrieveSQLSchema($url='') {
+    	$result = array();
+    	$data = null;
+    	$uri = $this->_getURI($url);
+    	$response = $this->_getResponse($uri);
+    	$body = $this->_getHTML($response);
+    	if(false !== $body) {
+    		preg_match_all("|<pre>(.*)<[^>]pre>|i",$body,$data,PREG_PATTERN_ORDER);
+    		foreach ($data as $query) {
+    			$result[] = str_replace("<br>",' ',$query);
+    		}
+    		return $result;
+    	}
+    	return false;
     }
 }
