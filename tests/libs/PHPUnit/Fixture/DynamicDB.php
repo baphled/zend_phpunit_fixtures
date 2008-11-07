@@ -177,4 +177,8 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	}
     	return false;
     }
+    
+    public function getSchemas() {
+    	return array();
+    }
 }

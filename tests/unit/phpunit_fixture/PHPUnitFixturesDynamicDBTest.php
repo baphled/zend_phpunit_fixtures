@@ -82,6 +82,14 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 		$this->assertClassHasAttribute('_schemas','PHPUnit_Fixture_DynamicDB');
 	}
 	
+	function testDynamicDBHasAFixManagerAttribute() {
+		$this->assertClassHasAttribute('_fixMan','PHPUnit_Fixture_DynamicDB');
+	}
+	
+	function testDynamicDBHasAConfigAttribute() {
+		$this->assertClassHasAttribute('_config','PHPUnit_Fixture_DynamicDB');
+	}
+	
 	/**
 	 * If a URL is not passed & a configured URL is not in
 	 * settings.ini we want to throw an exception.
@@ -184,9 +192,12 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 * We want to be able to pass a parameter to retrieveSQLSchema which will
 	 * allow us to retrieve only a single schema, we'll the DB table name as a
 	 * search point.
-	 * 
+	 *
+	 * To do this I'll refactor retrieveSQLSchema to return bool & populate
+	 * our private schema property which will be accessed via getSchema & findSchema
+	 *  
 	 */
-	function tsetRetrieveSQLSchemaSearchParamReturnsResultsExpectedResult() {
-		$this->_dynamicDB->retrieveSQLSchema('');
+	function testGetSchemaReturnsEmptyArrayIfNotPopulated() {
+		$this->assertType('array',$this->_dynamicDB->getSchemas());
 	}
 }
