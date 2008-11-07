@@ -153,7 +153,7 @@ abstract class PHPUnit_Fixture {
             if (!empty($key) && !empty($value)) {
                 foreach ($this->_testData as $data) {
                     if ($data[$key] === $value) {
-                       return $data;
+                       return $this->_removeAlias($data);
                     }
                 }
             } else {
@@ -426,7 +426,8 @@ abstract class PHPUnit_Fixture {
     public function testDataExists($testData) {
         if ($this->testDataCount() > 0 ) {
             for ($i=0;$i<$this->testDataCount();$i++) {
-                if ($this->_testData[$i] == $testData[$i]) {
+            	$data = $this->_removeAlias($this->_testData[$i]);
+                if ($data[$i] == $testData[$i]) {
                     return true;
                 }
             }

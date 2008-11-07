@@ -745,4 +745,12 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 			$this->assertArrayNotHasKey('ALIAS', $data);
 		}
 	}
+	
+	/**
+	 * We now want to check that getTestData also does not include our ALIAS key
+	 */
+	function testGetTestDataDoesNotReturnTheALIASKeyAlongWithTheResults() {
+		$result = $this->_testFix->getTestData('id',1);
+		$this->assertArrayNotHasKey('ALIAS', $result);
+	}
 }
