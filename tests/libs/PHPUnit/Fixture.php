@@ -487,10 +487,10 @@ abstract class PHPUnit_Fixture {
      * @return 	Array	$result
      */
     function find($name) {
-    	foreach ($this->_testData as $data) {
-    		if(array_key_exists('ALIAS',$data)) {
-    			if($name === $data['ALIAS']) {
-    				 unset($result['ALIAS']);
+    	foreach ($this->_testData as $result) {
+    		if(array_key_exists('ALIAS', $result)) {
+    			if($name === $result['ALIAS']) {
+    				unset($result['ALIAS']);
     				return $result;
     			}
     		}
