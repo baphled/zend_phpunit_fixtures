@@ -205,6 +205,10 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testFindSchemaReturnsAsAString() {
-		$this->assertType('string', $this->_dynamicDB->findSchema('events'));
+		$this->assertType('string', $this->_dynamicDB->findSchema('event'));
+	}
+	
+	function testFindSchemaResultsAreNotEmpty() {
+		$this->assertNotSame('' ,$this->_dynamicDB->findSchema('event'));
 	}
 }

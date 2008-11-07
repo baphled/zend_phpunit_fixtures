@@ -188,13 +188,24 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      * 
      */
     public function getSchemas() {
-    	if (0 === count($this->_schemas)) {
-    		$this->retrieveSQLSchema();
-    	}
+    	$this->_checkSchemaList();
     	return $this->_schemas;
     }
     
+    private function _checkSchemaList() {
+    	if (0 === count($this->_schemas)) {
+    		$this->retrieveSQLSchema();
+    	}
+    }
+    
     public function findSchema($name) {
-    	return '';
+    	$this->_checkSchemaList();
+    	foreach ($this->_schemas as $schema) {
+    		if(preg_match("/`{$name}`/i",$schema)) {
+    			echo $schema;
+    			return $schema;
+    		}
+    	}
+    	return false;
     }
 }
