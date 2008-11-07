@@ -130,8 +130,8 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 * Our results must come in an array format.
 	 *
 	 */
-	function testRetrieveSQLSchemaReturnsAnArrayOnSuccess() {
-		$this->assertType('array', $this->_dynamicDB->retrieveSQLSchema());
+	function testRetrieveSQLSchemaReturnsAnTrueOnSuccess() {
+		$this->assertEquals(true, $this->_dynamicDB->retrieveSQLSchema());
 	}
 	
 	/**
@@ -141,7 +141,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testRetrieveSQLSchemaThatEachResultStartsWithCREATE() {
-		$result = $this->_dynamicDB->retrieveSQLSchema();
+		$result = $this->_dynamicDB->getSchemas();
 		foreach ($result as $stmt) {
 			$this->assertContains('CREATE', $stmt);
 		}
@@ -173,7 +173,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testRetrieveSQLSchemaThatEachResultHasNoBRs() {
-		$result = $this->_dynamicDB->retrieveSQLSchema();
+		$result = $this->_dynamicDB->getSchemas();
 		foreach ($result as $stmt) {
 			$this->assertNotContains('<br>', $stmt);			
 		}
@@ -183,9 +183,8 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 * Now we want to make sure that we have more than 1 entry in our schema results
 	 * 
 	 */
-	function testRetrieveSQLSchemaReturnsMoreThanOneResultInArray() {
-		$result = $this->_dynamicDB->retrieveSQLSchema();
-		$this->assertGreaterThan(10, count($result));
+	function testGetSchemasReturnArrayWithElements() {
+		$this->assertGreaterThan(10,count($this->_dynamicDB->getSchemas()));
 	}
 	
 	/**
@@ -198,6 +197,6 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *  
 	 */
 	function testGetSchemaReturnsEmptyArrayIfNotPopulated() {
-		$this->assertType('array',$this->_dynamicDB->getSchemas());
+		$this->assertType('array', $this->_dynamicDB->getSchemas());
 	}
 }

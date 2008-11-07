@@ -32,6 +32,7 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     private $_schemas;
     
 	public function __construct() {
+		$this->_schemas = array();
 		$this->_fixMan = new FixturesManager();
 		TestConfigSettings::setUpConfig();
 		$this->_config = Zend_Registry::get('config');
@@ -150,9 +151,9 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     /**
      * Retrieves our SQL schema for us.
      *
-     * @access public
-     * @param String $url
-     * @return Array	$result		False on failure.
+     * @access 	public
+     * @param 	String $url
+     * @return 	bool			False on failure.
      * 
      */
     public function retrieveSQLSchema($url='') {
@@ -173,12 +174,23 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     			}
     			$stmts[] = str_replace("<br>", ' ', $query);
     		}
-    		return $stmts;
+    		$this->_schemas = $stmts;
+    		return true;
     	}
     	return false;
     }
     
+    /**
+     * Gets our SQL Schemas from our Workbench.
+     *
+     * @access public
+     * @return Array
+     * 
+     */
     public function getSchemas() {
-    	return array();
+    	if (0 === count($this->_schemas)) {
+    		$this->retrieveSQLSchema();
+    	}
+    	return $this->_schemas;
     }
 }
