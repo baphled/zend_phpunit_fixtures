@@ -696,4 +696,22 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$actual = $this->_testFix->testDataCount();
 		$this->assertEquals($expected,$actual);
 	}
+	
+	/**
+	 * We want to be able to get a fixture by using an alias,
+	 * this alias is optional and will only return a fixture if
+	 * the corresponding alias is found.
+	 */
+	function testFindReturnsFalseIfAliasNotFound() {
+		$this->assertFalse($this->_testFix->find('blah'));
+	}
+	
+	function testFindReturnsArrayIfAliasIsFound() {
+		$this->assertType('array', $this->_testFix->find('first'));
+	}
+	
+	function testFindReturnsWhatWeExpect() {
+		$expected = array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26');
+		$this->assertSame($expected,$this->_testFix->find('first'));
+	}
 }

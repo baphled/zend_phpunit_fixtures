@@ -478,4 +478,23 @@ abstract class PHPUnit_Fixture {
         }
         return false;
     }
+    
+    /**
+     * Finds a fixture via an alias, the fixture must
+     * already have an alias key defined.
+     *
+     * @param 	String 	$name	The name of the fixtures alias.
+     * @return 	Array	$result
+     */
+    function find($name) {
+    	foreach ($this->_testData as $data) {
+    		if(array_key_exists('ALIAS',$data)) {
+    			if($name === $data['ALIAS']) {
+    				 unset($result['ALIAS']);
+    				return $result;
+    			}
+    		}
+    	}
+    	return false;
+    }
 }
