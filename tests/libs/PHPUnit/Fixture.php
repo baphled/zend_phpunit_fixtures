@@ -448,6 +448,7 @@ abstract class PHPUnit_Fixture {
         }
         for ($i=0;$i<$this->testDataCount();$i++) {
             $testData[$i]['id'] = $i+1;
+            $testData[$i] = $this->_removeAlias($testData[$i]);
         }
         return $testData;
     }
@@ -490,10 +491,22 @@ abstract class PHPUnit_Fixture {
     	foreach ($this->_testData as $result) {
     		if(array_key_exists('ALIAS', $result)) {
     			if($name === $result['ALIAS']) {
-    				unset($result['ALIAS']);
-    				return $result;
+    				return $this->_removeAlias($result);
     			}
     		}
+    	}
+    	return false;
+    }
+    
+    protected function _removeAlias($fixture) {
+    	  unset($fixture['ALIAS']);
+    	  return $fixture;
+    }
+    
+    function addAlias($index, $alias) {
+    	if(!array_key_exists('ALIAS',$this->_testData[$index])) {
+    		$this->_testData[$index]['ALIAS'] = $alias;
+    		return true;
     	}
     	return false;
     }

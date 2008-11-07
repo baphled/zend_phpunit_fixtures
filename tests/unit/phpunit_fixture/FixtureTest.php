@@ -714,4 +714,35 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$expected = array('id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26');
 		$this->assertSame($expected,$this->_testFix->find('first'));
 	}
+	
+	function testSetReturnsBool() {
+		$this->assertType('bool',$this->_testFix->addAlias(0,''));
+	}
+	
+	function testSetAliasReturnsFalseIfUnableToAddAlias() {
+		$this->assertFalse($this->_testFix->addAlias(0,'first'));
+	}
+	
+	function testSetAliasReturnsTrueIfAliasKeyNotFound() {
+		$this->assertTrue($this->_testFix->addAlias(1,'second'));		
+	}
+	
+	function testSetAliasActuallySetsAliasIfNoneAreAlreadySet() {
+		$this->assertTrue($this->_testFix->addAlias(1,'second'));
+		$actual = $this->_testFix->find('second');
+		$expected = array('id' => 2, 'apple_id' => 1, 'color' => 'Bright Red 1', 'name' => 'Bright Red Apple', 'created' => '2006-11-22 10:43:13', 'date' => '2014-01-01', 'modified' => '2006-11-30 18:38:10');
+		$this->assertSame($expected,$actual);
+	}
+	
+	/**
+	 * Now we are able to add aliases, we should really implement functionality
+	 * to remove this key when retrieving our test data as it will not be needed.
+	 * 
+	 */
+	function testRetrieveTestDataResultsDoesNotReturnAnyFixturesWithALIASes() {
+		$result = $this->_testFix->retrieveTestDataResults();
+		foreach($result as $data) {
+			$this->assertArrayNotHasKey('ALIAS', $data);
+		}
+	}
 }
