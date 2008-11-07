@@ -202,7 +202,6 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	$this->_checkSchemaList();
     	foreach ($this->_schemas as $schema) {
     		if(preg_match("/`{$name}`/i",$schema)) {
-    			echo $schema;
     			return $schema;
     		}
     	}
