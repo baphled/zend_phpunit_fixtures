@@ -78,6 +78,10 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($this->_dynamicDBStub->retrieveSQLSchema('http://false.url'));
 	}
 	
+	function testDynamicDBHasASchemasAttribute() {
+		$this->assertClassHasAttribute('_schemas','PHPUnit_Fixture_DynamicDB');
+	}
+	
 	/**
 	 * If a URL is not passed & a configured URL is not in
 	 * settings.ini we want to throw an exception.
@@ -115,36 +119,58 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * We'll need to parse our HTML body so that we only actually have the pieces
-	 * of data relevant to us (<td class="ddl_field"><pre> & </td>) 
+	 * Our results must come in an array format.
+	 *
 	 */
 	function testRetrieveSQLSchemaReturnsAnArrayOnSuccess() {
 		$this->assertType('array', $this->_dynamicDB->retrieveSQLSchema());
 	}
 	
+	/**
+	 * As these schemas are used to create DB tables we onlt want
+	 * CREATE statements, so we need to make sure that each element
+	 * contains this keyword.
+	 *
+	 */
 	function testRetrieveSQLSchemaThatEachResultStartsWithCREATE() {
 		$result = $this->_dynamicDB->retrieveSQLSchema();
 		foreach ($result as $stmt) {
 			$this->assertContains('CREATE', $stmt);
 		}
 	}
+	
+	/**
+	 * We'll need to parse our HTML body so that we only actually have the pieces
+	 * of data relevant to us (<td class="ddl_field"><pre> & </pre>) 
+	 */
 	function testRetreieveSQLSchemaThrowsExceptionIfPatternNotFoundAtAll() {
 		$this->setExpectedException('Zend_Exception');
 		$this->_dynamicDB->retrieveSQLSchema('http://auto.ibetx.com');
 	}
 	
+	/**
+	 * If any of our elements are not a CREATE statement we want to throw
+	 * an exception.
+	 *
+	 */
 	function testRetrieveSQLSchemaIfNoCREATEInResultsThrowsException() {
 		$this->markTestIncomplete('Need to find a site with pre\'s to test this or refactor search pattern out of code.');
 		$this->setExpectedException('Zend_Exception');
 		$this->_dynamicDB->retrieveSQLSchema('http://auto.ibetx.com');
 	}
 	
+	/**
+	 * We still have some cleaning up to do, in each element
+	 * we still have a BR HTML tag, we'll need to remove this.
+	 *
+	 */
 	function testRetrieveSQLSchemaThatEachResultHasNoBRs() {
 		$result = $this->_dynamicDB->retrieveSQLSchema();
 		foreach ($result as $stmt) {
 			$this->assertNotContains('<br>', $stmt);			
 		}
 	}
+	
 	/**
 	 * Now we want to make sure that we have more than 1 entry in our schema results
 	 * 
@@ -154,4 +180,13 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 		$this->assertGreaterThan(10, count($result));
 	}
 	
+	/**
+	 * We want to be able to pass a parameter to retrieveSQLSchema which will
+	 * allow us to retrieve only a single schema, we'll the DB table name as a
+	 * search point.
+	 * 
+	 */
+	function tsetRetrieveSQLSchemaSearchParamReturnsResultsExpectedResult() {
+		$this->_dynamicDB->retrieveSQLSchema('');
+	}
 }

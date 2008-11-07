@@ -29,6 +29,8 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     
     protected $_config;
     
+    private $_schemas;
+    
 	public function __construct() {
 		$this->_fixMan = new FixturesManager();
 		TestConfigSettings::setUpConfig();
@@ -163,7 +165,7 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     		preg_match_all("|<pre>(.*)<[^>]pre>|i", $body, $data, PREG_PATTERN_ORDER);
     		$schemas = $data[1];
     		if (0 === count($schemas)) {
-    			throw new Zend_Exception('Now Schemas found.');
+    			throw new Zend_Exception('No Schemas found.');
     		}
     		foreach ($schemas as $query) {
     			if (!eregi('^CREATE', $query)) {
