@@ -193,4 +193,8 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	}
     	return $this->_schemas;
     }
+    
+    public function findSchema($name) {
+    	return '';
+    }
 }

@@ -199,4 +199,12 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	function testGetSchemaReturnsEmptyArrayIfNotPopulated() {
 		$this->assertType('array', $this->_dynamicDB->getSchemas());
 	}
+	
+	/**
+	 * We want to be able to find a single schema and return it as a string
+	 * 
+	 */
+	function testFindSchemaReturnsAsAString() {
+		$this->assertType('string', $this->_dynamicDB->findSchema('events'));
+	}
 }
