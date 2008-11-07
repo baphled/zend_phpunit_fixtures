@@ -159,10 +159,17 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	$uri = $this->_getURI($url);
     	$response = $this->_getResponse($uri);
     	$body = $this->_getHTML($response);
-    	if(false !== $body) {
+    	if (false !== $body) {
     		preg_match_all("|<pre>(.*)<[^>]pre>|i", $body, $data, PREG_PATTERN_ORDER);
-    		foreach ($data[1] as $query) {
-    			$stmts[] = str_replace("<br>",' ',$query);
+    		$schemas = $data[1];
+    		if (0 === count($schemas)) {
+    			throw new Zend_Exception('Now Schemas found.');
+    		}
+    		foreach ($schemas as $query) {
+    			if (!eregi('^CREATE', $query)) {
+    				throw new Zend_Exception('Seems like we have a non SQL query in our results'); 
+    			}
+    			$stmts[] = str_replace("<br>", ' ', $query);
     		}
     		return $stmts;
     	}

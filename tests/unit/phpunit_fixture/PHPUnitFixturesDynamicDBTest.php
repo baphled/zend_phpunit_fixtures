@@ -122,19 +122,27 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 		$this->assertType('array', $this->_dynamicDB->retrieveSQLSchema());
 	}
 	
-	function testRetrieveSQLSchemaEachResultStartsWithCREATE() {
+	function testRetrieveSQLSchemaThatEachResultStartsWithCREATE() {
 		$result = $this->_dynamicDB->retrieveSQLSchema();
-		//print_r($result);
 		foreach ($result as $stmt) {
-			//print_r($stmt);
-			$this->assertContains('CREATE',$stmt);
+			$this->assertContains('CREATE', $stmt);
 		}
+	}
+	function testRetreieveSQLSchemaThrowsExceptionIfPatternNotFoundAtAll() {
+		$this->setExpectedException('Zend_Exception');
+		$this->_dynamicDB->retrieveSQLSchema('http://auto.ibetx.com');
+	}
+	
+	function testRetrieveSQLSchemaIfNoCREATEInResultsThrowsException() {
+		$this->markTestIncomplete('Need to find a site with pre\'s to test this or refactor search pattern out of code.');
+		$this->setExpectedException('Zend_Exception');
+		$this->_dynamicDB->retrieveSQLSchema('http://auto.ibetx.com');
 	}
 	
 	function testRetrieveSQLSchemaThatEachResultHasNoBRs() {
 		$result = $this->_dynamicDB->retrieveSQLSchema();
 		foreach ($result as $stmt) {
-			$this->assertNotContains('<br>',$stmt);			
+			$this->assertNotContains('<br>', $stmt);			
 		}
 	}
 	/**
@@ -142,10 +150,8 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveSQLSchemaReturnsMoreThanOneResultInArray() {
-		//$this->markTestSkipped('Will come back to.');
 		$result = $this->_dynamicDB->retrieveSQLSchema();
 		$this->assertGreaterThan(10, count($result));
-		//print_r($result);
 	}
 	
 }
