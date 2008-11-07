@@ -200,6 +200,9 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 		$this->assertType('array', $this->_dynamicDB->getSchemas());
 	}
 	
+	function testFindSchemaReturnsFalseIfNoResultsAreFound() {
+		$this->assertFalse($this->_dynamicDB->findSchema('events'));
+	}
 	/**
 	 * We want to be able to find a single schema and return it as a string
 	 * 
@@ -211,4 +214,16 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	function testFindSchemaResultsAreNotEmpty() {
 		$this->assertNotSame('' ,$this->_dynamicDB->findSchema('event'));
 	}
+	
+	/**
+	 * Have realised that our schemas still have new lines within them, we'll need
+	 * to remove these.
+	 * 
+	 */
+	/*function testRetrieveSQLSchemaContainsNoNewLinesWithinResults() {
+		$results = $this->_dynamicDB->getSchemas();
+		foreach ($results as $data) {
+			$this->assertNotContains('\n', nl2br($data));			
+		}
+	}*/
 }

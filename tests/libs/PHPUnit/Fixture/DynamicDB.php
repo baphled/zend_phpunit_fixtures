@@ -172,7 +172,7 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     			if (!eregi('^CREATE', $query)) {
     				throw new Zend_Exception('Seems like we have a non SQL query in our results'); 
     			}
-    			$stmts[] = str_replace("<br>", ' ', $query);
+    			$stmts[] = strip_tags($query); 
     		}
     		$this->_schemas = $stmts;
     		return true;
