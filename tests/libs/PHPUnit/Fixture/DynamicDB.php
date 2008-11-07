@@ -154,17 +154,17 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      * 
      */
     public function retrieveSQLSchema($url='') {
-    	$result = array();
+    	$stmts = array();
     	$data = null;
     	$uri = $this->_getURI($url);
     	$response = $this->_getResponse($uri);
     	$body = $this->_getHTML($response);
     	if(false !== $body) {
-    		preg_match_all("|<pre>(.*)<[^>]pre>|i",$body,$data,PREG_PATTERN_ORDER);
-    		foreach ($data as $query) {
-    			$result[] = str_replace("<br>",' ',$query);
+    		preg_match_all("|<pre>(.*)<[^>]pre>|i", $body, $data, PREG_PATTERN_ORDER);
+    		foreach ($data[1] as $query) {
+    			$stmts[] = str_replace("<br>",' ',$query);
     		}
-    		return $result;
+    		return $stmts;
     	}
     	return false;
     }
