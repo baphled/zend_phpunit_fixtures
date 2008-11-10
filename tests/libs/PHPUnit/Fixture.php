@@ -541,4 +541,26 @@ abstract class PHPUnit_Fixture {
     	}
     	return false;
     }
+ 
+    /**
+     * Modifies a Fixtures alias from one name to another.
+     *
+     * @param 	String	$oldAlias	The old alias
+     * @param 	String	$newAlias	The new alias
+     * @return 	bool				True if alias was modified.
+     */
+    function modAlias($oldAlias, $newAlias) {
+    	$fixture = $this->find($oldAlias);
+    	if(false !== $fixture) {
+    		for ($index=0;$index<$this->testDataCount();$index++) {
+    			if (array_key_exists('ALIAS',$this->_testData[$index])) {
+    				if($oldAlias === $this->_testData[$index]['ALIAS']) {
+    					$this->_testData[$index]['ALIAS'] = $newAlias;
+    					return true;
+    				}
+    			}
+    		}
+    	}
+    	return false;
+    }
 }

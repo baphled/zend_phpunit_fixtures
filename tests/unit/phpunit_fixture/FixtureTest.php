@@ -761,4 +761,25 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 			$this->assertArrayNotHasKey('ALIAS', $data);
 		}
 	}
+	
+	/**
+	 * We now want to make sure that we can modify pre-existing aliases. By default
+	 * if a alias doesn't already have an alias we throw an exception.
+	 */
+	function testModAliasThrowsExceptionIfExistingAliasIsNotFound() {
+		$this->assertFalse($this->_testFix->modAlias('blah','newAlias'));
+	}
+	
+	function testModAliasReturnsTrueIfAliasModified() {
+		$this->_testFix->find('first');
+		$result = $this->_testFix->modAlias('first','second');
+		$this->assertTrue($result);
+	}
+	
+	function testModAliasActuallyModifiesExistingAlias() {
+		$expected = $this->_testFix->find('first');
+		$this->_testFix->modAlias('first','second');
+		$actual = $this->_testFix->find('second');
+		$this->assertSame($expected,$actual);
+	}
 }
