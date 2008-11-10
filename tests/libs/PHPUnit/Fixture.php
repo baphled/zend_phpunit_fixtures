@@ -149,7 +149,8 @@ abstract class PHPUnit_Fixture {
      * 
      */
     private function _retrieveTestData($key, $value) {
-       if (0 !== $this->testDataCount()) {
+    	$results = array();
+    	if (0 !== $this->testDataCount()) {
             if (!empty($key) && !empty($value)) {
                 foreach ($this->_testData as $data) {
                     if ($data[$key] === $value) {
@@ -157,7 +158,10 @@ abstract class PHPUnit_Fixture {
                     }
                 }
             } else {
-                return $this->_testData;                
+            	foreach ($this->_testData as $result) {
+	            		$results[] = $this->_removeAlias($result);
+	            } 
+                return $results;
             }
        }
        return false;
@@ -230,6 +234,24 @@ abstract class PHPUnit_Fixture {
         }
         
         return false;
+    }
+
+    /**
+     * Seeing as we don't want to actually store the
+     * ALIAS key, we need to remove it from our fixture
+     * before we actually use them.
+     *
+     * @access 	protected
+     * @param 	Array 	$fixture	The Fixture we want to check for an alias.
+     * @return 	Array	$fixture	Fixture with alias removed.
+     */
+    protected function _removeAlias($fixture) {
+    	if(is_array($fixture)) {
+    		if (array_key_exists('ALIAS',$fixture)) {
+    			unset($fixture['ALIAS']);
+    		}
+	   	}
+	   	return $fixture;
     }
     
 	/**
@@ -333,7 +355,7 @@ abstract class PHPUnit_Fixture {
             if (is_array($data)) {
                 $this->_verifyTestData($data);
             } else {
-                $this->_testData = $testData;
+                $this->_testData[] = $testData;
                 break;
             }
         }
@@ -363,7 +385,7 @@ abstract class PHPUnit_Fixture {
      * @return  Array
      * 
      */
-    function getSingleDataTypeField($field) {
+    public function getSingleDataTypeField($field) {
         if (!is_string($field)) {
             throw new ErrorException('Field name must be a string.');
         }
@@ -427,7 +449,7 @@ abstract class PHPUnit_Fixture {
         if ($this->testDataCount() > 0 ) {
             for ($i=0;$i<$this->testDataCount();$i++) {
             	$data = $this->_removeAlias($this->_testData[$i]);
-                if ($data[$i] == $testData[$i]) {
+                if ($data == $testData[$i]) {
                     return true;
                 }
             }
@@ -485,13 +507,15 @@ abstract class PHPUnit_Fixture {
      * Finds a fixture via an alias, the fixture must
      * already have an alias key defined.
      *
+     * @access public
      * @param 	String 	$name	The name of the fixtures alias.
-     * @return 	Array	$result
+     * @return 	Array	$result Fixture if found, otherwise false.
+     * 
      */
-    function find($name) {
+    public function find($name) {
     	foreach ($this->_testData as $result) {
-    		if(array_key_exists('ALIAS', $result)) {
-    			if($name === $result['ALIAS']) {
+    		if (array_key_exists('ALIAS', $result)) {
+    			if ($name === $result['ALIAS']) {
     				return $this->_removeAlias($result);
     			}
     		}
@@ -499,13 +523,19 @@ abstract class PHPUnit_Fixture {
     	return false;
     }
     
-    protected function _removeAlias($fixture) {
-    	  unset($fixture['ALIAS']);
-    	  return $fixture;
-    }
-    
-    function addAlias($index, $alias) {
-    	if(!array_key_exists('ALIAS',$this->_testData[$index])) {
+    /**
+     * Adds an alias to our Fixture, is useful for when we 
+     * want to specify a user-friendly name for each of our
+     * pieces of test data.
+     *
+     * @access public
+     * @param Int 		$index	The index of the fixture we want to give an alias.
+     * @param String 	$alias	The alias we want to assign
+     * @return bool				True if successfully added, false otherwise.
+     * 
+     */
+    public function addAlias($index, $alias) {
+    	if (!array_key_exists('ALIAS',$this->_testData[$index])) {
     		$this->_testData[$index]['ALIAS'] = $alias;
     		return true;
     	}

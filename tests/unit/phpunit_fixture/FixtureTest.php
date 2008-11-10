@@ -203,10 +203,11 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestDataCanSubmitTestDataToFixture() {
-		$testData = $this->_testFix->getTestData('id',1);
+		$testData = array();
+		$testData[] = $this->_testFix->getTestData('id',1);
 		$result = $this->_basicFix->addTestData($testData);
 		$this->assertTrue($result);
-		$expected = $this->_basicFix->getTestData(); 
+		$expected = $this->_basicFix->getTestData();
 		$this->assertSame($expected,$testData);
 	}
 
@@ -752,5 +753,12 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testGetTestDataDoesNotReturnTheALIASKeyAlongWithTheResults() {
 		$result = $this->_testFix->getTestData('id',1);
 		$this->assertArrayNotHasKey('ALIAS', $result);
+	}
+	
+	function testGetTestDataWithNoParamsDoesNotReturnTheALIASKeyAlongWithTheResults() {
+		$result = $this->_testFix->getTestData();
+		foreach ($result as $data) {
+			$this->assertArrayNotHasKey('ALIAS', $data);
+		}
 	}
 }
