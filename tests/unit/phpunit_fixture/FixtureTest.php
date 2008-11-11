@@ -53,8 +53,23 @@ Zend_Loader::registerAutoload ();
 require_once 'PHPUnit/Framework/TestCase.php';
 require_once 'PHPUnit/Fixture.php';
 
+/**
+ * Created to test basic functionality of our
+ * fixture class.
+ *
+ */
 class BasicFixture extends PHPUnit_Fixture {}
 
+class FakeFixture extends PHPUnit_Fixture {
+	
+	protected $_testData = 
+		array('ALIAS'=>'first', 'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26');
+}
+
+/**
+ * Our main test cases.
+ *
+ */
 class FixtureTest extends PHPUnit_Framework_TestCase {
 	
 	private $_fixtures;
@@ -116,6 +131,17 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
     function testTestDataCountReturnsTheExpectedNumberOfResults() {
         $result = $this->_testFix->testDataCount();
         $this->assertEquals(7,$result);
+    }
+    
+    /**
+     * If our test data is not in an expected format, a single
+     * array encapsulating each piece of test data, we throw
+     * an exception.
+     *
+     */
+    function testTestDataIsntInExpectedFormatThrowException() {
+    	$this->setExpectedException('Zend_Exception');
+		$fakeFix = new FakeFixture();
     }
     
 	/**

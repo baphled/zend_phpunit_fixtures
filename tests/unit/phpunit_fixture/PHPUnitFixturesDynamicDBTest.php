@@ -17,25 +17,48 @@ class DynamicDBTester extends PHPUnit_Fixture_DynamicDB {
 		throw new Zend_Exception('Must submit a URL, via param or database.info');
 	}
 }
+
+/**
+ * As PHPUnit_Fixture_DynamicDB, we'll use this to test
+ * the class.
+ *
+ */
+class DynamicTestDB extends PHPUnit_Fixture_DynamicDB {}
+
 /**
  * PHPUnit_Fixture_Transactions test case.
+ * 
  */
 class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	
 	/**
-	 * @var PHPUnit_Fixture_Transactions
+	 * Used to test our PHPUnit_Fixture_DynamicDB
+	 * @access private
+	 * @var PHPUnit_Fixture_DynamicDB
+	 * 
 	 */
 	private $_dynamicDB;
 	
+	/**
+	 * Extended version of PHPUnit_Fixture_DynamicDB
+	 * so we can test that special circumstances.
+	 *
+	 * @var DynamicDBTester
+	 */
 	private $_dynamicDBTest;
 	
+	/**
+	 * Stubbed version of our PHPUnit_Fixture_DynamicDB
+	 *
+	 * @var Mock
+	 */
 	private $_dynamicDBStub;
 	
 	/**
 	 * Prepares the environment before running a test.
 	 */
 	protected function setUp() {
-		$this->_dynamicDB = new PHPUnit_Fixture_DynamicDB();
+		$this->_dynamicDB = new DynamicTestDB();
 		$this->_dynamicDBTest = new DynamicDBTester();
 		$this->_dynamicDBStub = $this->getMock('PHPUnit_Fixture_DynamicDB',array('retrieveSQLSchema'));
 		parent::setUp ();
@@ -67,17 +90,9 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 */
 	
 	/**
-	 * First we make sure that we return false if we can't locate
-	 * the HTML file.
-	 * 
+	 * Testing properties
+	 *
 	 */
-	function testRetrieveSQLSchemaReturnsFalseIfURLNotValid() {
-		$this->_dynamicDBStub->expects($this->once())
-							 ->method('retrieveSQLSchema')
-							 ->will($this->returnValue(false));
-		$this->assertFalse($this->_dynamicDBStub->retrieveSQLSchema('http://false.url'));
-	}
-	
 	function testDynamicDBHasASchemasAttribute() {
 		$this->assertClassHasAttribute('_schemas','PHPUnit_Fixture_DynamicDB');
 	}
@@ -88,6 +103,18 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	
 	function testDynamicDBHasAConfigAttribute() {
 		$this->assertClassHasAttribute('_config','PHPUnit_Fixture_DynamicDB');
+	}
+	
+	/**
+	 * First we make sure that we return false if we can't locate
+	 * the HTML file.
+	 * 
+	 */
+	function testRetrieveSQLSchemaReturnsFalseIfURLNotValid() {
+		$this->_dynamicDBStub->expects($this->once())
+							 ->method('retrieveSQLSchema')
+							 ->will($this->returnValue(false));
+		$this->assertFalse($this->_dynamicDBStub->retrieveSQLSchema('http://false.url'));
 	}
 	
 	/**
@@ -216,14 +243,14 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * Have realised that our schemas still have new lines within them, we'll need
-	 * to remove these.
-	 * 
+	 * Want to make sure that our schema
+	 *
 	 */
-	/*function testRetrieveSQLSchemaContainsNoNewLinesWithinResults() {
-		$results = $this->_dynamicDB->getSchemas();
-		foreach ($results as $data) {
-			$this->assertNotContains('\n', nl2br($data));			
-		}
-	}*/
+	function testFindSchemaReturnsTheExpectedResult() {
+		$expected = "CREATE  TABLE IF NOT EXISTS `betting_index`.`event`";
+		$actual = $this->_dynamicDB->findSchema('event');
+		$this->assertContains($expected,$actual);
+	}
+	
+	
 }

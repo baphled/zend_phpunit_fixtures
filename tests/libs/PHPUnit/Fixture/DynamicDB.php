@@ -12,26 +12,56 @@
  * @package Zend_PHPUnit_Scaffolding
  * @subpackage PHPUnit_Fixture_Transactions
  * 
- * @TODO Finish implementing retrieving our list of SQL schemas.
- * 
  */
-class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
+abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
 	
 	/**
-     * Our fixture manager, used to handle 
-     * the meat of fixture interactions.
+     * Our fixture manager, used to handle the meat of fixture interactions.
      *
      * @access private
      * @var FixtureManager
      * 
      */
-    protected $_fixMan;
+    protected $_fixMan = null;
     
+    /**
+     * Stores the fixtures table name
+     *
+     * @access protected
+     * @var String
+     * 
+     */
+    protected $_table = null;
+    
+    /**
+     * Stores our configurations
+     *
+     * @access protected
+     * @var Zend_Config
+     * 
+     */
     protected $_config;
     
+    /**
+     * Array of SQL schemas.
+     * 
+     * As this property will only be used within these objects we make it private.
+     * 
+     * @access private
+     * @var Array
+     * 
+     */
     private $_schemas;
     
+    /**
+     * Constructs our Dynamic DB settings, basically sets up our configurations
+     * & constructs our parents functionality.
+     *
+     * @access public
+     * 
+     */
 	public function __construct() {
+		parent::__construct();
 		$this->_schemas = array();
 		$this->_fixMan = new FixturesManager();
 		TestConfigSettings::setUpConfig();
@@ -58,7 +88,42 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     }
     
     /**
-     * Gets our URI, which we'll need to retrieve our SQL schema
+<<<<<<< .mine
+     * Used to call our CRUD methods, which we use to control our DB state (clean, truncate, delete, etc).
+     * 
+     * @access  private
+     * @param   String    $call   The call we want to make.
+     * @return  bool
+     * 
+     */
+    protected function _callMethod($call) {
+        try {
+            $result = $this->_fixMan->fixtureMethodCheck($call, $this);
+        }
+        catch(Exception $e) {
+        	$result = false;
+            $e->getMessage();
+        }
+        return $result;
+    }
+    
+    /**
+     * Wrapper function for truncating our test tables.
+     * 
+     * @access public
+     * @return bool
+     * 
+     */
+    public function truncate() {
+        return $this->_callMethod('truncate');
+    }
+    
+    /**
+=======
+>>>>>>> .r288
+     * Gets our URI, which we'll need to retrieve our SQL schema.
+     * At the moment it is setup to work with MySQL Workbench, will
+     * refactor once other source become available.
      * 
      * Determines whether a URL has been passed, if
      * it hasn't we will use the one within the configuration file.
@@ -83,13 +148,14 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     }
 
     /**
-     * Gets our HTML for us.
+     * Gets our HTML from MySQL Workbench for us.
      *
      * @access private
      * @param Zend_Response $response
      * @return String
+     * 
      */
-    private function _getHTML($response) {
+    private function _getHTMLResponse($response) {
     	if(200 === $response->getStatus()) {
     		$doc = Zend_Search_Lucene_Document_Html::loadHTML($response->getBody());
     		return $doc->getHTML();
@@ -105,7 +171,7 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      * @return Zend_Http_Response
      * 
      */
-    private function _getResponse($uri) {
+    private function _requestResponse($uri) {
     	try {
 	    	if (isset($uri) && $uri->valid()) {
 	    		$client = new Zend_Http_Client($uri, array('maxredirects'=>0, 'timeout'=>15));
@@ -166,8 +232,8 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	$stmts = array();
     	$data = null;
     	$uri = $this->_getURI($url);
-    	$response = $this->_getResponse($uri);
-    	$body = $this->_getHTML($response);
+    	$response = $this->_requestResponse($uri);
+    	$body = $this->_getHTMLResponse($response);
     	if (false !== $body) {
     		preg_match_all("|<pre>(.*)<[^>]pre>|i", $body, $data, PREG_PATTERN_ORDER);
     		$schemas = $data[1];
@@ -198,6 +264,30 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	return $this->_schemas;
     }
     
+<<<<<<< .mine
+    /**
+     * Checks our SQL Schema List.
+     * 
+     * If the schema is not setup, we retrieve our SQL schema a new.
+     * @access private
+     *
+     */
+    private function _checkSchemaList() {
+    	if (0 === count($this->_schemas)) {
+    		$this->retrieveSQLSchema();
+    	}
+    }
+    
+=======
+>>>>>>> .r288
+    /**
+     * Finds a particular SQL schema from MySQL Workbench
+     *
+     * @access public
+     * @param 	String $name
+     * @return 	String	$schema	Found SQL schema, returns false if not found.
+     * 
+     */
     public function findSchema($name) {
     	$this->_checkSchemaList();
     	foreach ($this->_schemas as $schema) {

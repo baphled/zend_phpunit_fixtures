@@ -86,12 +86,21 @@ abstract class PHPUnit_Fixture {
 	private $_result = null;
 	
 	/**
-	 * Sets the timezone ready for later.
+	 * Checks that if test data is setup, that
+	 * it is in the expected format, also sets 
+	 * the timezone ready for later.
 	 * 
 	 * @access public
 	 * 
 	 */
 	public function __construct() {
+		if(null !== $this->_testData) {
+			foreach ($this->_testData as $testData) {
+				if(!is_array($testData)) {
+					throw new Zend_Exception('Fixture data in unexpected format, should be an array of arrays');
+				}
+			}
+		}
 		$tmz = TestConfigSettings::setupTimeZone();
 		date_default_timezone_set($tmz);
 	}
@@ -551,10 +560,10 @@ abstract class PHPUnit_Fixture {
      */
     function modAlias($oldAlias, $newAlias) {
     	$fixture = $this->find($oldAlias);
-    	if(false !== $fixture) {
+    	if (false !== $fixture) {
     		for ($index=0;$index<$this->testDataCount();$index++) {
     			if (array_key_exists('ALIAS',$this->_testData[$index])) {
-    				if($oldAlias === $this->_testData[$index]['ALIAS']) {
+    				if ($oldAlias === $this->_testData[$index]['ALIAS']) {
     					$this->_testData[$index]['ALIAS'] = $newAlias;
     					return true;
     				}

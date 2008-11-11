@@ -26,19 +26,12 @@
  */
 
 abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture_DynamicDB {
-    /**
-     * Stores the fixtures table name
-     *
-     * @access protected
-     * @var String
-     * 
-     */
-    protected $_table = null;
-    
     
     /**
      * Initialises our fixture manager.
+     * 
      * @access public
+     * @see PHPUnit_Fixture_DynamicDB::__construct()
      * 
      */
     final public function __construct() {
