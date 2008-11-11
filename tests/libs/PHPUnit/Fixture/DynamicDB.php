@@ -191,36 +191,6 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     }
     
     /**
-     * Used to call our CRUD methods
-     * 
-     * @access  private
-     * @param   String    $call   The call we want to make.
-     * @return  bool
-     * 
-     */
-    protected function _callMethod($call) {
-        try {
-            $result = $this->_fixMan->fixtureMethodCheck($call, $this);
-        }
-        catch(Exception $e) {
-        	$result = false;
-            $e->getMessage();
-        }
-        return $result;
-    }
-    
-    /**
-     * Wrapper function for truncating our test tables.
-     * 
-     * @access public
-     * @return bool
-     * 
-     */
-    public function truncate() {
-        return $this->_callMethod('truncate');
-    }
-    
-    /**
      * Retrieves our SQL schema for us.
      *
      * @access 	public
@@ -263,23 +233,7 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	$this->_checkSchemaList();
     	return $this->_schemas;
     }
-    
-<<<<<<< .mine
-    /**
-     * Checks our SQL Schema List.
-     * 
-     * If the schema is not setup, we retrieve our SQL schema a new.
-     * @access private
-     *
-     */
-    private function _checkSchemaList() {
-    	if (0 === count($this->_schemas)) {
-    		$this->retrieveSQLSchema();
-    	}
-    }
-    
-=======
->>>>>>> .r288
+
     /**
      * Finds a particular SQL schema from MySQL Workbench
      *
