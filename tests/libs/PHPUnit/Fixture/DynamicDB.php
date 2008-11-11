@@ -58,36 +58,6 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     }
     
     /**
-     * Used to call our CRUD methods
-     * 
-     * @access  private
-     * @param   String    $call   The call we want to make.
-     * @return  bool
-     * 
-     */
-    protected function _callMethod($call) {
-        try {
-            $result = $this->_fixMan->fixtureMethodCheck($call, $this);
-        }
-        catch(Exception $e) {
-        	$result = false;
-            $e->getMessage();
-        }
-        return $result;
-    }
-    
-    /**
-     * Wrapper function for truncating our test tables.
-     * 
-     * @access public
-     * @return bool
-     * 
-     */
-    public function truncate() {
-        return $this->_callMethod('truncate');
-    }
-    
-    /**
      * Gets our URI, which we'll need to retrieve our SQL schema
      * 
      * Determines whether a URL has been passed, if
@@ -146,6 +116,42 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     		throw new Zend_Exception($e->getMessage());
     	}
     	return $response;
+    }   
+    
+    private function _checkSchemaList() {
+    	if (0 === count($this->_schemas)) {
+    		$this->retrieveSQLSchema();
+    	}
+    }
+    
+    /**
+     * Used to call our CRUD methods
+     * 
+     * @access  private
+     * @param   String    $call   The call we want to make.
+     * @return  bool
+     * 
+     */
+    protected function _callMethod($call) {
+        try {
+            $result = $this->_fixMan->fixtureMethodCheck($call, $this);
+        }
+        catch(Exception $e) {
+        	$result = false;
+            $e->getMessage();
+        }
+        return $result;
+    }
+    
+    /**
+     * Wrapper function for truncating our test tables.
+     * 
+     * @access public
+     * @return bool
+     * 
+     */
+    public function truncate() {
+        return $this->_callMethod('truncate');
     }
     
     /**
@@ -192,16 +198,10 @@ class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	return $this->_schemas;
     }
     
-    private function _checkSchemaList() {
-    	if (0 === count($this->_schemas)) {
-    		$this->retrieveSQLSchema();
-    	}
-    }
-    
     public function findSchema($name) {
     	$this->_checkSchemaList();
     	foreach ($this->_schemas as $schema) {
-    		if(preg_match("/`{$name}`/i",$schema)) {
+    		if (preg_match("/`{$name}`/i",$schema)) {
     			return $schema;
     		}
     	}
