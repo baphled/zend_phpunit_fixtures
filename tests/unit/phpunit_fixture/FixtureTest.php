@@ -60,6 +60,10 @@ require_once 'PHPUnit/Fixture.php';
  */
 class BasicFixture extends PHPUnit_Fixture {}
 
+/**
+ * Used to test what happens when a invalid test data format is setup.
+ *
+ */
 class FakeFixture extends PHPUnit_Fixture {
 	
 	protected $_testData = 

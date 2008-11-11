@@ -1,6 +1,6 @@
 <?php
 /**
- * PHPUnit_Fixture_Transactions
+ * PHPUnit_Fixture_DynamicDB
  * 
  * Deals with setting up an truncating our transaction
  * based fixture data. Here we can deal with the actual
@@ -88,7 +88,6 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     }
     
     /**
-<<<<<<< .mine
      * Used to call our CRUD methods, which we use to control our DB state (clean, truncate, delete, etc).
      * 
      * @access  private
@@ -119,8 +118,6 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     }
     
     /**
-=======
->>>>>>> .r288
      * Gets our URI, which we'll need to retrieve our SQL schema.
      * At the moment it is setup to work with MySQL Workbench, will
      * refactor once other source become available.
