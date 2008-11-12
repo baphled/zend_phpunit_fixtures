@@ -812,4 +812,18 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$actual = $this->_testFix->find('second');
 		$this->assertSame($expected,$actual);
 	}
+
+	/**
+	 * Refactored from SecurityTest, as we will be using
+	 * this functionality in our fixtures.
+	 */
+	public function testGenerateMethodMakesRandomNumber() {
+		$number1 = $this->_testFix->generate();
+		$this->assertNotNull($number1);
+		$number2 = $this->_testFix->generate();
+		$this->assertNotNull($number2);
+		$this->assertEquals(8, strlen($number2));
+		$this->assertNotEquals($number1, $number2);
+		
+	}
 }

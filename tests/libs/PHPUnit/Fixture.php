@@ -572,4 +572,21 @@ abstract class PHPUnit_Fixture {
     	}
     	return false;
     }
+    
+	/**
+	 * Generates a random string
+	 * 
+	 * @param  	int	$length number of characters (defaults to 8)
+	 * @return	string
+	 * @access 	public
+	 */
+	public function generate($length = 8) {
+		$pool = 'abcdefghijklmnopqrstuvwxyz';
+		$str = '';
+		for ($i=0; $i < $length; $i++)
+		{
+			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
+		}
+		return $str;
+	}
 }
