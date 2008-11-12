@@ -40,7 +40,7 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      * @var Zend_Config
      * 
      */
-    protected $_config;
+    protected $_general;
     
     /**
      * Array of SQL schemas.
@@ -65,7 +65,7 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
 		$this->_schemas = array();
 		$this->_fixMan = new FixturesManager();
 		ConfigSettings::setUpConfig();
-		$this->_config = Zend_Registry::get('general');
+		$this->_general = Zend_Registry::get('config');
 	}
 	
 	/**
@@ -132,10 +132,10 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      */
     private function _getURI($url='') {
     	if (empty($url)) {
-    		if (!isset($this->_config->schema->url) || empty($this->_config->schema->url)) {
+    		if (!isset($this->_general->schema->url) || empty($this->_general->schema->url)) {
     			throw new Zend_Exception('Must submit a URL, via param or schema.url');    			
     		}
-    		$url = $this->_config->schema->url;
+    		$url = $this->_general->schema->url;
     	}
     	$uri = Zend_Uri::factory($url);
     	if ('http' !== $uri->getScheme()) {
