@@ -23,7 +23,7 @@
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload();
 
-class TestConfigSettings {
+class ConfigSettings {
 	
 	/**
 	 * Used to store our configurations
@@ -62,7 +62,7 @@ class TestConfigSettings {
         self::setUpConfigEnv('general');
         $general = self::$_config;
         self::$_config = new Zend_Config_Ini( $configPath, $general->environment);
-        Zend_Registry::set('config', self::$_config);
+        Zend_Registry::set('general', self::$_config);
     }
     
     /**

@@ -101,7 +101,7 @@ abstract class PHPUnit_Fixture {
 				}
 			}
 		}
-		$tmz = TestConfigSettings::setupTimeZone();
+		$tmz = ConfigSettings::setupTimeZone();
 		date_default_timezone_set($tmz);
 	}
 

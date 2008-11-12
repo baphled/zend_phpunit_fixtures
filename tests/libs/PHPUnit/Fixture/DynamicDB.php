@@ -64,8 +64,8 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
 		parent::__construct();
 		$this->_schemas = array();
 		$this->_fixMan = new FixturesManager();
-		TestConfigSettings::setUpConfig();
-		$this->_config = Zend_Registry::get('config');
+		ConfigSettings::setUpConfig();
+		$this->_config = Zend_Registry::get('general');
 	}
 	
 	/**
