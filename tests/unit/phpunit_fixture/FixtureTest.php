@@ -901,8 +901,18 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 			$max = mt_rand(5,10);
 			$result = $this->_basicFix->generate('',$max);
 			//echo $result .' - ' .$min .PHP_EOL;
-			$this->assertEquals($max,strlen($result));		
+			$this->assertLessThanOrEqual($max,strlen($result));		
 		}
+	}
+	
+	/*
+	 * Now we want to be able to pass generate a min & max parameter, which will
+	 * allow the method to create a more random string.
+	 */
+	function testGenerateReturnsExpectedRangeAmountsWhenMinAndMaxParamsPassed() {
+		$expected = 10;
+		$actual = $this->_basicFix->generate('',3,$expected);
+		$this->assertLessThanOrEqual($expected,strlen($actual));
 	}
 	
 	/**
