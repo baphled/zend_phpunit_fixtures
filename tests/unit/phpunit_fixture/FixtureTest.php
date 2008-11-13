@@ -75,9 +75,13 @@ class FakeFixture extends PHPUnit_Fixture {
  *
  */
 class FixtureTest extends PHPUnit_Framework_TestCase {
-	
-	private $_fixtures;
-	
+
+	/**
+	 * Stores our TestFixture
+	 *
+	 * @var PHPUnit_Fixture
+	 * 
+	 */
 	private $_testFix;
 	
 	public function __construct() {
@@ -102,7 +106,6 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($this->_basicFix);
 	}
 	
-
 	/*
 	 * Test Helpers
 	 */
@@ -110,7 +113,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Used to test our generated patterns
 	 *
-	 * @param Strin $pattern	Pattern we are looking for.
+	 * @param String $pattern	Pattern we are looking for.
 	 * @param String $string	String we are going to check
 	 */
 	function assertPattern($pattern,$string) {

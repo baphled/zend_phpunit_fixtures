@@ -133,7 +133,7 @@ abstract class PHPUnit_Fixture {
      *
      * @access 	private
      * @param 	String 	$field		The fixture field
-     * @param 	Array 	$fixtures	Our test data.
+     * @param 	Array 	$fixtures	Our fixtures.
      * 
      */
     private function _parseSchema($field, $fixtures) {
@@ -210,8 +210,8 @@ abstract class PHPUnit_Fixture {
      * already set within the instance.
      * 
      * @access 	private
-     * @param 	String 	$key
-     * @param 	String 	$value
+	 * @param  String  $key		The key to verify.
+	 * @param  Mixed   $value	The value associated to the key, we want to verify.
      * 
      */
     private function _verifyKeyAndValue($key,$value) {
@@ -272,7 +272,7 @@ abstract class PHPUnit_Fixture {
      *
      * @access 	protected
      * @param 	Array 		$fixture	The Fixture we want to check for an alias.
-     * @return 	Array		$fixture	Fixture with alias removed.
+     * @return 	Array		$fixture	Fixture without alias.
      */
     protected function _removeAlias($fixture) {
     	if(is_array($fixture)) {
@@ -320,7 +320,7 @@ abstract class PHPUnit_Fixture {
 	 * the fixture.
 	 *
 	 * @access public
-	 * @return Int					Number of Fixtures we have stored.
+	 * @return Int		$result	Number of Fixtures we have stored.
 	 * 
 	 */
 	public function count() {
@@ -334,9 +334,9 @@ abstract class PHPUnit_Fixture {
 	/**
 	 * Sets our results.
 	 *
-	 * @access public
-	 * @param String $field
-	 * @param Array $data
+	 * @access 	public
+	 * @param 	String 	$field	The field we want to set the results to.
+	 * @param 	Array 	$data	The data we want to set to our results.
 	 * 
 	 */
 	public function setResult($field, $data) {
@@ -349,9 +349,9 @@ abstract class PHPUnit_Fixture {
 	 * we will return the specific test data in question.
 	 *
 	 * @access public
-	 * @param  String $key
-	 * @param  String $value
-	 * @return Array
+	 * @param  String  $key		The key to retrieve.
+	 * @param  Mixed   $value	The value associated to the key, we want to retrieve.
+	 * @return Array			The fixture we were looking for.
 	 * 
 	 */
 	public function get($key='', $value='') {
@@ -365,9 +365,9 @@ abstract class PHPUnit_Fixture {
 	 * fixture.
 	 *
 	 * @access public
-	 * @param  String  $key
-	 * @param  Mixed   $value
-	 * @return bool
+	 * @param  String  $key		The key to search for.
+	 * @param  Mixed   $value	The value associated to the key, we want to remove.
+	 * @return bool				True if able to remove, false otherwise.
 	 * 
 	 */
 	public function remove($key='', $value='') {
@@ -389,19 +389,19 @@ abstract class PHPUnit_Fixture {
      * Sets our test data to our fixture.
      *
      * @access  public
-     * @param   Array   $testData
-     * @return  bool
+     * @param   Array   $fixture	The fixture we want to add.
+     * @return  bool				True if able to add, false otherwise.
      * 
      */
-    public function add($testData) {
-        if (!is_array($testData)) {
+    public function add($fixture) {
+        if (!is_array($fixture)) {
             throw new ErrorException('Test data must be in an array format.');
         } 
-        foreach ($testData as $data) {
-            if (is_array($data)) {
-                $this->_verify($data);
+        foreach ($fixture as $dataType) {
+            if (is_array($dataType)) {
+                $this->_verify($dataType);
             } else {
-                $this->_fixtures[] = $testData;
+                $this->_fixtures[] = $fixture;
                 break;
             }
         }
