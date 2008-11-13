@@ -866,6 +866,26 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertPattern($pattern,$result);
 	}
 	
+	/**
+	 * Now we have tested the types we can focus on generated larger string,
+	 * we'll loop through 10 times, creating a min number which we'll pass to
+	 * our generate function, this will then be checked against the number of 
+	 * characters per result. 
+	 */
+	function testGenerateReturnsExpectedAmountOfCharactersWhenMinIsPassedAsParam() {
+		for($i=0;$i<10;$i++) {
+			$min = rand(1,10);
+			$result = $this->_basicFix->generate('',$min);
+			$this->assertEquals($min,strlen($result));		
+		}
+	}
+	
+	/**
+	 * Used to test our generate patterns
+	 *
+	 * @param Strin $pattern
+	 * @param String $string
+	 */
 	function assertPattern($pattern,$string) {
 		if(!ereg($pattern,$string)) {
 			$this->fail('Pattern not found in ' .$string);

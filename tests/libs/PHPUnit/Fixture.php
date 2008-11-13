@@ -582,10 +582,10 @@ abstract class PHPUnit_Fixture {
 	 * @return	string	$str	Our generated string.
 	 * 
 	 */
-	public function generate($type = '', $max = 8) {
+	public function generate($type = '', $min = 8) {
 		$pool = $this->_findGenerateType($type);
 		$str = '';
-		for ($i=0; $i < $max; $i++)
+		for ($i=0; $i < $min; $i++)
 		{
 			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
 		}
