@@ -116,7 +116,7 @@ abstract class PHPUnit_Fixture {
      */
     private function _verify($fixture) {
        try {
-            $this->validateTestData($fixture, $this);
+            $this->validate($fixture, $this);
             $this->_testData[] = $fixture;
        }
        catch(ErrorException $e) {
@@ -244,6 +244,26 @@ abstract class PHPUnit_Fixture {
         
         return false;
     }
+	
+	/**
+	 * Gets the number we'll use to generate our test data.
+	 *
+	 * @access 	private
+	 * @param 	Int 	$max	Max number.
+	 * @param 	Int		$min	Minimum number.
+	 * @return 	Int		$num	Actual number generated.
+	 * 
+	 */
+	private function _getRandomNumber($max, $min) {
+		if ( $min < $max) {
+			$num = mt_rand($min,$max);			
+		} elseif ($min > $max) {
+			throw new Zend_Exception('Min cannot be greater than max.');
+		} else {
+			$num = $max;
+		}
+		return $num;
+	}
 
     /**
      * Seeing as we don't want to actually store the
@@ -256,7 +276,7 @@ abstract class PHPUnit_Fixture {
      */
     protected function _removeAlias($fixture) {
     	if(is_array($fixture)) {
-    		if (array_key_exists('ALIAS',$fixture)) {
+    		if (array_key_exists('ALIAS', $fixture)) {
     			unset($fixture['ALIAS']);
     		}
 	   	}
@@ -270,22 +290,22 @@ abstract class PHPUnit_Fixture {
 	 * datatype is not of the same structure we throw and exception.
 	 *
 	 * @access 	public
-	 * @param 	Array 	$testData
-	 * @return 	bool
+	 * @param 	Array 	$fixture	Fixture we want to validate
+	 * @return 	bool				True if valid, false otherwise.
 	 * 
 	 */
-	public function validateTestData($testData) {
-        if (false === $testData) {
+	public function validate($fixture) {
+        if (false === $fixture) {
             throw  new ErrorException('Invalid test data type.');
         }
         if (null === $this->_testData) {
 			return true;
         } else {
-			$existingTestData = $this->getTestData('id', 1);
+			$existingTestData = $this->get('id', 1);
 			if (false === $existingTestData) {
 				return true;
 			}
-			foreach ($testData as $key=>$value) {
+			foreach ($fixture as $key=>$value) {
 				if (!array_key_exists($key, $existingTestData)) {
 				    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
 				}
@@ -317,7 +337,7 @@ abstract class PHPUnit_Fixture {
 	 * @return Array
 	 * 
 	 */
-	public function getTestData($key='', $value='') {
+	public function get($key='', $value='') {
 		$this->_verifyKeyAndValue($key, $value);
 		return $this->_retrieveTestData($key, $value);
 		
@@ -474,7 +494,7 @@ abstract class PHPUnit_Fixture {
      * 
      */
     public function retrieveTestDataResults() {
-        $fixtures = $this->getTestData();
+        $fixtures = $this->get();
         if (!array_key_exists('id', $fixtures[0])) {
         	throw new ErrorException('Id does not exists, must have to use this method.');
         }
@@ -591,16 +611,5 @@ abstract class PHPUnit_Fixture {
 			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
 		}
 		return $str;
-	}
-	
-	private function _getRandomNumber($max, $min) {
-		if ( $min < $max) {
-			$num = mt_rand($min,$max);			
-		} elseif ($min > $max) {
-			throw new Zend_Exception('Min cannot be greater than max.');
-		} else {
-			$num = $max;
-		}
-		return $num;
 	}
 }

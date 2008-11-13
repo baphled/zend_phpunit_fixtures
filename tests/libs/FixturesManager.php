@@ -406,7 +406,7 @@ class FixturesManager {
 				    $result = $this->truncateTable();
 				    break;
 				case 'populate':
-				    $result = $this->insertTestData($fixture->getTestData(), $fixture->getName());
+				    $result = $this->insertTestData($fixture->get(), $fixture->getName());
 				    break;
 				default:
     				throw new ErrorException('Invalid fixture method call.');             

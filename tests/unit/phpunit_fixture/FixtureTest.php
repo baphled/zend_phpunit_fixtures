@@ -183,20 +183,20 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * an fixture with no actual data, we get false.
      *
      */
-	function testGetTestDataReturnsFalseIfNoTestDataPresent() {
-		$result = $this->_basicFix->getTestData();
+	function testgetReturnsFalseIfNoTestDataPresent() {
+		$result = $this->_basicFix->get();
 		$this->assertFalse($result);
 	}
 	
 	/**
-	 * If the parameter passed to getTestData is no string we
+	 * If the parameter passed to get is no string we
 	 * throw an exception.
 	 * 
 	 */
-	function testGetTestDataThrowsExceptionIfParameterIsNotAString() {
+	function testgetThrowsExceptionIfParameterIsNotAString() {
 		$id = array();
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->getTestData($id);
+		$this->_basicFix->get($id);
 	}
 	
 	/**
@@ -205,8 +205,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * this instead of creating actual data.
 	 * 
 	 */
-	function testGetTestDataReturnsAnArrayIfTestDataIsPresent() {
-		$result = $this->_testFix->getTestData();
+	function testgetReturnsAnArrayIfTestDataIsPresent() {
+		$result = $this->_testFix->get();
 		$this->assertType('array',$result);
 	}
 	
@@ -215,11 +215,11 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * is, as both are need to retrieve a single test data.
 	 * 
 	 */
-	function testGetTestDataThrowsExceptionIfKeyIsPassedButValueIsEmpty() {
+	function testgetThrowsExceptionIfKeyIsPassedButValueIsEmpty() {
 		$key = 'id';
 		$value = '';
 		$this->setExpectedException('ErrorException');
-		$this->_testFix->getTestData($key,$value);
+		$this->_testFix->get($key,$value);
 	}
 	
 	/**
@@ -243,7 +243,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testFixtureAddTestDataReturnsTrueOnSuccess() {
-        $testData = $this->_testFix->getTestData('id',1);
+        $testData = $this->_testFix->get('id',1);
         $result = $this->_basicFix->addTestData($testData);
         $this->assertTrue($result);
     }
@@ -257,10 +257,10 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testAddTestDataCanSubmitTestDataToFixture() {
 		$testData = array();
-		$testData[] = $this->_testFix->getTestData('id',1);
+		$testData[] = $this->_testFix->get('id',1);
 		$result = $this->_basicFix->addTestData($testData);
 		$this->assertTrue($result);
-		$expected = $this->_basicFix->getTestData();
+		$expected = $this->_basicFix->get();
 		$this->assertSame($expected,$testData);
 	}
 
@@ -270,10 +270,10 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testAddTestDataIsAbleToAddMultiplesOfTestData() {
 		$actual = array();
-		$actual[] = $this->_testFix->getTestData('id',1);
-		$actual[] = $this->_testFix->getTestData('id',3);
+		$actual[] = $this->_testFix->get('id',1);
+		$actual[] = $this->_testFix->get('id',3);
 		$this->_basicFix->addTestData($actual);
-		$expected = $this->_basicFix->getTestData();
+		$expected = $this->_basicFix->get();
 		$this->assertSame($expected,$actual);
 		
 	}
@@ -285,8 +285,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testValidateTestDataReturnsTrueAsDefault() {
 		$testData = array();
-		$testData[] = $this->_testFix->getTestData('id',1);
-		$result = $this->_basicFix->validateTestData($testData);
+		$testData[] = $this->_testFix->get('id',1);
+		$result = $this->_basicFix->validate($testData);
 		$this->assertTrue($result);
 	}
 	
@@ -297,22 +297,22 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestDataThrowsExceptionsIfAddingTestDataOfVaryingStructure() {
-		$testData[] = $this->_testFix->getTestData('id',1);
+		$testData[] = $this->_testFix->get('id',1);
 		$this->setExpectedException('ErrorException');
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
-		$this->_basicFix->validateTestData($invalidData);
+		$this->_basicFix->validate($invalidData);
 	}
 	
 	/**
 	 * Now we need to check that if our invalid test data is submitted via
-	 * addTestData, we need to throw an exception. ValidateTestData, should
+	 * addTestData, we need to throw an exception. validate, should
 	 * ideally be callable from within addTestData, so that we can automatically
 	 * handle validations within our addition routine.
 	 * 
 	 */
 	function testAddTestThrowsExceptionsIfTestDataDoesNotMatchPreExistingTestDataStructure() {
-		$testData[] = $this->_testFix->getTestData('id',1);
+		$testData[] = $this->_testFix->get('id',1);
 		$this->setExpectedException('ErrorException');
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
 		$this->_basicFix->addTestData($testData);
@@ -325,7 +325,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testAddTestReturnsTrueIfTestDataIsAlreadyPresent() {
-		$testData[] = $this->_testFix->getTestData('id',1);
+		$testData[] = $this->_testFix->get('id',1);
 		$result = $this->_testFix->testDataExists($testData);
 		$this->assertTrue($result);
 	}
@@ -335,7 +335,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testTestDataExistsFalseIfNoTestDataIsPresent() {
-		$testData[] = $this->_basicFix->getTestData('id',1);
+		$testData[] = $this->_basicFix->get('id',1);
 		$result = $this->_basicFix->testDataExists($testData);
 		$this->assertFalse($result);
 	}
@@ -357,7 +357,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testAutoGenerateTestDataReturnsResultsAsArrayAndIdIsNotAutoSet() {
 		$this->_testFix->autoGenerateTestData(1);
-		$this->assertEquals(8,count($this->_testFix->getTestData()));
+		$this->assertEquals(8,count($this->_testFix->get()));
 	}
 	
 	/**
@@ -366,7 +366,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testGenerateFixtureTestDataReturnsExpectedNumberOfTestData() {
 		$this->_testFix->autoGenerateTestData(23);
-        $this->assertEquals(30,count($this->_testFix->getTestData()));
+        $this->assertEquals(30,count($this->_testFix->get()));
 	}
 	
 	/**
@@ -393,7 +393,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testAutoGenerateTestDataCanAddTenPiecesOfTestDataToTestFixture() {
 		$result = $this->_testFix->autoGenerateTestData(10);
 		$this->assertTrue($result);
-		$numTestData = count($this->_testFix->getTestData());
+		$numTestData = count($this->_testFix->get());
 		$this->assertEquals(17,$numTestData);
 	}
 	
@@ -679,9 +679,9 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse($result);
 	}
 	
-	function testValidateTestDataThrowsExceptionIfTestDataHasNoData() {
+	function testvalidateThrowsExceptionIfTestDataHasNoData() {
 		$this->setExpectedException('ErrorException');
-		$this->_basicFix->validateTestData(false);
+		$this->_basicFix->validate(false);
 	}
 	
 	/**
@@ -801,15 +801,15 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	/**
-	 * We now want to check that getTestData also does not include our ALIAS key
+	 * We now want to check that get also does not include our ALIAS key
 	 */
-	function testGetTestDataDoesNotReturnTheALIASKeyAlongWithTheResults() {
-		$result = $this->_testFix->getTestData('id',1);
+	function testgetDoesNotReturnTheALIASKeyAlongWithTheResults() {
+		$result = $this->_testFix->get('id',1);
 		$this->assertArrayNotHasKey('ALIAS', $result);
 	}
 	
-	function testGetTestDataWithNoParamsDoesNotReturnTheALIASKeyAlongWithTheResults() {
-		$result = $this->_testFix->getTestData();
+	function testgetWithNoParamsDoesNotReturnTheALIASKeyAlongWithTheResults() {
+		$result = $this->_testFix->get();
 		foreach ($result as $data) {
 			$this->assertArrayNotHasKey('ALIAS', $data);
 		}

@@ -200,7 +200,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testConvertDataTypeThrowsExceptionIfNoTypeIfDefine() {
-		$fields = $this->_invalidFixture->getSingleDataTypeField('parent_id');
+		$fields = $this->_invalidFixture->getField('parent_id');
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->convertDataType($fields);
 	}
@@ -255,7 +255,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testStringDataTypesConvertedToVarchar() {
-		$dataType = $this->_testFixture->getSingleDataTypeField('color');
+		$dataType = $this->_testFixture->getField('color');
 		$result = $this->_fixturesManager->convertDataType($dataType);
 		$this->assertContains('color',$result);
 	}
@@ -277,7 +277,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypesReturnsValueWithFieldName() {
     	$name = 'apple_id';
-    	$fields = $this->_testFixture->getSingleDataTypeField('apple_id');
+    	$fields = $this->_testFixture->getField('apple_id');
     	$result = $this->_fixturesManager->convertDataType($fields);
         $this->assertContains($name,$result);
     }
@@ -288,7 +288,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeConvertsStringToVarChar() {
-    	$dataType = $this->_testFixture->getSingleDataTypeField('color');
+    	$dataType = $this->_testFixture->getField('color');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('VARCHAR(255)',$result);
     }
@@ -299,7 +299,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeHandlesDefaultValues() {
-    	$dataType = $this->_testFixture->getSingleDataTypeField('name');
+    	$dataType = $this->_testFixture->getField('name');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('DEFAULT ""',$result);
     }
@@ -309,7 +309,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeHandlesAbleToSetDefaultDataOnStrings() {
-    	$dataType = $this->_testFixture->getSingleDataTypeField('color');
+    	$dataType = $this->_testFixture->getField('color');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains('DEFAULT "green"',$result);
     	//echo $result;
@@ -321,7 +321,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testWeGetTheQuerySegmentWeExpect() {
     	$query = 'created DATETIME NOT NULL';
-    	$dataType = $this->_testFixture->getSingleDataTypeField('created');
+    	$dataType = $this->_testFixture->getField('created');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
@@ -333,7 +333,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testConvertDataTypeConvertToIntegerToInt() {
-    	$dataType = $this->_testFixture->getSingleDataTypeField('apple_id');
+    	$dataType = $this->_testFixture->getField('apple_id');
     	$query = 'apple_id INT(10)';
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
@@ -345,7 +345,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeParseNullsInIntegerDataTypes() {
     	$query = 'apple_id INT(10) NULL';
-    	$dataType = $this->_testFixture->getSingleDataTypeField('apple_id');
+    	$dataType = $this->_testFixture->getField('apple_id');
     	$result = $this->_fixturesManager->convertDataType($dataType);
     	$this->assertContains($query,$result);
     }
@@ -355,7 +355,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeParseNotNullInIntegerDataTypes() {
     	$query = 'apple_id INT(10) NULL';
-    	$dataType = $this->_testFixture->getSingleDataTypeField('apple_id');
+    	$dataType = $this->_testFixture->getField('apple_id');
         $result = $this->_fixturesManager->convertDataType($dataType);
         $this->assertContains($query,$result);
     }
@@ -378,7 +378,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testConvertDataTypeCanParsePrimaryKeys() {
     	$query = 'id INT(10) PRIMARY KEY AUTO_INCREMENT';
-        $dataType = $this->_testFixture->getSingleDataTypeField('id');
+        $dataType = $this->_testFixture->getField('id');
         $result = $this->_fixturesManager->convertDataType($dataType);
         $this->assertContains($query,$result);
     }
@@ -401,7 +401,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertDataTypeReturnsExpectedQueryFromParsedDate() {
     	$query = 'CREATE TABLE pool (date DATE NOT NULL);';
     	$table = 'pool';
-    	$dataType = $this->_testFixture->getSingleDataTypeField('date');
+    	$dataType = $this->_testFixture->getField('date');
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
@@ -413,7 +413,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertDataTypeCanParseDateTimeDataTypes() {
     	$query = 'CREATE TABLE snooker (created DATETIME NOT NULL);';
     	$table = 'snooker';
-    	$dataType = $this->_testFixture->getSingleDataTypeField('created');
+    	$dataType = $this->_testFixture->getField('created');
     	$result = $this->_fixturesManager->convertDataType($dataType,$table);
     	$this->assertEquals($query,$result);
     }
@@ -622,7 +622,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
     function testConvertInsertQueryThrowsExceptionIfTableNameIsAnArray() {
     	$table = array();
-        $insertData = $this->_testFixture->getTestData('id',1);
+        $insertData = $this->_testFixture->get('id',1);
         $this->setExpectedException('ErrorException');
         $this->_fixWrap->constructInsertQuery($insertData,$table);
     }
@@ -632,7 +632,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testConstructInsertQueryReturnsTrue() {
-		$data = $this->_testFixture->getTestData('id',1);
+		$data = $this->_testFixture->get('id',1);
 		$result = $this->_fixWrap->constructInsertQuery($data,'snooker');
 		$this->assertContains('INSERT INTO', $result);
 	}
@@ -645,7 +645,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testConstructInsertQueryContainsEnclosingBrackets() {
-		$data = $this->_testFixture->getTestData('id',1);
+		$data = $this->_testFixture->get('id',1);
 		$result = $this->_fixWrap->constructInsertQuery($data,'pool');
 		$this->assertContains('VALUES (',$result);
 	}
@@ -657,7 +657,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsNotAString() {
-		$testData = $this->_testFixture->getTestData('id',1);
+		$testData = $this->_testFixture->get('id',1);
 		$this->setExpectedException('ErrorException');
 		$this->_fixturesManager->setupTable($testData,array());
 	}
@@ -667,7 +667,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testConstructInsertQueryThrowsExceptionIfTableNameIsEmpty() {
-		$testData = $this->_testFixture->getTestData('id',1);
+		$testData = $this->_testFixture->get('id',1);
         $this->setExpectedException('ErrorException');
         $this->_fixturesManager->setupTable($testData,'');
 	}
@@ -706,7 +706,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testInsertTestDataIsAbleToInsertASingleEntry() {
     	$table = 'apples';
         $this->_setUpTestTableStructure($table);
-        $testData = $this->_testFixture->getTestData();
+        $testData = $this->_testFixture->get();
         $result = $this->_fixturesManager->insertTestData($testData,$table);
         $this->assertTrue($result);
     }
@@ -720,7 +720,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testInsertTestDataIsAbleToInsertMultipleEntries() {
     	$table = 'pears';
         $this->_setUpTestTableStructure($table);
-        $testData = $this->_testFixture->getTestData();
+        $testData = $this->_testFixture->get();
         $result = $this->_fixturesManager->insertTestData($testData,$table);
         $this->assertTrue($result);
     }
@@ -732,7 +732,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testInsertTestDataThrowsExceptionWhenTableDoesNotExist() {
     	$this->setExpectedException('PDOException');
-        $testData = $this->_testFixture->getTestData();
+        $testData = $this->_testFixture->get();
         $this->_fixturesManager->insertTestData($testData,'plum');
     }
     
