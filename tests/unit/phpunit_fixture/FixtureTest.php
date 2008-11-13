@@ -824,6 +824,57 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($number2);
 		$this->assertEquals(8, strlen($number2));
 		$this->assertNotEquals($number1, $number2);
-		
+	}
+	
+	function testGenerateGeneratesAlphanumericByDefault() {
+		$pattern = '[a-zA-Z0-9]{8}';
+		$result = $this->_basicFix->generate('ALPHNUM');
+		$this->assertPattern($pattern,$result);
+	}
+	
+	function testGenerateGeneratesAlphaWhenALPHIsPassedAsType() {
+		$pattern = '[a-zA-Z]{8}';
+		$result = $this->_basicFix->generate('ALPH');
+		$this->assertPattern($pattern,$result);
+	}
+	
+	function testGenerateGeneratesNumbersWhenNUMIsPassedAsType() {
+		$pattern = '[0-9]{8}';
+		$result = $this->_basicFix->generate('NUM');
+		$this->assertPattern($pattern,$result);
+	}
+	
+	function assertPattern($pattern,$string) {
+		if(!ereg($pattern,$string)) {
+			$this->fail('Pattern not found in ' .$string);
+		} else {
+			echo 'Found pattern ' .$string;
+		}
+	}
+	
+	/**
+	 * Want to make sure the don't get any duplicate data, which will
+	 * cause problems when we need unique data for our fixtures.
+	 *
+	 */
+	function testGenerateMethodMakesRandomStringDoesNotDuplicate() {
+		$newData = array();
+		$duplicateCount = 0;
+		$loopNum = 1000;
+		for($i=0;$i<$loopNum;$i++) {
+			$newData[] = $this->_basicFix->generate();
+		}
+		foreach ($newData as $data) {
+			$duplicateCount = 0;
+			for($i=0;$i<$loopNum;$i++) {
+				//echo $data . ' - ' .$newData[$i].PHP_EOL;
+				if( $newData[$i] === $data) {
+					$duplicateCount++;
+				}
+				if($duplicateCount >=2) {
+					$this->fail($duplicateCount .' duplicate entries ' .$data .' - ' .$newData[$i]);
+				}
+			}
+		}
 	}
 }

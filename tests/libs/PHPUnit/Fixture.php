@@ -580,10 +580,27 @@ abstract class PHPUnit_Fixture {
 	 * @return	string
 	 * @access 	public
 	 */
-	public function generate($length = 8) {
+	public function generate($type = '', $min= 8, $max = 8) {
 		$pool = 'abcdefghijklmnopqrstuvwxyz';
+		$upper = strtoupper($pool);
+		$nums = '';
+		for($i=0;$i<=9;$i++) {
+			$nums .= $i;
+		}
+		switch($type) {
+			case 'ALPHNUM':
+				$pool .= $upper .= $nums;
+				break;
+			case 'NUM':
+				$pool = $nums;
+				break;
+			case 'ALPH':
+				$pool .= $upper;
+			default:
+				break;
+		}
 		$str = '';
-		for ($i=0; $i < $length; $i++)
+		for ($i=0; $i < $max; $i++)
 		{
 			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
 		}
