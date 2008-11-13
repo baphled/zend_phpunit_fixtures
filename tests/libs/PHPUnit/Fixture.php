@@ -61,8 +61,8 @@ abstract class PHPUnit_Fixture {
     /**
      * The fixtures table structure
      *
-     * @access protected
-     * @var Array
+     * @access 	protected
+     * @var 	Array
      * 
      */
     protected $_fields = array();
@@ -70,8 +70,8 @@ abstract class PHPUnit_Fixture {
 	/**
 	 * The fixtures test data.
 	 *
-	 * @access protected
-	 * @var Array
+	 * @access 	protected
+	 * @var 	Array
 	 * 
 	 */
 	protected $_testData = null;
@@ -79,8 +79,8 @@ abstract class PHPUnit_Fixture {
 	/**
 	 * Stores our test data results
 	 *
-	 * @access private
-	 * @var Array
+	 * @access 	private
+	 * @var 	Array
 	 * 
 	 */
 	private $_result = null;
@@ -90,7 +90,7 @@ abstract class PHPUnit_Fixture {
 	 * it is in the expected format, also sets 
 	 * the timezone ready for later.
 	 * 
-	 * @access public
+	 * @access 	public
 	 * 
 	 */
 	public function __construct() {
@@ -110,14 +110,14 @@ abstract class PHPUnit_Fixture {
      * structure and adds it to our our _testData
      * property.
      *
-     * @access private
-     * @param Array $testData
+     * @access 	private
+     * @param 	Array 	$fixture	TestData we want to verify.
      * 
      */
-    private function _verifyTestData($testData) {
+    private function _verify($fixture) {
        try {
-            $this->validateTestData($testData, $this);
-            $this->_testData[] = $testData;
+            $this->validateTestData($fixture, $this);
+            $this->_testData[] = $fixture;
        }
        catch(ErrorException $e) {
             throw new ErrorException($e->getMessage());
@@ -131,44 +131,44 @@ abstract class PHPUnit_Fixture {
      * generate fixture test data, which is used to generate
      * our return our completed test data. 
      *
-     * @access private
-     * @param String $field
-     * @param Array $values
+     * @access 	private
+     * @param 	String 	$field		The fixture field
+     * @param 	Array 	$fixtures	Our test data.
      * 
      */
-    private function _parseSchema($field, $values) {
-       foreach ($values as $value) {
-            DataTypeIs::anInt($value, $field, $this);
-            DataTypeIs::aString($value, $field, $this);
-            DataTypeIs::aDate($value, $field, $this);
-            DataTypeIs::aDateTime($value, $field, $this);
+    private function _parseSchema($field, $fixtures) {
+       foreach ($fixtures as $fixture) {
+            DataTypeIs::anInt($fixture, $field, $this);
+            DataTypeIs::aString($fixture, $field, $this);
+            DataTypeIs::aDate($fixture, $field, $this);
+            DataTypeIs::aDateTime($fixture, $field, $this);
        }
     }
 
     /**
      * Retrieves all our test data.
      * 
-     * @access private
-     * @param String    $key
-     * @param Array     $value
-     * @return Array
+     * @access 	private
+     * @param 	String  $property	The fixture property we are looking for.
+     * @param 	String  $value		The value set in the property we are looking for		
+     * @return 	Array	$results	Our resulting test data
      * 
      * @todo Should not really return false but instead
      *       throw an exception if no test data is found.
      * 
      */
-    private function _retrieveTestData($key, $value) {
+    private function _retrieveTestData($property, $value) {
     	$results = array();
     	if (0 !== $this->testDataCount()) {
-            if (!empty($key) && !empty($value)) {
-                foreach ($this->_testData as $data) {
-                    if ($data[$key] === $value) {
-                       return $this->_removeAlias($data);
+            if (!empty($property) && !empty($value)) {
+                foreach ($this->_testData as $fixture) {
+                    if ($fixture[$property] === $value) {
+                       return $this->_removeAlias($fixture);
                     }
                 }
             } else {
-            	foreach ($this->_testData as $result) {
-	            		$results[] = $this->_removeAlias($result);
+            	foreach ($this->_testData as $fixture) {
+	            		$results[] = $this->_removeAlias($fixture);
 	            } 
                 return $results;
             }
@@ -182,23 +182,23 @@ abstract class PHPUnit_Fixture {
      * of each piece of test data.
      *
      * @access  private
-     * @param   Int     $numOfTestData
-     * @return  Array   $results
+     * @param   Int     $numOfFixtures	Number of fixtures to generate.
+     * @return  Array   $results		Our fixtures encapsulated in a array.
      * 
      */
-    private function _generateTestData($numOfTestData) {
+    private function _generateTestData($numOfFixtures) {
         if (0 === count($this->_fields)) {
             throw new ErrorException('Fields not defined, can not generate without it.');
         }
-        if (!is_int($numOfTestData)) {
+        if (!is_int($numOfFixtures)) {
             throw new ErrorException('Must supply number of test data using an integer.');
         }
         $results = array();
         $this->_result = array();
-        for ($i=0;$i<$numOfTestData;$i++) {
-            foreach ($this->getFields() as $field=>$values) {
-                DataTypeChecker::checkDataType($values);
-                $this->_parseSchema($field, $values);
+        for ($i=0;$i<$numOfFixtures;$i++) {
+            foreach ($this->getFields() as $field=>$dataType) {
+                DataTypeChecker::checkDataType($dataType);
+                $this->_parseSchema($field, $dataType);
             }
             array_push($results, $this->_result);
         }
@@ -209,9 +209,9 @@ abstract class PHPUnit_Fixture {
      * Verify that field key and values are valid &
      * already set within the instance.
      * 
-     * @access private
-     * @param String $key
-     * @param String $value
+     * @access 	private
+     * @param 	String 	$key
+     * @param 	String 	$value
      * 
      */
     private function _verifyKeyAndValue($key,$value) {
@@ -228,13 +228,13 @@ abstract class PHPUnit_Fixture {
      * within a fixture or not.
      *
      * @access  private
-     * @param   String  $field
-     * @return  bool    True on success, false on failure.
+     * @param   String  $field	The field we are looking for.
+     * @return  bool    		True on success, false on failure.
      * 
      */
     private function _dataTypeFieldExists($field) {
         try {
-            if ($this->getSingleDataTypeField($field)) {
+            if ($this->getField($field)) {
                 return true;
             }
         }
@@ -251,8 +251,8 @@ abstract class PHPUnit_Fixture {
      * before we actually use them.
      *
      * @access 	protected
-     * @param 	Array 	$fixture	The Fixture we want to check for an alias.
-     * @return 	Array	$fixture	Fixture with alias removed.
+     * @param 	Array 		$fixture	The Fixture we want to check for an alias.
+     * @return 	Array		$fixture	Fixture with alias removed.
      */
     protected function _removeAlias($fixture) {
     	if(is_array($fixture)) {
@@ -269,9 +269,9 @@ abstract class PHPUnit_Fixture {
 	 * our test data & store it for comparison, if the validating
 	 * datatype is not of the same structure we throw and exception.
 	 *
-	 * @access public
-	 * @param Array $testData
-	 * @return bool
+	 * @access 	public
+	 * @param 	Array 	$testData
+	 * @return 	bool
 	 * 
 	 */
 	public function validateTestData($testData) {
@@ -362,7 +362,7 @@ abstract class PHPUnit_Fixture {
         } 
         foreach ($testData as $data) {
             if (is_array($data)) {
-                $this->_verifyTestData($data);
+                $this->_verify($data);
             } else {
                 $this->_testData[] = $testData;
                 break;
@@ -390,11 +390,11 @@ abstract class PHPUnit_Fixture {
      * Gets a single data type field from our fixture.
      *
      * @access  public
-     * @param   String  $field
-     * @return  Array
+     * @param   String  $field	Name of the field we want to get.
+     * @return  Array			Field's data type.
      * 
      */
-    public function getSingleDataTypeField($field) {
+    public function getField($field) {
         if (!is_string($field)) {
             throw new ErrorException('Field name must be a string.');
         }
@@ -408,8 +408,8 @@ abstract class PHPUnit_Fixture {
      * Sets PHPUnit_Fixture's field property.
      *
      * @access  public
-     * @param   Array $fields
-     * @return  bool
+     * @param   Array 	$fields	The Fields we want to set for our fixture.
+     * @return  bool			True if set, false otherwise.
      * 
      */
     public function setFields(array $fields) {
@@ -435,7 +435,7 @@ abstract class PHPUnit_Fixture {
 	 * the fixture.
 	 *
 	 * @access public
-	 * @return Int
+	 * @return Int					Number of Fixtures we have stored.
 	 * 
 	 */
 	public function testDataCount() {
@@ -450,15 +450,15 @@ abstract class PHPUnit_Fixture {
      * Determines whether our test data already exists
      *
      * @access  public
-     * @param   Array $testData
-     * @return  bool
+     * @param   Array 	$fixture	Fixture we are looking for.
+     * @return  bool				True if it exists, false otherwise.
      * 
      */
-    public function testDataExists($testData) {
+    public function testDataExists($fixture) {
         if ($this->testDataCount() > 0 ) {
             for ($i=0;$i<$this->testDataCount();$i++) {
             	$data = $this->_removeAlias($this->_testData[$i]);
-                if ($data == $testData[$i]) {
+                if ($data == $fixture[$i]) {
                     return true;
                 }
             }
@@ -470,19 +470,19 @@ abstract class PHPUnit_Fixture {
      * Returns our results with a id auto incremented.
      *
      * @access public
-     * @return Array
+     * @return Array	$fixtures	Our fixtures with their ID's populated.
      * 
      */
     public function retrieveTestDataResults() {
-        $testData = $this->getTestData();
-        if (!array_key_exists('id', $testData[0])) {
+        $fixtures = $this->getTestData();
+        if (!array_key_exists('id', $fixtures[0])) {
         	throw new ErrorException('Id does not exists, must have to use this method.');
         }
         for ($i=0;$i<$this->testDataCount();$i++) {
-            $testData[$i]['id'] = $i+1;
-            $testData[$i] = $this->_removeAlias($testData[$i]);
+            $fixtures[$i]['id'] = $i+1;
+            $fixtures[$i] = $this->_removeAlias($fixtures[$i]);
         }
-        return $testData;
+        return $fixtures;
     }
     
     /**
@@ -493,13 +493,13 @@ abstract class PHPUnit_Fixture {
      * property.
      *
      * @access  public
-     * @param   int     $numOfTestData
-     * @return  bool
+     * @param   int     $numOfFixtures	Number of fixtures we want to generate.
+     * @return  bool					True if successful, false otherwise.
      * 
      */
-    public function autoGenerateTestData($numOfTestData=10) {
+    public function autoGenerateTestData($numOfFixtures=10) {
         try {
-            $result = $this->_generateTestData($numOfTestData);
+            $result = $this->_generateTestData($numOfFixtures);
             if (0 === count($result)) {
                 throw new ErrorException('Unable to generate test data.');
             }
@@ -516,9 +516,9 @@ abstract class PHPUnit_Fixture {
      * Finds a fixture via an alias, the fixture must
      * already have an alias key defined.
      *
-     * @access public
-     * @param 	String 	$name	The name of the fixtures alias.
-     * @return 	Array	$result Fixture if found, otherwise false.
+     * @access 	public
+     * @param 	String 	$name		The name of the fixtures alias.
+     * @return 	Array	$result 	Fixture if found, otherwise false.
      * 
      */
     public function find($name) {
@@ -590,40 +590,5 @@ abstract class PHPUnit_Fixture {
 			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
 		}
 		return $str;
-	}
-	
-	/**
-	 * Helper method for finding our generate type
-	 * & returning the correct string pool. 
-	 *
-	 * @access 	private
-	 * @param 	String 	$type
-	 * @return 	String 	$pool		The string pool we want to use to generate our string.
-	 * 
-	 */
-	private function _findGenerateType($type) {
-		$pool = 'abcdefghijklmnopqrstuvwxyz';
-		$upper = strtoupper($pool);
-		$nums = '';
-		for($i=0;$i<=9;$i++) {
-			$nums .= $i;
-		}
-		switch($type) {
-			case 'ALPH':
-				$pool .= $upper;
-				break;
-			case 'ALPHUP':
-				$pool = $upper;
-				break;
-			case 'NUM':
-				$pool = $nums;
-				break;
-			case 'ALPHNUM':
-				$pool .= $upper .= $nums;
-				break;
-			default:
-				break;
-		}
-		return $pool;
 	}
 }

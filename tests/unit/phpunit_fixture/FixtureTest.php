@@ -469,7 +469,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRetrieveSingleTestDataFieldThrowsExceptionIfFieldNameIsNotAString() {
 		$this->setExpectedException('ErrorException');
-		$this->_testFix->getSingleDataTypeField(array());
+		$this->_testFix->getField(array());
 	}
 	
 	/**
@@ -478,7 +478,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRetrieveSingleTestDataFieldThrowsExceptionIfFieldIsInvalid() {
 		$this->setExpectedException('ErrorException');
-		$this->_testFix->getSingleDataTypeField('bid');
+		$this->_testFix->getField('bid');
 	}
 	
 	/**
@@ -487,13 +487,13 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveSingleTestDataFieldReturnAnArrayOnSucces() {
-		$result = $this->_testFix->getSingleDataTypeField('id');
+		$result = $this->_testFix->getField('id');
 		$this->assertType('array',$result);
 	}
 	
 	function testRetrieveSingleTestDataFieldReturnExpected() {
-		$fieldData = $this->_testFix->getSingleDataTypeField('id');
-		$result = $this->_testFix->getSingleDataTypeField('id');
+		$fieldData = $this->_testFix->getField('id');
+		$result = $this->_testFix->getField('id');
 		$this->assertSame($fieldData,$result);
 	}
 	
