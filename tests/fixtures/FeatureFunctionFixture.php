@@ -20,7 +20,7 @@ class FeatureFunctionFixture extends PHPUnit_Fixture {
 					 'function_id' => array('type' => 'integer', 'length'=>10),
 					  );
 	
-	public $_testData = array(
+	protected $_fixtures = array(
 						array('feature_id' => 1, 'function_id' => 10),
 						array('feature_id' => 2, 'function_id' => 20),
 						array('feature_id' => 3, 'function_id' => 30),

@@ -66,7 +66,7 @@ class BasicFixture extends PHPUnit_Fixture {}
  */
 class FakeFixture extends PHPUnit_Fixture {
 	
-	protected $_testData = 
+	protected $_fixtures = 
 		array('ALIAS'=>'first', 'id' => 1, 'apple_id' => 2, 'color' => 'Red 1', 'name' => 'Red Apple 1', 'created' => '2006-11-22 10:38:58', 'date' => '1951-01-04', 'modified' => '2006-12-01 13:31:26');
 }
 
@@ -129,7 +129,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * Our Fixture will need a testDataProperty.
 	 */
 	function testFixtureHasTestDataProperty() {
-		$this->assertClassHasAttribute('_testData','PHPUnit_Fixture');
+		$this->assertClassHasAttribute('_fixtures','PHPUnit_Fixture');
 	}
 	
 	/**
@@ -168,7 +168,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      */
     function testTestDataIsntInExpectedFormatThrowException() {
     	$this->setExpectedException('Zend_Exception');
-		new FakeFixture();
+		$fake = new FakeFixture();
     }
     
 	/**

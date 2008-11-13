@@ -74,7 +74,7 @@ abstract class PHPUnit_Fixture {
 	 * @var 	Array
 	 * 
 	 */
-	protected $_testData = null;
+	protected $_fixtures = null;
 	
 	/**
 	 * Stores our test data results
@@ -94,8 +94,8 @@ abstract class PHPUnit_Fixture {
 	 * 
 	 */
 	public function __construct() {
-		if(null !== $this->_testData) {
-			foreach ($this->_testData as $fixture) {
+		if(null !== $this->_fixtures) {
+			foreach ($this->_fixtures as $fixture) {
 				if(!is_array($fixture)) {
 					throw new Zend_Exception('Fixture data in unexpected format, should be an array of arrays');
 				}
@@ -117,7 +117,7 @@ abstract class PHPUnit_Fixture {
     private function _verify($fixture) {
        try {
             $this->validate($fixture, $this);
-            $this->_testData[] = $fixture;
+            $this->_fixtures[] = $fixture;
        }
        catch(ErrorException $e) {
             throw new ErrorException($e->getMessage());
@@ -161,13 +161,13 @@ abstract class PHPUnit_Fixture {
     	$results = array();
     	if (0 !== $this->count()) {
             if (!empty($property) && !empty($value)) {
-                foreach ($this->_testData as $fixture) {
+                foreach ($this->_fixtures as $fixture) {
                     if ($fixture[$property] === $value) {
                        return $this->_removeAlias($fixture);
                     }
                 }
             } else {
-            	foreach ($this->_testData as $fixture) {
+            	foreach ($this->_fixtures as $fixture) {
 	            		$results[] = $this->_removeAlias($fixture);
 	            } 
                 return $results;
@@ -298,7 +298,7 @@ abstract class PHPUnit_Fixture {
         if (false === $fixture) {
             throw  new ErrorException('Invalid test data type.');
         }
-        if (null === $this->_testData) {
+        if (null === $this->_fixtures) {
 			return true;
         } else {
 			$existingTestData = $this->get('id', 1);
@@ -312,6 +312,23 @@ abstract class PHPUnit_Fixture {
 			}
 		}
 		return false;
+	}
+    
+	/**
+	 * Basic method, allowing us to determine
+	 * the number of test data we have within
+	 * the fixture.
+	 *
+	 * @access public
+	 * @return Int					Number of Fixtures we have stored.
+	 * 
+	 */
+	public function count() {
+		$result = 0;
+		if (isset($this->_fixtures)) {
+			$result = count($this->_fixtures);
+		}
+		return $result;
 	}
 	
 	/**
@@ -357,8 +374,8 @@ abstract class PHPUnit_Fixture {
 		$this->_verifyKeyAndValue($key, $value);
 		if ($this->_fieldExists($key)) {
 			for ($i=0;$i<$this->count();$i++) { 
-				if ($this->_testData[$i][$key] === $value) {
-					unset($this->_testData[$i]);
+				if ($this->_fixtures[$i][$key] === $value) {
+					unset($this->_fixtures[$i]);
 					return true;
 				}
 			}
@@ -384,12 +401,32 @@ abstract class PHPUnit_Fixture {
             if (is_array($data)) {
                 $this->_verify($data);
             } else {
-                $this->_testData[] = $testData;
+                $this->_fixtures[] = $testData;
                 break;
             }
         }
         return true;
     }
+    
+	/**
+	 * Generates a random string.
+	 * 
+	 * @access 	public
+	 * @param  	int		$length Number of characters (defaults to 8).
+	 * @param 	Int		$max	The maximum number of chars to generate.
+	 * @return	string	$str	Our generated string.
+	 * 
+	 */
+	public function generate($type = '', $max = 8, $min = 8) {
+		$str = '';
+		$pool = DataTypeChecker::getDataTypeGeneratePool($type);
+		$num = $this->_getRandomNumber($max, $min);
+		for ($i=0; $i < $num; $i++)
+		{
+			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
+		}
+		return $str;
+	}
 	
 	/**
 	 * Gets the fixture fields data in an array format.
@@ -449,23 +486,6 @@ abstract class PHPUnit_Fixture {
         return true;
     }
     
-	/**
-	 * Basic method, allowing us to determine
-	 * the number of test data we have within
-	 * the fixture.
-	 *
-	 * @access public
-	 * @return Int					Number of Fixtures we have stored.
-	 * 
-	 */
-	public function count() {
-		$result = 0;
-		if (isset($this->_testData)) {
-			$result = count($this->_testData);
-		}
-		return $result;
-	}
-    
     /**
      * Determines whether our test data already exists
      *
@@ -477,7 +497,7 @@ abstract class PHPUnit_Fixture {
     public function exists($fixture) {
         if ($this->count() > 0 ) {
             for ($i=0;$i<$this->count();$i++) {
-            	$data = $this->_removeAlias($this->_testData[$i]);
+            	$data = $this->_removeAlias($this->_fixtures[$i]);
                 if ($data == $fixture[$i]) {
                     return true;
                 }
@@ -542,7 +562,7 @@ abstract class PHPUnit_Fixture {
      * 
      */
     public function find($name) {
-    	foreach ($this->_testData as $result) {
+    	foreach ($this->_fixtures as $result) {
     		if (array_key_exists('ALIAS', $result)) {
     			if ($name === $result['ALIAS']) {
     				return $this->_removeAlias($result);
@@ -564,8 +584,8 @@ abstract class PHPUnit_Fixture {
      * 
      */
     public function addAlias($index, $alias) {
-    	if (!array_key_exists('ALIAS',$this->_testData[$index])) {
-    		$this->_testData[$index]['ALIAS'] = $alias;
+    	if (!array_key_exists('ALIAS',$this->_fixtures[$index])) {
+    		$this->_fixtures[$index]['ALIAS'] = $alias;
     		return true;
     	}
     	return false;
@@ -582,9 +602,9 @@ abstract class PHPUnit_Fixture {
     	$fixture = $this->find($oldAlias);
     	if (false !== $fixture) {
     		for ($index=0;$index<$this->count();$index++) {
-    			if (array_key_exists('ALIAS',$this->_testData[$index])) {
-    				if ($oldAlias === $this->_testData[$index]['ALIAS']) {
-    					$this->_testData[$index]['ALIAS'] = $newAlias;
+    			if (array_key_exists('ALIAS',$this->_fixtures[$index])) {
+    				if ($oldAlias === $this->_fixtures[$index]['ALIAS']) {
+    					$this->_fixtures[$index]['ALIAS'] = $newAlias;
     					return true;
     				}
     			}
@@ -592,24 +612,4 @@ abstract class PHPUnit_Fixture {
     	}
     	return false;
     }
-    
-	/**
-	 * Generates a random string.
-	 * 
-	 * @access 	public
-	 * @param  	int		$length Number of characters (defaults to 8).
-	 * @param 	Int		$max	The maximum number of chars to generate.
-	 * @return	string	$str	Our generated string.
-	 * 
-	 */
-	public function generate($type = '', $max = 8, $min = 8) {
-		$str = '';
-		$pool = DataTypeChecker::getDataTypeGeneratePool($type);
-		$num = $this->_getRandomNumber($max, $min);
-		for ($i=0; $i < $num; $i++)
-		{
-			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
-		}
-		return $str;
-	}
 }

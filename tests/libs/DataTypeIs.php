@@ -27,7 +27,7 @@ class DataTypeIs {
             if ('id' !== $field) {
                 $obj->setResult($field, rand());
             } else {
-            	$obj->setResult($field,NULL);
+            	$obj->setResult($field, NULL);
             }
        }
     }

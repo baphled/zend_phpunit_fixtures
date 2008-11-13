@@ -107,17 +107,6 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     }
     
     /**
-     * Wrapper function for truncating our test tables.
-     * 
-     * @access public
-     * @return bool
-     * 
-     */
-    public function truncate() {
-        return $this->_callMethod('truncate');
-    }
-    
-    /**
      * Gets our URI, which we'll need to retrieve our SQL schema.
      * At the moment it is setup to work with MySQL Workbench, will
      * refactor once other source become available.
@@ -185,6 +174,18 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     	if (0 === count($this->_schemas)) {
     		$this->retrieveSQLSchema();
     	}
+    }
+    
+    
+    /**
+     * Wrapper function for truncating our test tables.
+     * 
+     * @access public
+     * @return bool
+     * 
+     */
+    public function truncate() {
+        return $this->_callMethod('truncate');
     }
     
     /**

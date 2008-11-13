@@ -22,7 +22,7 @@ class FunctionFixture extends PHPUnit_Fixture_DB {
 					 'description' 	=> array('type'=>'string','length'=>255, 'null', FALSE)
 					  );
 	
-	public $_testData = array(
+	protected $_fixtures = array(
 						array('id' => 1, 'userid' => 10,'title' => 'new function','description' => 'To test a new description'),
 						array('id' => 2, 'userid' => 20,'title' => 'second function','description' => 'second description'),
 						array('id' => 3, 'userid' => 30,'title' => 'another function','description' => 'another description')
