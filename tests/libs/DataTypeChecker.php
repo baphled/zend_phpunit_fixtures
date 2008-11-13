@@ -3,8 +3,8 @@
 /**
  * DataTypeChecker
  *  
- * Helps to check our fixure DB table data types, this can help us
- * not only input data into a DB but also emulate an DB response.
+ * Helps to check our fixture data types, this can help us
+ * not only input data into a DB but also emulate a DB response.
  * 
  * @author Yomi (baphled) Akindayini 2008
  * @version $Id$
@@ -213,6 +213,41 @@ class DataTypeChecker {
        }
     }
 
+    /**
+	 * Helper method for finding our generate type
+	 * & returning the correct string pool. 
+	 *
+	 * @access 	private
+	 * @param 	String 	$type
+	 * @return 	String 	$pool		The string pool we want to use to generate our string.
+	 * 
+	 */
+    static function getDataTypeGeneratePool($type) {
+    	$pool = 'abcdefghijklmnopqrstuvwxyz';
+		$upper = strtoupper($pool);
+		$nums = '';
+		for($i=0;$i<=9;$i++) {
+			$nums .= $i;
+		}
+		switch($type) {
+			case 'ALPH':
+				$pool .= $upper;
+				break;
+			case 'ALPHUP':
+				$pool = $upper;
+				break;
+			case 'NUM':
+				$pool = $nums;
+				break;
+			case 'ALPHNUM':
+				$pool .= $upper .= $nums;
+				break;
+			default:
+				break;
+		}
+		return $pool;
+    }
+    
     /**
      * Used to make sure that our data type fields are all valid.
      * 

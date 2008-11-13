@@ -102,6 +102,29 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($this->_basicFix);
 	}
 	
+
+	/*
+	 * Test Helpers
+	 */
+	
+	/**
+	 * Used to test our generated patterns
+	 *
+	 * @param Strin $pattern	Pattern we are looking for.
+	 * @param String $string	String we are going to check
+	 */
+	function assertPattern($pattern,$string) {
+		if(!ereg($pattern,$string)) {
+			$this->fail('Pattern not found in ' .$string);
+		} else {
+			echo 'Found pattern ' .$string;
+		}
+	}
+	
+	/*
+	 * End of test helpers
+	 */
+	
 	/**
 	 * Our Fixture will need a testDataProperty.
 	 */
@@ -145,7 +168,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      */
     function testTestDataIsntInExpectedFormatThrowException() {
     	$this->setExpectedException('Zend_Exception');
-		$fakeFix = new FakeFixture();
+		new FakeFixture();
     }
     
 	/**
@@ -871,26 +894,14 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * we'll loop through 10 times, creating a min number which we'll pass to
 	 * our generate function, this will then be checked against the number of 
 	 * characters per result. 
+	 * 
 	 */
 	function testGenerateReturnsExpectedAmountOfCharactersWhenMinIsPassedAsParam() {
-		for($i=0;$i<10;$i++) {
-			$min = rand(1,10);
-			$result = $this->_basicFix->generate('',$min);
-			$this->assertEquals($min,strlen($result));		
-		}
-	}
-	
-	/**
-	 * Used to test our generate patterns
-	 *
-	 * @param Strin $pattern
-	 * @param String $string
-	 */
-	function assertPattern($pattern,$string) {
-		if(!ereg($pattern,$string)) {
-			$this->fail('Pattern not found in ' .$string);
-		} else {
-			echo 'Found pattern ' .$string;
+		for($i=0;$i<100;$i++) {
+			$max = mt_rand(5,10);
+			$result = $this->_basicFix->generate('',$max);
+			//echo $result .' - ' .$min .PHP_EOL;
+			$this->assertEquals($max,strlen($result));		
 		}
 	}
 	
