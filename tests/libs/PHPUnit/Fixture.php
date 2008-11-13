@@ -186,7 +186,7 @@ abstract class PHPUnit_Fixture {
      * @return  Array   $results		Our fixtures encapsulated in a array.
      * 
      */
-    private function _generateTestData($numOfFixtures) {
+    private function _generate($numOfFixtures) {
         if (0 === count($this->_fields)) {
             throw new ErrorException('Fields not defined, can not generate without it.');
         }
@@ -353,7 +353,7 @@ abstract class PHPUnit_Fixture {
 	 * @return bool
 	 * 
 	 */
-	public function removeTestData($key='', $value='') {
+	public function remove($key='', $value='') {
 		$this->_verifyKeyAndValue($key, $value);
 		if ($this->_fieldExists($key)) {
 			for ($i=0;$i<$this->testDataCount();$i++) { 
@@ -519,7 +519,7 @@ abstract class PHPUnit_Fixture {
      */
     public function autoGenerateTestData($numOfFixtures=10) {
         try {
-            $result = $this->_generateTestData($numOfFixtures);
+            $result = $this->_generate($numOfFixtures);
             if (0 === count($result)) {
                 throw new ErrorException('Unable to generate test data.');
             }

@@ -712,14 +712,14 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * First off we want true of false to be returned on success or failure
 	 * 
 	 */
-	function testRemoveTestDataReturnsFalseOnFailure() {
-		$result = $this->_testFix->removeTestData('id',40);
+	function testremoveReturnsFalseOnFailure() {
+		$result = $this->_testFix->remove('id',40);
 		$this->assertFalse($result);
 	}
 	
-	function testRemoveTestDataThrowsExceptionIfKeyDoesNotExist() {
+	function testremoveThrowsExceptionIfKeyDoesNotExist() {
 		$this->setExpectedException('ErrorException');
-		$this->_testFix->removeTestData('nid',1);
+		$this->_testFix->remove('nid',1);
 	}
 	
 	/**
@@ -728,13 +728,13 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * data & return false.
 	 * 
 	 */
-	function testRemoveTestDataReturnsFalseIfValueIsInvalid() {
-        $result = $this->_testFix->removeTestData('id',10);
+	function testremoveReturnsFalseIfValueIsInvalid() {
+        $result = $this->_testFix->remove('id',10);
         $this->assertFalse($result);
 	}
 	
-	function testRemoveTestDataReturnsTrueIfTestDataIsFound() {
-		$result = $this->_testFix->removeTestData('id',1);
+	function testremoveReturnsTrueIfTestDataIsFound() {
+		$result = $this->_testFix->remove('id',1);
 		$this->assertTrue($result);
 	}
 	
@@ -744,9 +744,9 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * of test data equal 
 	 *
 	 */
-	function testRemoveTestDataActuallyRemovesExpectedTestData() {
+	function testremoveActuallyRemovesExpectedTestData() {
 		$expected = $this->_testFix->testDataCount() -1;
-		$this->_testFix->removeTestData('id',1);
+		$this->_testFix->remove('id',1);
 		$actual = $this->_testFix->testDataCount();
 		$this->assertEquals($expected,$actual);
 	}
