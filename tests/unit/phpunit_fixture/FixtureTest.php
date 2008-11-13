@@ -23,7 +23,7 @@
  * to improve on but is more aless finished.
  * Really no need to extend Module_PHPUnit_Framework_TestCase, as
  * Fixture does not use the DB or Zend.
- * Improved code coverage and added tests for autoGenerateTestData
+ * Improved code coverage and added tests for autoGen
  * which were previously covered by _generateTestData
  * 
  * Date: 01/09/2008
@@ -145,8 +145,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * that will return the number of fixtures within our class.
      * 
      */
-    function testTestDataCountReturnsZeroIfNoFixturesArePresent() {
-        $result = $this->_basicFix->testDataCount();
+    function testCountReturnsZeroIfNoFixturesArePresent() {
+        $result = $this->_basicFix->count();
         $this->assertEquals(0,$result);
     }
     
@@ -155,8 +155,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * we want to count it, otherwise we have zero.
      * 
      */
-    function testTestDataCountReturnsTheExpectedNumberOfResults() {
-        $result = $this->_testFix->testDataCount();
+    function testCountReturnsTheExpectedNumberOfResults() {
+        $result = $this->_testFix->count();
         $this->assertEquals(7,$result);
     }
     
@@ -326,17 +326,17 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testAddTestReturnsTrueIfTestDataIsAlreadyPresent() {
 		$testData[] = $this->_testFix->get('id',1);
-		$result = $this->_testFix->testDataExists($testData);
+		$result = $this->_testFix->exists($testData);
 		$this->assertTrue($result);
 	}
 	
 	/**
-	 * If testDataExists finds no test data we want to return false.
+	 * If exists finds no test data we want to return false.
 	 * 
 	 */
-	function testTestDataExistsFalseIfNoTestDataIsPresent() {
+	function testExistsFalseIfNoTestDataIsPresent() {
 		$testData[] = $this->_basicFix->get('id',1);
-		$result = $this->_basicFix->testDataExists($testData);
+		$result = $this->_basicFix->exists($testData);
 		$this->assertFalse($result);
 	}
 	
@@ -345,8 +345,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * actul test data & add it to the fixtures test data.
 	 *
 	 */
-	function testAutoGenerateTestDataReturnsFalseByDefault() {
-		$result = $this->_testFix->autoGenerateTestData();
+	function testAutoGenReturnsFalseByDefault() {
+		$result = $this->_testFix->autoGen();
 		$this->assertTrue($result);
 	}
 	
@@ -355,8 +355,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * creating an array that corresponds with the fixtures schema.
 	 * 
 	 */
-	function testAutoGenerateTestDataReturnsResultsAsArrayAndIdIsNotAutoSet() {
-		$this->_testFix->autoGenerateTestData(1);
+	function testAutoGenReturnsResultsAsArrayAndIdIsNotAutoSet() {
+		$this->_testFix->autoGen(1);
 		$this->assertEquals(8,count($this->_testFix->get()));
 	}
 	
@@ -365,12 +365,12 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testGenerateFixtureTestDataReturnsExpectedNumberOfTestData() {
-		$this->_testFix->autoGenerateTestData(23);
+		$this->_testFix->autoGen(23);
         $this->assertEquals(30,count($this->_testFix->get()));
 	}
 	
 	/**
-	 * We should get back to implementing autoGenerateTestData, which will be 
+	 * We should get back to implementing autoGen, which will be 
 	 * the wrapper method for handling all our test data generating.
 	 * 
 	 */
@@ -380,8 +380,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * for that and see what happens, we expect to see a return of false, but lets see.
 	 *
 	 */
-	function testAutoGenerateTestDataReturnsFalseIfFixtureHasNotDefinedFieldsProperty() {
-		$result = $this->_basicFix->autoGenerateTestData();
+	function testAutoGenReturnsFalseIfFixtureHasNotDefinedFieldsProperty() {
+		$result = $this->_basicFix->autoGen();
 		$this->assertFalse($result);
 	}
 	
@@ -390,8 +390,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * It already has 7 pieces of data, lets add another 10.
 	 * 
 	 */
-	function testAutoGenerateTestDataCanAddTenPiecesOfTestDataToTestFixture() {
-		$result = $this->_testFix->autoGenerateTestData(10);
+	function testAutoGenCanAddTenPiecesOfTestDataToTestFixture() {
+		$result = $this->_testFix->autoGen(10);
 		$this->assertTrue($result);
 		$numTestData = count($this->_testFix->get());
 		$this->assertEquals(17,$numTestData);
@@ -401,8 +401,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * When we try to auto gen test data with no field data, what happens?
 	 * 
 	 */
-	function testAutoGenerateTestDataReturnsFalseIfFixtureHasNoFieldData() {
-		$result = $this->_basicFix->autoGenerateTestData();
+	function testAutoGenReturnsFalseIfFixtureHasNoFieldData() {
+		$result = $this->_basicFix->autoGen();
 		$this->assertFalse($result);
 	}
 	
@@ -429,31 +429,31 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * We refactored Fixture so that _generateTestData is now private, we need to cover
 	 * the tests that were previously used on _generateTestData
 	 *
-	 * The following will cause autoGenerateTestData to return false. 
+	 * The following will cause autoGen to return false. 
 	 */
-	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfTestDataIsNotSet() {
-		$result = $this->_basicFix->autoGenerateTestData(1);
+	function testAutoGenReturnsFalseAndCatchesErrorExceptionIfTestDataIsNotSet() {
+		$result = $this->_basicFix->autoGen(1);
 		$this->assertFalse($result);
 	}
 	
-	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfFieldsHasAnEntryWithNoType() {
-		$result = $this->_invalidFieldFixture->autoGenerateTestData(1);
+	function testAutoGenReturnsFalseAndCatchesErrorExceptionIfFieldsHasAnEntryWithNoType() {
+		$result = $this->_invalidFieldFixture->autoGen(1);
 		$this->assertFalse($result);
 	}
 
-    function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfParamIsZero() {
-        $result = $this->_invalidFieldFixture->autoGenerateTestData(0);
+    function testAutoGenReturnsFalseAndCatchesErrorExceptionIfParamIsZero() {
+        $result = $this->_invalidFieldFixture->autoGen(0);
         $this->assertFalse($result);
     }
     
-	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfParamIsNotInt() {
-        $result = $this->_invalidFieldFixture->autoGenerateTestData('23');
+	function testAutoGenReturnsFalseAndCatchesErrorExceptionIfParamIsNotInt() {
+        $result = $this->_invalidFieldFixture->autoGen('23');
         $this->assertFalse($result);
     }
 	
-	function testAutoGenerateTestDataReturnsFalseAndCatchesErrorExceptionIfDataTypeLengthSpecifiedWithDateAndDateTime() {
+	function testAutoGenReturnsFalseAndCatchesErrorExceptionIfDataTypeLengthSpecifiedWithDateAndDateTime() {
 		$this->_invalidFieldFixture->_fields = array('id' => array('type' => 'date', 'length' => '10', 'null' => FALSE));
-		$result = $this->_invalidFieldFixture->autoGenerateTestData(1); 
+		$result = $this->_invalidFieldFixture->autoGen(1); 
 		$this->assertFalse($result);
 	}
 	
@@ -625,7 +625,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * seeing as we would only use this functionality if/when test data has a id field
      * if this is not the case we throw an exception.
      */
-    function testRetrieveTestDataResultsThrowsExceptionIfIDFieldDoesNotExists() {
+    function testRetrieveResultsThrowsExceptionIfIDFieldDoesNotExists() {
     	$fields = $this->_testFix->getFields();
     	unset($fields['id']);
     	$testData = array(
@@ -634,15 +634,15 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
     	$this->_basicFix->setFields($fields);
     	$this->_basicFix->add($testData);
     	$this->setExpectedException('ErrorException');
-    	$this->_basicFix->retrieveTestDataResults();
+    	$this->_basicFix->retrieveResults();
     }
     
 	/**
 	 * Now if we need to be able to retrieve our testData with auto incremented id's, this will
 	 * be used to retrieve test data without actually having to insert the data into our test DB.
 	 */
-	function testRetrieveTestDataResultsReturnsArrayOnSuccess() {
-		$result = $this->_testFix->retrieveTestDataResults();
+	function testRetrieveResultsReturnsArrayOnSuccess() {
+		$result = $this->_testFix->retrieveResults();
 		$this->assertType('array',$result);
 	}
 	
@@ -651,11 +651,11 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * incrementally change them to an integer.
 	 * 
 	 */
-	function testRetrieveTestDataResultsReturnsArrayAndIdsAreNotNull() {
+	function testRetrieveResultsReturnsArrayAndIdsAreNotNull() {
 		$this->_basicFix->setFields($this->_testFix->getFields());
-		$this->assertTrue($this->_basicFix->autoGenerateTestData(20));
-		$data = $this->_basicFix->retrieveTestDataResults();
-		for($i=0;$i<$this->_basicFix->testDataCount();$i++) {
+		$this->assertTrue($this->_basicFix->autoGen(20));
+		$data = $this->_basicFix->retrieveResults();
+		for($i=0;$i<$this->_basicFix->count();$i++) {
 		  $this->assertNotNull($data[$i]['id']);
 		  $this->assertNotEquals(0,$data[$i]['id']);
 		  $this->assertEquals($i+1,$data[$i]['id']);
@@ -667,15 +667,15 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveTestDataIncrementsFromTheLastInputtedID() {
-		$this->_testFix->autoGenerateTestData(20);
-        $data = $this->_testFix->retrieveTestDataResults();
-		for($i=0;$i<$this->_testFix->testDataCount();$i++) {
+		$this->_testFix->autoGen(20);
+        $data = $this->_testFix->retrieveResults();
+		for($i=0;$i<$this->_testFix->count();$i++) {
 			$this->assertEquals($i+1,$data[$i]['id']);
 		}
 	}
 	
-	function testAutoGenerateTestDataThrowsException() {
-		$result = $this->_basicFix->autoGenerateTestData(20);
+	function testAutoGenThrowsException() {
+		$result = $this->_basicFix->autoGen(20);
 		$this->assertFalse($result);
 	}
 	
@@ -745,9 +745,9 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testremoveActuallyRemovesExpectedTestData() {
-		$expected = $this->_testFix->testDataCount() -1;
+		$expected = $this->_testFix->count() -1;
 		$this->_testFix->remove('id',1);
-		$actual = $this->_testFix->testDataCount();
+		$actual = $this->_testFix->count();
 		$this->assertEquals($expected,$actual);
 	}
 	
@@ -793,8 +793,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * to remove this key when retrieving our test data as it will not be needed.
 	 * 
 	 */
-	function testRetrieveTestDataResultsDoesNotReturnAnyFixturesWithALIASes() {
-		$result = $this->_testFix->retrieveTestDataResults();
+	function testRetrieveResultsDoesNotReturnAnyFixturesWithALIASes() {
+		$result = $this->_testFix->retrieveResults();
 		foreach($result as $data) {
 			$this->assertArrayNotHasKey('ALIAS', $data);
 		}

@@ -23,7 +23,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	private $_functions;
 	
 	private function _initialiseCompleteFunction(){
-		$data = $this->_functionFixtures->getTestData('userid', 10);
+		$data = $this->_functionFixtures->get('userid', 10);
 		return $this->_functions->addNewFunction($data);
 	}
 	
@@ -127,7 +127,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function testAddNewFunctionAllowNoDuplication(){
 		$this->_initialiseCompleteFunction();
-		$result = $this->_functionFixtures->getTestData('userid',20);
+		$result = $this->_functionFixtures->get('userid',20);
 		$final 	= $this->_functions->_functionExists($result);
 		$this->assertEquals(FALSE, $final);
 	}
@@ -137,7 +137,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * if yes, return true
 	 */
 	public function testAddNewFunctionReturnsTrueOnFunctionDuplication(){
-		$data 	= $this->_functionFixtures->getTestData('userid',10);
+		$data 	= $this->_functionFixtures->get('userid',10);
 		$this->_functions->addNewFunction($data);
 		$result = $this->_functions->_functionExists($data);
 		$this->assertEquals(TRUE, $result);
@@ -150,7 +150,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	public function testUserIdThrowExceptionIfNull(){
 		$id = null;
 		$this->setExpectedException('ErrorException');
-		$this->_functions->updateFunction($id, $this->_functionFixtures->getTestData('userid', 10));
+		$this->_functions->updateFunction($id, $this->_functionFixtures->get('userid', 10));
 	}
 	 
 	/*
@@ -170,7 +170,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * if not, return false
 	 */
 	function testUpdateFeaturesReturnFalseOnFailure(){
-		$data = $this->_functionFixtures->getTestData('userid',10);
+		$data = $this->_functionFixtures->get('userid',10);
 		$this->_functions->addNewFunction($data);
 		$result = $this->_functions->updateFunction(1,$data);
 		$this->assertFalse($result);		
@@ -181,7 +181,7 @@ class FunctionsTest extends PHPUnit_Framework_TestCase {
 	 * return true on success
 	 */
 	function testDeleteFunctionReturnTrueOnSuccess(){
-		$data = $this->_functionFixtures->getTestData('userid',10);
+		$data = $this->_functionFixtures->get('userid',10);
 		$this->_functions->addNewFunction($data);
 		$result = $this->_functions->deleteFunction(1);
 		$this->assertTrue($result);

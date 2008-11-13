@@ -43,12 +43,12 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	 * Helper functions.
 	 */
 	function _setupSingleFixtures() {
-		$this->_featureFixtures->autoGenerateTestData(1);
+		$this->_featureFixtures->autoGen(1);
 	}
 	
 	function _getTestData() {
 		$this->_setupSingleFixtures();
-		return $this->_featureFixtures->getTestData();
+		return $this->_featureFixtures->get();
 	}
 	
 	private function _initialiseCompleteFeature(){
@@ -68,7 +68,7 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function _returnFeatureData() {
 		$this->_setupSingleFixtures();
-		return $this->_featureFixtures->retrieveTestDataResults();
+		return $this->_featureFixtures->retrieveResults();
 	}
 	
 	private function _returnDataAndAddFeature() {
@@ -142,8 +142,8 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testAddNewFeatureReturnsIntegerOnSuccess(){
-		$this->_featureFixtures->autoGenerateTestData(2);
-		$data = $this->_featureFixtures->getTestData();
+		$this->_featureFixtures->autoGen(2);
+		$data = $this->_featureFixtures->get();
 		$this->_feature->addNewFeature($data[0]);
 		$this->assertEquals(2,$this->_feature->addNewFeature($data[1]));
 	}
@@ -278,7 +278,7 @@ class FeatureTest extends PHPUnit_Framework_TestCase {
 		//$this->markTestSkipped('cant test atm.');
 		$data = $this->_getTestData();
 		$this->_feature->addNewFeature($data[0]);
-		$new = $this->_featureFixtures->retrieveTestDataResults();
+		$new = $this->_featureFixtures->retrieveResults();
 		unset($new[0]['moddate']);
 		$this->setExpectedException('ErrorException');
 		$this->_feature->updateFeature(1,$new[0]);

@@ -159,7 +159,7 @@ abstract class PHPUnit_Fixture {
      */
     private function _retrieve($property, $value) {
     	$results = array();
-    	if (0 !== $this->testDataCount()) {
+    	if (0 !== $this->count()) {
             if (!empty($property) && !empty($value)) {
                 foreach ($this->_testData as $fixture) {
                     if ($fixture[$property] === $value) {
@@ -356,7 +356,7 @@ abstract class PHPUnit_Fixture {
 	public function remove($key='', $value='') {
 		$this->_verifyKeyAndValue($key, $value);
 		if ($this->_fieldExists($key)) {
-			for ($i=0;$i<$this->testDataCount();$i++) { 
+			for ($i=0;$i<$this->count();$i++) { 
 				if ($this->_testData[$i][$key] === $value) {
 					unset($this->_testData[$i]);
 					return true;
@@ -458,7 +458,7 @@ abstract class PHPUnit_Fixture {
 	 * @return Int					Number of Fixtures we have stored.
 	 * 
 	 */
-	public function testDataCount() {
+	public function count() {
 		$result = 0;
 		if (isset($this->_testData)) {
 			$result = count($this->_testData);
@@ -474,9 +474,9 @@ abstract class PHPUnit_Fixture {
      * @return  bool				True if it exists, false otherwise.
      * 
      */
-    public function testDataExists($fixture) {
-        if ($this->testDataCount() > 0 ) {
-            for ($i=0;$i<$this->testDataCount();$i++) {
+    public function exists($fixture) {
+        if ($this->count() > 0 ) {
+            for ($i=0;$i<$this->count();$i++) {
             	$data = $this->_removeAlias($this->_testData[$i]);
                 if ($data == $fixture[$i]) {
                     return true;
@@ -493,12 +493,12 @@ abstract class PHPUnit_Fixture {
      * @return Array	$fixtures	Our fixtures with their ID's populated.
      * 
      */
-    public function retrieveTestDataResults() {
+    public function retrieveResults() {
         $fixtures = $this->get();
         if (!array_key_exists('id', $fixtures[0])) {
         	throw new ErrorException('Id does not exists, must have to use this method.');
         }
-        for ($i=0;$i<$this->testDataCount();$i++) {
+        for ($i=0;$i<$this->count();$i++) {
             $fixtures[$i]['id'] = $i+1;
             $fixtures[$i] = $this->_removeAlias($fixtures[$i]);
         }
@@ -517,7 +517,7 @@ abstract class PHPUnit_Fixture {
      * @return  bool					True if successful, false otherwise.
      * 
      */
-    public function autoGenerateTestData($numOfFixtures=10) {
+    public function autoGen($numOfFixtures=10) {
         try {
             $result = $this->_generate($numOfFixtures);
             if (0 === count($result)) {
@@ -581,7 +581,7 @@ abstract class PHPUnit_Fixture {
     function modAlias($oldAlias, $newAlias) {
     	$fixture = $this->find($oldAlias);
     	if (false !== $fixture) {
-    		for ($index=0;$index<$this->testDataCount();$index++) {
+    		for ($index=0;$index<$this->count();$index++) {
     			if (array_key_exists('ALIAS',$this->_testData[$index])) {
     				if ($oldAlias === $this->_testData[$index]['ALIAS']) {
     					$this->_testData[$index]['ALIAS'] = $newAlias;
