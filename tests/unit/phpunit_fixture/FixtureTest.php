@@ -899,7 +899,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testGenerateReturnsExpectedAmountOfCharactersWhenMinIsPassedAsParam() {
 		for($i=0;$i<100;$i++) {
 			$max = mt_rand(5,10);
-			$result = $this->_basicFix->generate('',$max);
+			$result = $this->_basicFix->generate('',$max, $max-4);
 			//echo $result .' - ' .$min .PHP_EOL;
 			$this->assertLessThanOrEqual($max,strlen($result));		
 		}
@@ -911,8 +911,13 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testGenerateReturnsExpectedRangeAmountsWhenMinAndMaxParamsPassed() {
 		$expected = 10;
-		$actual = $this->_basicFix->generate('',3,$expected);
+		$actual = $this->_basicFix->generate('',$expected,3);
 		$this->assertLessThanOrEqual($expected,strlen($actual));
+	}
+	
+	function testGenerateThrowsExceptionIfMinIsGreaterThanMax() {
+		$this->setExpectedException('Zend_Exception');
+		$this->_basicFix->generate('',3,6);
 	}
 	
 	/**

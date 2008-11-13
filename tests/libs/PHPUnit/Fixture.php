@@ -583,18 +583,24 @@ abstract class PHPUnit_Fixture {
 	 * 
 	 */
 	public function generate($type = '', $max = 8, $min = 8) {
-		$pool = DataTypeChecker::getDataTypeGeneratePool($type);
 		$str = '';
-		if( $min < $max) {
-			$num = mt_rand($min,$max);			
-		} else {
-			$num = $max;
-		}
-		
+		$pool = DataTypeChecker::getDataTypeGeneratePool($type);
+		$num = $this->_getRandomNumber($max, $min);
 		for ($i=0; $i < $num; $i++)
 		{
 			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
 		}
 		return $str;
+	}
+	
+	private function _getRandomNumber($max, $min) {
+		if ( $min < $max) {
+			$num = mt_rand($min,$max);			
+		} elseif ($min > $max) {
+			throw new Zend_Exception('Min cannot be greater than max.');
+		} else {
+			$num = $max;
+		}
+		return $num;
 	}
 }
