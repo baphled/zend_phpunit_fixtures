@@ -90,17 +90,19 @@ class FixturesManager {
 	
     /**
      * Zend DB, used to connect to our DB
-     * @access private
-     * @var Zend_DB
      * 
-    */
+     * @access 	private
+     * @var 	Zend_DB
+     * 
+     */
     private $_db;
     
     /**
      * Initialises our DB connection for us.
      *
-     * @access public
-     * @param String $env
+     * @access 	public
+     * @param 	String 	$env
+     * 
      */
 	public function __construct($env=null) {
 		if (null === $env) {
@@ -117,20 +119,20 @@ class FixturesManager {
 	 * go along.
 	 *
 	 * @access private
-	 * @param  Array $dataType
+	 * @param  Array 	$fixture
 	 * @return String
 	 * 
 	 */
-    private function _checkDataTypes($dataType) {
-    	$data = '';
-        foreach ($dataType as $key=>$value) {
-            $data .= DataTypeChecker::checkDataTypeValues($key, $value);
-            $data .= DataTypeChecker::checkDataTypeValuesLength($key, $value);
-            $data .= DataTypeChecker::checkDataTypeValueNull($key, $value);
-            $data .= DataTypeChecker::checkDataTypeDefault($key, $value);
-            $data .= DataTypeChecker::checkDataTypePrimaryKey($key);
+    private function _checkDataTypes($fixture) {
+    	$stmt = '';
+        foreach ($fixture as $property=>$dataType) {
+            $stmt .= DataTypeChecker::checkDataTypeValues($property, $dataType);
+            $stmt .= DataTypeChecker::checkDataTypeValuesLength($property, $dataType);
+            $stmt .= DataTypeChecker::checkDataTypeValueNull($property, $dataType);
+            $stmt .= DataTypeChecker::checkDataTypeDefault($property, $dataType);
+            $stmt .= DataTypeChecker::checkDataTypePrimaryKey($property);
         }
-        return $data;
+        return $stmt;
     }
     
     /**
@@ -142,12 +144,24 @@ class FixturesManager {
      * @param String $table
      * 
      */
-    private function _parseTestData($testData, $table) {
-       DataTypeChecker::checkTestDataAndTableName($testData, $table);
-       foreach ($testData as $data) {
-            $query = $this->_constructInsertQuery($data, $table);
+    private function _parseTestData($fixture, $table) {
+       DataTypeChecker::checkTestDataAndTableName($fixture, $table);
+       foreach ($fixture as $testData) {
+            $query = $this->_constructInsertQuery($testData, $table);
             $this->_runFixtureQuery($query);                
        }
+    }
+	
+    /**
+     * Truncates a single table
+     *
+     * @access 	private
+     * @param 	String 	$name	The name of the table we want to truncate.
+     * 
+     */
+    private function _truncate($name) {
+    	$sql = 'TRUNCATE TABLE ' .$name;
+       	$this->_db->getConnection()->exec($sql);
     }
 
     /**
@@ -219,7 +233,6 @@ class FixturesManager {
         $query = '';
 	    foreach ($dataTypeInfo as $field=>$dataType) {
             DataTypeChecker::checkDataType($dataType);
-            $data = '';
             $data = $this->_checkDataTypes($dataType);
             $query .= $field .$data .', ';
 	    }
@@ -339,11 +352,6 @@ class FixturesManager {
         	return false;
         }
         return true;
-    }
-	
-    private function _truncate($name) {
-    	$sql = 'TRUNCATE TABLE ' .$name;
-       	$this->_db->getConnection()->exec($sql);
     }
     
 	/**
