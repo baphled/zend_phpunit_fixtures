@@ -95,8 +95,8 @@ abstract class PHPUnit_Fixture {
 	 */
 	public function __construct() {
 		if(null !== $this->_testData) {
-			foreach ($this->_testData as $testData) {
-				if(!is_array($testData)) {
+			foreach ($this->_testData as $fixture) {
+				if(!is_array($fixture)) {
 					throw new Zend_Exception('Fixture data in unexpected format, should be an array of arrays');
 				}
 			}
@@ -157,7 +157,7 @@ abstract class PHPUnit_Fixture {
      *       throw an exception if no test data is found.
      * 
      */
-    private function _retrieveTestData($property, $value) {
+    private function _retrieve($property, $value) {
     	$results = array();
     	if (0 !== $this->testDataCount()) {
             if (!empty($property) && !empty($value)) {
@@ -232,7 +232,7 @@ abstract class PHPUnit_Fixture {
      * @return  bool    		True on success, false on failure.
      * 
      */
-    private function _dataTypeFieldExists($field) {
+    private function _fieldExists($field) {
         try {
             if ($this->getField($field)) {
                 return true;
@@ -339,7 +339,7 @@ abstract class PHPUnit_Fixture {
 	 */
 	public function get($key='', $value='') {
 		$this->_verifyKeyAndValue($key, $value);
-		return $this->_retrieveTestData($key, $value);
+		return $this->_retrieve($key, $value);
 		
 	}
 	
@@ -355,7 +355,7 @@ abstract class PHPUnit_Fixture {
 	 */
 	public function removeTestData($key='', $value='') {
 		$this->_verifyKeyAndValue($key, $value);
-		if ($this->_dataTypeFieldExists($key)) {
+		if ($this->_fieldExists($key)) {
 			for ($i=0;$i<$this->testDataCount();$i++) { 
 				if ($this->_testData[$i][$key] === $value) {
 					unset($this->_testData[$i]);
