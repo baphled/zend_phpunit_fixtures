@@ -232,19 +232,19 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
      * Now our class must have testData in array format
      * 
      */
-    function testAddTestDataThrowsExceptionIfTestDataIsNotAnArray() {
+    function testaddThrowsExceptionIfTestDataIsNotAnArray() {
         $testData = '';
         $this->setExpectedException('ErrorException');
-        $this->_basicFix->addTestData($testData);
+        $this->_basicFix->add($testData);
     }
     
     /**
      * If we set our test data up successfully we should get a response
      * 
      */
-    function testFixtureAddTestDataReturnsTrueOnSuccess() {
+    function testFixtureaddReturnsTrueOnSuccess() {
         $testData = $this->_testFix->get('id',1);
-        $result = $this->_basicFix->addTestData($testData);
+        $result = $this->_basicFix->add($testData);
         $this->assertTrue($result);
     }
 	/**
@@ -255,10 +255,10 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * format as what we are inputting.
 	 * 
 	 */
-	function testAddTestDataCanSubmitTestDataToFixture() {
+	function testaddCanSubmitTestDataToFixture() {
 		$testData = array();
 		$testData[] = $this->_testFix->get('id',1);
-		$result = $this->_basicFix->addTestData($testData);
+		$result = $this->_basicFix->add($testData);
 		$this->assertTrue($result);
 		$expected = $this->_basicFix->get();
 		$this->assertSame($expected,$testData);
@@ -268,11 +268,11 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * Now we want to be able to add multiples as well
 	 * 
 	 */
-	function testAddTestDataIsAbleToAddMultiplesOfTestData() {
+	function testaddIsAbleToAddMultiplesOfTestData() {
 		$actual = array();
 		$actual[] = $this->_testFix->get('id',1);
 		$actual[] = $this->_testFix->get('id',3);
-		$this->_basicFix->addTestData($actual);
+		$this->_basicFix->add($actual);
 		$expected = $this->_basicFix->get();
 		$this->assertSame($expected,$actual);
 		
@@ -296,18 +296,18 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	 * of the same structure as the rest of predefined data.
 	 * 
 	 */
-	function testAddTestDataThrowsExceptionsIfAddingTestDataOfVaryingStructure() {
+	function testaddThrowsExceptionsIfAddingTestDataOfVaryingStructure() {
 		$testData[] = $this->_testFix->get('id',1);
 		$this->setExpectedException('ErrorException');
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
-		$this->_basicFix->addTestData($testData);
+		$this->_basicFix->add($testData);
 		$this->_basicFix->validate($invalidData);
 	}
 	
 	/**
 	 * Now we need to check that if our invalid test data is submitted via
-	 * addTestData, we need to throw an exception. validate, should
-	 * ideally be callable from within addTestData, so that we can automatically
+	 * add, we need to throw an exception. validate, should
+	 * ideally be callable from within add, so that we can automatically
 	 * handle validations within our addition routine.
 	 * 
 	 */
@@ -315,8 +315,8 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$testData[] = $this->_testFix->get('id',1);
 		$this->setExpectedException('ErrorException');
 		$invalidData[] = array('id' => 7, 'appl_id' => 8, 'color' => 'Some wierd color', 'name' => 'Some odd color', 'created' => '2006-12-25 05:34:21', 'date' => '2006-12-25', 'modified' => '2006-12-25 05:34:21');
-		$this->_basicFix->addTestData($testData);
-		$this->_basicFix->addTestData($invalidData);
+		$this->_basicFix->add($testData);
+		$this->_basicFix->add($invalidData);
 	}
 	
 	/**
@@ -632,7 +632,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
     	       array('userid' => 1,'title' => 'new feature','description' => 'To test a new feature','addeddate'=>'2008-10-07')
     	);
     	$this->_basicFix->setFields($fields);
-    	$this->_basicFix->addTestData($testData);
+    	$this->_basicFix->add($testData);
     	$this->setExpectedException('ErrorException');
     	$this->_basicFix->retrieveTestDataResults();
     }

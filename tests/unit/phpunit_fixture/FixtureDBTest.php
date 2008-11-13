@@ -153,7 +153,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testSetupFixtureTableThrowsExceptionIfTableNameIsNotSet() {
-        $this->_emptyFix->addTestData($this->_testFix->get('id',1));
+        $this->_emptyFix->add($this->_testFix->get('id',1));
         $this->setExpectedException('ErrorException');
         $this->_emptyFix->setup();
     }
@@ -181,7 +181,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      */
     function testSetupFixtureTableThrowsExceptionIfTestFieldsIsNotSet() {
         $this->_emptyFix->setName('blah');
-        $this->_emptyFix->addTestData($this->_testFix->get('id',1));
+        $this->_emptyFix->add($this->_testFix->get('id',1));
         $this->setExpectedException('ErrorException');
         $this->_emptyFix->setup();
     }

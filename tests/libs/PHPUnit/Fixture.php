@@ -376,7 +376,7 @@ abstract class PHPUnit_Fixture {
      * @return  bool
      * 
      */
-    public function addTestData($testData) {
+    public function add($testData) {
         if (!is_array($testData)) {
             throw new ErrorException('Test data must be in an array format.');
         } 
@@ -523,7 +523,7 @@ abstract class PHPUnit_Fixture {
             if (0 === count($result)) {
                 throw new ErrorException('Unable to generate test data.');
             }
-            $this->addTestData($result);
+            $this->add($result);
             return true;
         }
         catch(Exception $e) {
