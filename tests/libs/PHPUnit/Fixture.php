@@ -574,13 +574,34 @@ abstract class PHPUnit_Fixture {
     }
     
 	/**
-	 * Generates a random string
+	 * Generates a random string.
 	 * 
-	 * @param  	int	$length number of characters (defaults to 8)
-	 * @return	string
 	 * @access 	public
+	 * @param  	int		$length Number of characters (defaults to 8).
+	 * @param 	Int		$max	The maximum number of chars to generate.
+	 * @return	string	$str	Our generated string.
+	 * 
 	 */
-	public function generate($type = '', $min= 8, $max = 8) {
+	public function generate($type = '', $max = 8) {
+		$pool = $this->_findGenerateType($type);
+		$str = '';
+		for ($i=0; $i < $max; $i++)
+		{
+			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
+		}
+		return $str;
+	}
+	
+	/**
+	 * Helper method for finding our generate type
+	 * & returning the correct string pool. 
+	 *
+	 * @access 	private
+	 * @param 	String 	$type
+	 * @return 	String 	$pool		The string pool we want to use to generate our string.
+	 * 
+	 */
+	private function _findGenerateType($type) {
 		$pool = 'abcdefghijklmnopqrstuvwxyz';
 		$upper = strtoupper($pool);
 		$nums = '';
@@ -588,22 +609,21 @@ abstract class PHPUnit_Fixture {
 			$nums .= $i;
 		}
 		switch($type) {
-			case 'ALPHNUM':
-				$pool .= $upper .= $nums;
+			case 'ALPH':
+				$pool .= $upper;
+				break;
+			case 'ALPHUP':
+				$pool = $upper;
 				break;
 			case 'NUM':
 				$pool = $nums;
 				break;
-			case 'ALPH':
-				$pool .= $upper;
+			case 'ALPHNUM':
+				$pool .= $upper .= $nums;
+				break;
 			default:
 				break;
 		}
-		$str = '';
-		for ($i=0; $i < $max; $i++)
-		{
-			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
-		}
-		return $str;
+		return $pool;
 	}
 }

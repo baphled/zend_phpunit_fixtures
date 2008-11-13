@@ -825,10 +825,32 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals(8, strlen($number2));
 		$this->assertNotEquals($number1, $number2);
 	}
+
+	/**
+	 * We want to be able to generate different types of data
+	 * depending on the type passed to generate, we want to be
+	 * able to use this to help us get specific test data when
+	 * our input systems require a certain type.
+	 *
+	 * 
+	 * Below we make sure that we can match these patterns, with the 
+	 * default max value, once this is done, we test for differing lengths.
+	 */
+	function testGenerateGeneratesAlphaLowerByDefault() {
+		$pattern = '[a-z]{8}';
+		$result = $this->_basicFix->generate();
+		$this->assertPattern($pattern,$result);
+	}
 	
-	function testGenerateGeneratesAlphanumericByDefault() {
+	function testGenerateGeneratesAlphanumericWhenALPHNUMIsPassedAsType() {
 		$pattern = '[a-zA-Z0-9]{8}';
 		$result = $this->_basicFix->generate('ALPHNUM');
+		$this->assertPattern($pattern,$result);
+	}
+	
+	function testGenerateGeneratesAlphaWhenALPHUpIsPassedAsType() {
+		$pattern = '[A-Z]{8}';
+		$result = $this->_basicFix->generate('ALPHUP');
 		$this->assertPattern($pattern,$result);
 	}
 	
