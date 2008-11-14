@@ -80,6 +80,8 @@ require_once 'FixturesManager.php';
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
+class DummyDynamicFixture extends PHPUnit_Fixture_DynamicDB {}
+
 class FixturesManWrapper extends FixturesManager {
 	function runFixtureQuery($query) {
 		$result = $this->_runFixtureQuery($query);
@@ -123,6 +125,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		parent::setUp ();
 		$this->_fixturesManager = new FixturesManager();
 		$this->_fixWrap = new FixturesManWrapper();
+		$this->_dummyDynamic = new DummyDynamicFixture();
 		$this->_testFixture = new TestFixture();
 		$this->_invalidFixture = new InvalidFieldTypeFixture();
 	}
@@ -854,6 +857,26 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testDropTableThrowsExceptionIfTableDoesNotExist() {
     	$this->setExpectedException('PDOException');
     	$this->_fixturesManager->dropTable('chicken');
+    }
+    
+    /**
+     * We want to be iterate over each of our schemas within our PHPUnit_Fixture_DynamicDB
+     */
+    
+    function testGenSchemaThrowsExceptionIfParamNotAPHPUnit_Fixture_DynamicDB() {
+    	$this->setExpectedException('ErrorException');
+    	$this->_fixturesManager->buildSchema('');
+    }
+    
+    function testGenSchemaThrowsExceptionIfNoSchemaFound() {
+    	$this->setExpectedException('Zend_Exception');
+    	$this->_dummyDynamic->retrieveSQLSchema('blah');
+    	$this->_fixturesManager->buildSchema($this->_dummyDynamic);
+    }
+    
+    function testGenSchemaReturnsFalseByDefault() {
+    	$this->markTestIncomplete('Will be until the workbench has got a list of valid SQL statements.');
+    	$this->assertTrue($this->_fixturesManager->buildSchema($this->_dummyDynamic));
     }
     
     /**

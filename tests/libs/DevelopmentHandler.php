@@ -113,7 +113,14 @@ class DevelopmentHandler {
 	 * @return bool		True if successful, false otherwise.
 	 * 
 	 */
-	function genStagingStructure() {
+	function genStagingStructure(PHPUnit_Fixture_DynamicDB $fixture) {
+		try {
+			$this->_fixMan->fixtureMethodCheck('generate', $fixture);
+			return true;
+		}
+		catch (Zend_Exception $e) {
+			$e->getMessage();
+		}
 		return false;
 	}
 }

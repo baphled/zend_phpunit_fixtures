@@ -196,6 +196,7 @@ class FixturesManager {
 	    	}
     	}
     }
+    
     /**
      * Used to actually execute our dynamically
      * made SQL which creates an instance of our
@@ -423,14 +424,17 @@ class FixturesManager {
      * Does the checking for our method call.
      *
      * @access  public
-     * @param   String                $call      The called method.
-     * @param   PHPUnit_Fixture_DB    $fixture
+     * @param   String                		$call      The called method.
+     * @param   PHPUnit_Fixture_DynamicDB   $fixture
      * @return  bool
      * 
      */
     public function fixtureMethodCheck($call,$fixture) {
-    	if ($fixture instanceof PHPUnit_Fixture_DB) {
+    	if ($fixture instanceof PHPUnit_Fixture_DynamicDB) {
 			switch ($call) {
+				case 'generate':
+					$result = $this->buildSchema($fixture);
+					break;
           		case 'drop':
               		$result = $this->dropTables();
               		break;
@@ -450,8 +454,36 @@ class FixturesManager {
     				throw new ErrorException('Invalid fixture method call.');             
 			}
     	} else {
-    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DB.');
+    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DynamicDB.');
     	}
         return $result;
+    }
+    
+    /**
+     * Runs each of the schemas stored by PHPUnit_Fixture_DynamicDB
+     *
+     * @access public
+     * @param  PHPUnit_Fixture_DynamicDB	$fixture
+     * @return bool										True if sucessful, false otherwise.
+     * 
+     */
+    function buildSchema($fixture) {
+    	if (!$fixture instanceof PHPUnit_Fixture_DynamicDB) {
+    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DynamicDB.');
+    	}
+    	$schemas = $fixture->getSchemas();
+		if (0 === count($schemas)) {
+			throw new Zend_Exception('No schema found.');
+		}
+		try {
+			foreach ($schemas as $sql) {
+				$this->_runFixtureQuery($sql);
+			}
+			return true;
+		}
+		catch (Exception $e) {
+			$e->getMessage();
+		}
+		return false;
     }
 }
