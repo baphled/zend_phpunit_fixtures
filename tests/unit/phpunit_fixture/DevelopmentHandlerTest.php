@@ -25,6 +25,12 @@ class BlankFixture extends PHPUnit_Fixture_DB {}
 
 class DynamicFixture extends PHPUnit_Fixture_DynamicDB {}
 
+class FakeDevelopmentHandler extends DevelopmentHandler {
+	function genStagingStructure(PHPUnit_Fixture_DynamicDB $fixture) {
+		throw new Zend_Exception('No schema found.');
+	}
+}
+
 class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	
 	private $_devHandler;
@@ -150,13 +156,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	function testGenStagingStructureOnlyAcceptsPHPUnit_Fixture_DynamicDB() {
 		//$this->assertFalse($this->_devHandler->genStagingStructure($this->_dynamicFix));
 	}
-	
-	function testGenStagingStructureThrowsExceptionIfUnableToGetSchema() {
-		$this->setExpectedException('Zend_Exception');
-		$this->_dynamicFix->retrieveSQLSchema('blah');
-		$this->_devHandler->genStagingStructure($this->_dynamicFix);
-	}
-	
+		
 	function testGenStagingStructureThrowsExceptionIfNoSchemasAreFound() {
 		$this->setExpectedException('Zend_Exception');
 		$this->_fakeDevHandler->genStagingStructure($this->_dynamicFix);
@@ -164,11 +164,5 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	
 	function testGenStagingStructureReturnsTrueIfSchemaAndTablesCreated() {
 		$this->assertTrue($this->_devHandler->genStagingStructure($this->_dynamicFix));
-	}
-}
-
-class FakeDevelopmentHandler extends DevelopmentHandler {
-	function genStagingStructure(PHPUnit_Fixture_DynamicDB $fixture) {
-		throw new Zend_Exception('No schema found.');
 	}
 }

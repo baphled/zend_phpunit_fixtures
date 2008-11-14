@@ -118,7 +118,7 @@ class DevelopmentHandler {
 			$this->_fixMan->fixtureMethodCheck('generate', $fixture);
 			return true;
 		}
-		catch (Zend_Exception $e) {
+		catch (Exception $e) {
 			$e->getMessage();
 		}
 		return false;
