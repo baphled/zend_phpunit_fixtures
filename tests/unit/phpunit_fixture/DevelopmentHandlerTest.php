@@ -144,6 +144,6 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 * First we only want to do this with PHPUnit_Fixture_DynamicDB.
 	 */
 	function testGenStagingStructureOnlyAcceptsPHPUnit_Fixture_DynamicDB() {
-		
+		$this->assertFalse($this->_devHandler->genStagingStructure());
 	}
 }

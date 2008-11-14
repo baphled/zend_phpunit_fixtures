@@ -125,7 +125,7 @@ class FixturesManager {
 		}
 		ConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
-		$this->_allowedSQLCmds = array('CREATE TABLE','INSERT INTO');
+		$this->_allowedSQLCmds = array('CREATE','INSERT INTO');
 	}
 	
 	/**
@@ -178,13 +178,20 @@ class FixturesManager {
        	$this->_db->getConnection()->exec($sql);
     }
 
+    /**
+     * Validates our query, checking it against our allowed SQL commands.
+     *
+     * @access 	public
+     * @param 	String 	$query	The query we want to validate.
+     * 
+     */
     function validateQuery($query) {
     	$found = count($this->_allowedSQLCmds);
     	foreach ($this->_allowedSQLCmds as $cmd) {
-	        if (!ereg($cmd, $query)) {             // @todo smells need better verification
-	            echo $found--;
+	        if (!ereg($cmd, $query)) {
+	            $found--;
 	        }
-	    	if(0 >= $found) {
+	    	if (0 >= $found) {
 	    		throw new ErrorException('Illegal format: ' .$found .'='.$query .' = ' .$cmd);
 	    	}
     	}

@@ -105,4 +105,15 @@ class DevelopmentHandler {
 	public function truncate($fixture) {
 		return $this->_runTableMethod('clean', $fixture);
 	}
+	
+	/**
+	 * Generates our staging structure for us, ready for integration
+	 * & functional testing on the staging server.
+	 *
+	 * @return bool		True if successful, false otherwise.
+	 * 
+	 */
+	function genStagingStructure() {
+		return false;
+	}
 }
