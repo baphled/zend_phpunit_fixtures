@@ -139,4 +139,11 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 		$this->_devHandler->drop();
 	}
 	
+	/**
+	 * We want developmentHandler to be able to create our staging DB & tables on the fly.
+	 * First we only want to do this with PHPUnit_Fixture_DynamicDB.
+	 */
+	function testGenStagingStructureOnlyAcceptsPHPUnit_Fixture_DynamicDB() {
+		
+	}
 }

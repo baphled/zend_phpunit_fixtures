@@ -170,6 +170,13 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($this->_fixturesManager);
 	}
 	
+	function testFixtureManagerHasDBProperty() {
+		$this->assertClassHasAttribute('_db','FixturesManager');
+	}
+	
+	function testFixtureManagerHasAllowedSQLProperty() {
+		$this->assertClassHasAttribute('_allowedSQLCmds', 'FixturesManager');
+	}
 	/**
 	 * This test is purely used to help work out the
 	 * implementation of the fixtures fields array,
@@ -544,7 +551,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRunFixtureQueryReturnsFalseOnFailure() {
 		$query = 'CREATE TABLE SFSFSDsdsd;';
-		$this->setExpectedException('ErrorException');
+		$this->setExpectedException('PDOException');
 		$this->_fixWrap->runFixtureQuery($query);
 	}
 	

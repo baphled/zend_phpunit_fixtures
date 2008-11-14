@@ -98,10 +98,23 @@ class FixturesManager {
     private $_db;
     
     /**
+     * Stores the list of allowed SQL commands
+     * allowed to be executed.
+     *
+     * @access private
+     * @var Array
+     * 
+     */
+    private $_allowedSQLCmds = null;
+    
+    /**
      * Initialises our DB connection for us.
+     * 
+     * Takes an environment as the parameter which is used to 
+     * load up the correct configuration information.
      *
      * @access 	public
-     * @param 	String 	$env
+     * @param 	String 	$env	The environment we want to set our FixturesManager up in
      * 
      */
 	public function __construct($env=null) {
@@ -112,6 +125,7 @@ class FixturesManager {
 		}
 		ConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
+		$this->_allowedSQLCmds = array('CREATE TABLE','INSERT INTO');
 	}
 	
 	/**
@@ -119,8 +133,8 @@ class FixturesManager {
 	 * go along.
 	 *
 	 * @access private
-	 * @param  Array 	$fixture
-	 * @return String
+	 * @param  Array 	$fixture	The fixture we want to check.
+	 * @return String	$stmt		The returned SQL statement.
 	 * 
 	 */
     private function _checkDataTypes($fixture) {
@@ -139,9 +153,9 @@ class FixturesManager {
      * Parses through our test data constructing the nessary SQL
      * which is run, giving us our populated test DB.
      *
-     * @access private
-     * @param Array $testData
-     * @param String $table
+     * @access 	private
+     * @param 	Array 	$fixture	The fixture we want to parse
+     * @param 	String 	$table		The database we want to run the query on.
      * 
      */
     private function _parseTestData($fixture, $table) {
@@ -164,6 +178,17 @@ class FixturesManager {
        	$this->_db->getConnection()->exec($sql);
     }
 
+    function validateQuery($query) {
+    	$found = count($this->_allowedSQLCmds);
+    	foreach ($this->_allowedSQLCmds as $cmd) {
+	        if (!ereg($cmd, $query)) {             // @todo smells need better verification
+	            echo $found--;
+	        }
+	    	if(0 >= $found) {
+	    		throw new ErrorException('Illegal format: ' .$found .'='.$query .' = ' .$cmd);
+	    	}
+    	}
+    }
     /**
      * Used to actually execute our dynamically
      * made SQL which creates an instance of our
@@ -175,9 +200,7 @@ class FixturesManager {
      * 
      */
     protected function _runFixtureQuery($query) {
-        if (!eregi(' \(', $query)) {             // @todo smells need better verification
-            throw new ErrorException('Illegal query.');
-        }
+    	$this->validateQuery($query);
         try {
             $this->_db->getConnection()->exec($query);
         }
