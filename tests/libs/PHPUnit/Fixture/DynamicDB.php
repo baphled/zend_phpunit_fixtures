@@ -60,10 +60,14 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      * @access public
      * 
      */
-	public function __construct() {
+	public function __construct($env=null) {
 		parent::__construct();
 		$this->_schemas = array();
-		$this->_fixMan = new FixturesManager();
+		if (null !== $env) {
+			$this->_fixMan = new FixturesManager($env);
+		} else {
+			$this->_fixMan = new FixturesManager();
+		}
 		ConfigSettings::setUpConfig();
 		$this->_general = Zend_Registry::get('config');
 	}
@@ -249,5 +253,17 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     		}
     	}
     	return false;
+    }
+    
+    /**
+     * Another wrapper function, this time used for deleting
+     * our test tables.
+     *
+     * @access public
+     * @return bool
+     * 
+     */
+    public function drop() {
+        return $this->_callMethod('drop');
     }
 }

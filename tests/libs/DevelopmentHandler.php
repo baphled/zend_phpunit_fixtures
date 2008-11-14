@@ -115,7 +115,7 @@ class DevelopmentHandler {
 	 */
 	function genStagingStructure(PHPUnit_Fixture_DynamicDB $fixture) {
 		try {
-			$this->_fixMan->fixtureMethodCheck('generate', $fixture);
+			$this->_runTableMethod('generate', $fixture);
 			return true;
 		}
 		catch (Exception $e) {

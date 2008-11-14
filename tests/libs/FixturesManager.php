@@ -177,25 +177,6 @@ class FixturesManager {
     	$sql = 'TRUNCATE TABLE ' .$name;
        	$this->_db->getConnection()->exec($sql);
     }
-
-    /**
-     * Validates our query, checking it against our allowed SQL commands.
-     *
-     * @access 	public
-     * @param 	String 	$query	The query we want to validate.
-     * 
-     */
-    function validateQuery($query) {
-    	$found = count($this->_allowedSQLCmds);
-    	foreach ($this->_allowedSQLCmds as $cmd) {
-	        if (!ereg($cmd, $query)) {
-	            $found--;
-	        }
-	    	if (0 >= $found) {
-	    		throw new ErrorException('Illegal format: ' .$found .'='.$query .' = ' .$cmd);
-	    	}
-    	}
-    }
     
     /**
      * Used to actually execute our dynamically
@@ -244,6 +225,78 @@ class FixturesManager {
 
         return $stmt;
     }
+    
+    /**
+     * Checks to see if any tables are present in our test db.
+     *
+     * @access public
+     * @return bool
+     * 
+     */
+    public function tablesPresent() {
+        if ($this->_db->listTables()) {
+            return true;
+        }
+        return false;
+    }
+	
+    /**
+     * Does the checking for our method call.
+     *
+     * @access  public
+     * @param   String                		$call      The called method.
+     * @param   PHPUnit_Fixture_DynamicDB   $fixture
+     * @return  bool
+     * 
+     */
+    public function fixtureMethodCheck($call,$fixture) {
+    	if ($fixture instanceof PHPUnit_Fixture_DynamicDB) {
+			switch ($call) {
+				case 'generate':
+					$result = $this->buildSchema($fixture);
+					break;
+          		case 'drop':
+              		$result = $this->dropTables();
+              		break;
+				case 'setup':
+				    $result = $this->setupTable($fixture->getFields(), $fixture->getName());
+				    break;
+				case 'truncate':
+				    $result = $this->truncateTable($fixture->getName());
+				    break;
+			    case 'clean':
+				    $result = $this->truncateTable();
+				    break;
+				case 'populate':
+				    $result = $this->insertTestData($fixture->get(), $fixture->getName());
+				    break;
+				default:
+    				throw new ErrorException('Invalid fixture method call.');             
+			}
+    	} else {
+    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DynamicDB.');
+    	}
+        return $result;
+    }
+
+    /**
+     * Validates our query, checking it against our allowed SQL commands.
+     *
+     * @access 	public
+     * @param 	String 	$query	The query we want to validate.
+     * 
+     */
+    function validateQuery($query) {
+    	$found = count($this->_allowedSQLCmds);
+    	foreach ($this->_allowedSQLCmds as $cmd) {
+	        if (!ereg($cmd, $query)) {
+	            $found--;
+	        }
+	    	if (0 >= $found) {
+	    		throw new ErrorException('Illegal format: ' .$found .'='.$query .' = ' .$cmd);
+	    	}
+    	}
+    }
 
 	/**
 	 * Converts a Datatype array into SQL.
@@ -271,6 +324,39 @@ class FixturesManager {
         $stmt .= eregi_replace(', $', ');', $query);
         return $stmt;
      }
+    
+    /**
+     * Runs each of the schemas stored by PHPUnit_Fixture_DynamicDB
+     *
+     * Primarily used to generate our staging DB structure, ready for
+     * integration, functionality & acceptance testing.
+     * 
+     * @access public
+     * @param  PHPUnit_Fixture_DynamicDB	$fixture
+     * @return bool										True if sucessful, false otherwise.
+     * 
+     */
+    public function buildSchema($fixture) {
+    	if (!$fixture instanceof PHPUnit_Fixture_DynamicDB) {
+    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DynamicDB.');
+    	}
+    	$schemas = $fixture->getSchemas();
+		if (0 === count($schemas)) {
+			throw new Zend_Exception('No schema found.');
+		}
+		try {
+			foreach ($schemas as $sql) {
+				echo $sql;
+				$this->_runFixtureQuery($sql);
+			}
+			return true;
+		}
+		catch (Exception $e) {
+			$e->getMessage();
+			$fixture->drop();
+		}
+		return false;
+    }
 	
 	/**
 	 * Builds our fixtures DB table
@@ -339,20 +425,6 @@ class FixturesManager {
 		}
 		return false;
 	}
-    
-    /**
-     * Checks to see if any tables are present in our test db.
-     *
-     * @access public
-     * @return bool
-     * 
-     */
-    public function tablesPresent() {
-        if ($this->_db->listTables()) {
-            return true;
-        }
-        return false;
-    }
 
 	/**
 	 * Truncates our fixtures table.
@@ -384,6 +456,18 @@ class FixturesManager {
         }
         return true;
     }
+	
+	/**
+	 * Deletes a specific table.
+	 * 
+	 * @access public
+	 * @param  $name    Tablename
+	 * 
+	 */
+	public function dropTable($name) {
+		$sql = 'DROP TABLE ' .$name;         // smells
+        $this->_db->getConnection()->exec($sql);        
+	}
     
 	/**
 	 * Deletes all our fixtures tables.
@@ -407,83 +491,4 @@ class FixturesManager {
 		}
 		return true;
 	}
-	
-	/**
-	 * Deletes a specific table.
-	 * 
-	 * @access public
-	 * @param  $name    Tablename
-	 * 
-	 */
-	public function dropTable($name) {
-		$sql = 'DROP TABLE ' .$name;         // smells
-        $this->_db->getConnection()->exec($sql);        
-	}
-	
-    /**
-     * Does the checking for our method call.
-     *
-     * @access  public
-     * @param   String                		$call      The called method.
-     * @param   PHPUnit_Fixture_DynamicDB   $fixture
-     * @return  bool
-     * 
-     */
-    public function fixtureMethodCheck($call,$fixture) {
-    	if ($fixture instanceof PHPUnit_Fixture_DynamicDB) {
-			switch ($call) {
-				case 'generate':
-					$result = $this->buildSchema($fixture);
-					break;
-          		case 'drop':
-              		$result = $this->dropTables();
-              		break;
-				case 'setup':
-				    $result = $this->setupTable($fixture->getFields(), $fixture->getName());
-				    break;
-				case 'truncate':
-				    $result = $this->truncateTable($fixture->getName());
-				    break;
-			    case 'clean':
-				    $result = $this->truncateTable();
-				    break;
-				case 'populate':
-				    $result = $this->insertTestData($fixture->get(), $fixture->getName());
-				    break;
-				default:
-    				throw new ErrorException('Invalid fixture method call.');             
-			}
-    	} else {
-    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DynamicDB.');
-    	}
-        return $result;
-    }
-    
-    /**
-     * Runs each of the schemas stored by PHPUnit_Fixture_DynamicDB
-     *
-     * @access public
-     * @param  PHPUnit_Fixture_DynamicDB	$fixture
-     * @return bool										True if sucessful, false otherwise.
-     * 
-     */
-    function buildSchema($fixture) {
-    	if (!$fixture instanceof PHPUnit_Fixture_DynamicDB) {
-    		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DynamicDB.');
-    	}
-    	$schemas = $fixture->getSchemas();
-		if (0 === count($schemas)) {
-			throw new Zend_Exception('No schema found.');
-		}
-		try {
-			foreach ($schemas as $sql) {
-				$this->_runFixtureQuery($sql);
-			}
-			return true;
-		}
-		catch (Exception $e) {
-			$e->getMessage();
-		}
-		return false;
-    }
 }

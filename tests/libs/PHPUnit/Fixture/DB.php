@@ -115,16 +115,4 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture_DynamicDB {
         }
         return $this->_callMethod('populate');
     }
-    
-    /**
-     * Another wrapper function, this time used for deleting
-     * our test tables.
-     *
-     * @access public
-     * @return bool
-     * 
-     */
-    public function drop() {
-        return $this->_callMethod('drop');
-    }
 }
