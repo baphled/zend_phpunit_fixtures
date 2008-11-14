@@ -109,8 +109,8 @@ class ConfigSettings {
      * Returns our DB parameters from out configuration file.
      * 
      * @access  public
-     * @param   Zend_Config $config    
-     * @return  Array       $params
+     * @param   Zend_Config $config    	Our zend configuration object
+     * @return  Array       $params		Our DB configuration parameters.
      * 
      */
     static public function getDBParams($config) {

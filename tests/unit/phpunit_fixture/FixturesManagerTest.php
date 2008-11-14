@@ -130,7 +130,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$this->_fixturesManager = new FixturesManager();
 		$this->_fixWrap = new FixturesManWrapper();
 		$this->_dummyDynamic = new DummyDynamicFixture('development');
-		//print_r($this->_dummyDynamic);
 		$this->_testFixture = new TestFixture();
 		$this->_invalidFixture = new InvalidFieldTypeFixture();
 	}

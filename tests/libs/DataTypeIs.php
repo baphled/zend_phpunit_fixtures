@@ -16,10 +16,10 @@ class DataTypeIs {
      * are set to null, this is so that our db can create our
      * ID for us on insertion.
      *
-     * @access public
-     * @param String $dataType
-     * @param int $field
-     * @param PHPUnit_Fixture $obj
+     * @access 	public
+     * @param 	String 			$dataType	The fixtures type
+     * @param 	int 			$field		The field we want to check.
+     * @param 	PHPUnit_Fixture $obj		The object of which we want to assign to.
      * 
      */
     static function anInt($dataType, $field, PHPUnit_Fixture $obj) {
@@ -35,10 +35,10 @@ class DataTypeIs {
     /**
      * Checks that our a string, if so we generate test data.
      *
-     * @access public
-     * @param String $dataType
-     * @param int $field
-     * @param PHPUnit_Fixture $obj
+     * @access 	public
+     * @param 	String 			$dataType	The fixtures type
+     * @param 	int 			$field		The field we want to check.
+     * @param 	PHPUnit_Fixture $obj		The object of which we want to assign to.
      * 
      */
     static function aString($dataType, $field, $obj) {
@@ -51,10 +51,10 @@ class DataTypeIs {
      * Checks to see if our data type is a date, if it is,
      * we generate the current date.
      *
-     * @access public
-     * @param String $dataType
-     * @param int $field
-     * @param PHPUnit_Fixture $obj
+     * @access 	public
+     * @param 	String 			$dataType	The fixtures type
+     * @param 	int 			$field		The field we want to check.
+     * @param 	PHPUnit_Fixture $obj		The object of which we want to assign to.
      * 
      */
     static function aDate($dataType, $field, $obj) {
@@ -67,10 +67,10 @@ class DataTypeIs {
      * Checks to see if we have a datetype type, if we do
      * we generate the current date & time.
      *
-     * @access public
-     * @param String $dateType
-     * @param int $field
-     * @param PHPUnit_Fixture $obj
+     * @access 	public
+     * @param 	String 			$dataType	The fixtures type
+     * @param 	int 			$field		The field we want to check.
+     * @param 	PHPUnit_Fixture $obj		The object of which we want to assign to.
      * 
      */
     static function aDateTime($dateType, $field, $obj) {

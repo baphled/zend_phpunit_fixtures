@@ -19,8 +19,8 @@ class DevelopmentHandler {
 	 * Stores our FixtureManager, which will be used
 	 * to interact with our fixtures test tables.
 	 * 
-	 * @access private
-	 * @var FixtureManager
+	 * @access 	private
+	 * @var 	FixtureManager
 	 * 
 	 */
 	private $_fixMan;
@@ -29,8 +29,8 @@ class DevelopmentHandler {
 	 * Initialises our FixtureManager with the defined
 	 * environment.
 	 * 
-	 * @access public
-	 * @param String 				$env 		Our testing environment.
+	 * @access 	public
+	 * @param 	String 				$env 		Our testing environment.
 	 * 
 	 */
 	public function __construct($env='development') {
@@ -60,7 +60,7 @@ class DevelopmentHandler {
 	 * Builds our development database.
 	 * 
 	 * @access public
-	 * @param  PHPUnit_Fixture_DB $fixture	Our test fixture.
+	 * @param  PHPUnit_Fixture_DB 	$fixture	Our test fixture.
 	 * @return bool
 	 * 
 	 */
@@ -72,7 +72,7 @@ class DevelopmentHandler {
      * Populates our test table with our test data.
      *
      * @access public
-     * @param  PHPUnit_Fixture_DB $fixture	Our test fixture.
+     * @param  PHPUnit_Fixture_DB 	$fixture	Our test fixture.
      * @return bool
      *  
      */
@@ -98,8 +98,8 @@ class DevelopmentHandler {
 	 * Truncates our test table with our test data
 	 *
 	 * @access 	public
-	 * @param 	PHPUnit_Fixture $fixture	Our test fixture.
-	 * @return 	bool						True for success, false for failure.
+	 * @param 	PHPUnit_Fixture 	$fixture	Our test fixture.
+	 * @return 	bool							True for success, false for failure.
 	 * 
 	 */
 	public function truncate($fixture) {
@@ -110,7 +110,7 @@ class DevelopmentHandler {
 	 * Generates our staging structure for us, ready for integration
 	 * & functional testing on the staging server.
 	 *
-	 * @return bool		True if successful, false otherwise.
+	 * @return bool								True if successful, false otherwise.
 	 * 
 	 */
 	function genStagingStructure(PHPUnit_Fixture_DynamicDB $fixture) {

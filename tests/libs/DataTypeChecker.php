@@ -143,7 +143,7 @@ class DataTypeChecker {
      * Checks to see if we have a primary key set, if we do
      * we need to create the corresponding SQL.
      *
-     * @access public
+     * @access 	public
      * @param 	String 	$key	Key we want to check.
      * @return 	String	$data	Returns the primary key in a SQL format.
      * 
@@ -254,8 +254,8 @@ class DataTypeChecker {
     /**
      * Used to make sure that our data type fields are all valid.
      * 
-     * @access public
-     * @param Array $fixture	The fixture we want to validate.
+     * @access 	public
+     * @param 	Array 	$fixture	The fixture we want to validate.
      * 
      */
     static function validateDataTypeFields($fixture) {

@@ -101,8 +101,8 @@ class FixturesManager {
      * Stores the list of allowed SQL commands
      * allowed to be executed.
      *
-     * @access private
-     * @var Array
+     * @access 	private
+     * @var 	Array
      * 
      */
     private $_allowedSQLCmds = null;
@@ -114,7 +114,7 @@ class FixturesManager {
      * load up the correct configuration information.
      *
      * @access 	public
-     * @param 	String 	$env	The environment we want to set our FixturesManager up in
+     * @param 	String 	$env		The environment we want to set our FixturesManager up in
      * 
      */
 	public function __construct($env=null) {
@@ -170,7 +170,7 @@ class FixturesManager {
      * Truncates a single table
      *
      * @access 	private
-     * @param 	String 	$name	The name of the table we want to truncate.
+     * @param 	String 		$name	The name of the table we want to truncate.
      * 
      */
     private function _truncate($name) {
@@ -183,9 +183,9 @@ class FixturesManager {
      * made SQL which creates an instance of our
      * DB for us.
      *
-     * @access protected
-     * @param String $query
-     * @return bool
+     * @access 	protected
+     * @param 	String 		$query
+     * @return 	bool
      * 
      */
     protected function _runFixtureQuery($query) {
@@ -203,8 +203,8 @@ class FixturesManager {
      * Constructs insertion query.
      *
      * @access  private
-     * @param   Array   $insertDataType
-     * @param   String  $tableName
+     * @param   Array   	$insertDataType
+     * @param   String  	$tableName
      * @return  String
      * 
      */    
@@ -229,8 +229,8 @@ class FixturesManager {
     /**
      * Checks to see if any tables are present in our test db.
      *
-     * @access public
-     * @return bool
+     * @access 	public
+     * @return 	bool
      * 
      */
     public function tablesPresent() {
@@ -283,7 +283,7 @@ class FixturesManager {
      * Validates our query, checking it against our allowed SQL commands.
      *
      * @access 	public
-     * @param 	String 	$query	The query we want to validate.
+     * @param 	String 		$query		The query we want to validate.
      * 
      */
     function validateQuery($query) {
@@ -412,8 +412,8 @@ class FixturesManager {
 	 * actually exists with our test db.
 	 *
 	 * @access public
-	 * @param  String $tableName  The DB table name.
-	 * @return Bool               True on success, false on failure.
+	 * @param  String 	$tableName  The DB table name.
+	 * @return Bool     	        True on success, false on failure.
 	 * 
 	 */
 	public function tableExists($tableName) {
@@ -429,9 +429,9 @@ class FixturesManager {
 	/**
 	 * Truncates our fixtures table.
 	 * 
-	 * @access public
-	 * @param  String $name    Our fixture table name
-	 * @return bool
+	 * @access 	public
+	 * @param  	String 	$name    Our fixture table name
+	 * @return 	bool
 	 * 
 	 */
     public function truncateTable($name='') {
@@ -460,8 +460,8 @@ class FixturesManager {
 	/**
 	 * Deletes a specific table.
 	 * 
-	 * @access public
-	 * @param  $name    Tablename
+	 * @access 	public
+	 * @param  	$name    Name of table we want to drop.
 	 * 
 	 */
 	public function dropTable($name) {
@@ -472,8 +472,8 @@ class FixturesManager {
 	/**
 	 * Deletes all our fixtures tables.
 	 *
-	 * @access public
-	 * @return bool
+	 * @access 	public
+	 * @return 	bool		True on success, false otherwise.
 	 * 
 	 */
 	public function dropTables() {
