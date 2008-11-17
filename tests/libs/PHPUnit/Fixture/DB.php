@@ -46,15 +46,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture_DynamicDB {
      * 
      */
     public function __destruct() {
-    	try {
-	        if ($this->_fixMan->tablesPresent()) {
-	              $this->drop();
-	        }
-	        $this->_fixMan = null;
-    	}
-    	catch(Exception $e) {
-    		echo $e->getMessage();
-    	}
+    	parent::__destruct();
     }
     
     /**
