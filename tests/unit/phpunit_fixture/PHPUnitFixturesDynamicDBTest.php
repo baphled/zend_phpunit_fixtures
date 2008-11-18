@@ -102,7 +102,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testDynamicDBHasAConfigAttribute() {
-		$this->assertClassHasAttribute('_general','PHPUnit_Fixture_DynamicDB');
+		$this->assertClassHasAttribute('_config','PHPUnit_Fixture_DynamicDB');
 	}
 	
 	/**
