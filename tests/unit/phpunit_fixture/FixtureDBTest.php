@@ -212,7 +212,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      */
     function testpopulateThrowsExceptionIfTableIsNotBuilt() {
         $this->setExpectedException('ErrorException');
-        $this->_testFix->populate();
+        $this->_emptyFix->populate();
     }
     
     /**
