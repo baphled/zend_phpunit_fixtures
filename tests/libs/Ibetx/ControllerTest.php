@@ -36,6 +36,6 @@ class Ibetx_ControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	 * Prepares the environment before running a test.
 	 */
 	public function appBootstrap() {		
-		$this->frontController->registerPlugin(new Initializer('local'));		
+		$this->frontController->registerPlugin(new Initializer());		
 	}
 }
