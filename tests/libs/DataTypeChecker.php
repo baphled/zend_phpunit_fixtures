@@ -61,7 +61,7 @@ class DataTypeChecker {
         	switch ($value) {
         		case 'string':
         			$typeSegment = ' VARCHAR';
-        			break;
+              		break;
         		case 'integer':
         			$typeSegment = ' INT';
         			break;
@@ -229,7 +229,7 @@ class DataTypeChecker {
     	$pool = 'abcdefghijklmnopqrstuvwxyz';
 		$upper = strtoupper($pool);
 		$nums = '';
-		for($i=0;$i<=9;$i++) {
+		for ($i=0; $i<=9; $i++) {
 			$nums .= $i;
 		}
 		switch($type) {

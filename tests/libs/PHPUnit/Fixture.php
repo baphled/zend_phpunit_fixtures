@@ -94,9 +94,9 @@ abstract class PHPUnit_Fixture {
 	 * 
 	 */
 	public function __construct() {
-		if(null !== $this->_fixtures) {
+		if (null !== $this->_fixtures) {
 			foreach ($this->_fixtures as $fixture) {
-				if(!is_array($fixture)) {
+				if (!is_array($fixture)) {
 					throw new Zend_Exception('Fixture data in unexpected format, should be an array of arrays');
 				}
 			}
@@ -172,8 +172,8 @@ abstract class PHPUnit_Fixture {
 	            } 
                 return $results;
             }
-       }
-       return false;
+    	}
+    	return false;
     }
     
     /**
@@ -256,7 +256,7 @@ abstract class PHPUnit_Fixture {
 	 */
 	private function _getRandomNumber($max, $min) {
 		if ( $min < $max) {
-			$num = mt_rand($min,$max);			
+			$num = mt_rand($min, $max);			
 		} elseif ($min > $max) {
 			throw new Zend_Exception('Min cannot be greater than max.');
 		} else {
@@ -275,7 +275,7 @@ abstract class PHPUnit_Fixture {
      * @return 	Array		$fixture	Fixture without alias.
      */
     protected function _removeAlias($fixture) {
-    	if(is_array($fixture)) {
+    	if (is_array($fixture)) {
     		if (array_key_exists('ALIAS', $fixture)) {
     			unset($fixture['ALIAS']);
     		}
@@ -310,8 +310,8 @@ abstract class PHPUnit_Fixture {
 				    throw new ErrorException( $key .' using ' .$value.' is an invalid test data.');
 				}
 			}
-		}
-		return false;
+        }
+        return false;
 	}
     
 	/**
@@ -421,8 +421,7 @@ abstract class PHPUnit_Fixture {
 		$str = '';
 		$pool = DataTypeChecker::getDataTypeGeneratePool($type);
 		$num = $this->_getRandomNumber($max, $min);
-		for ($i=0; $i < $num; $i++)
-		{
+		for ($i=0; $i < $num; $i++) {
 			$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
 		}
 		return $str;
@@ -584,7 +583,7 @@ abstract class PHPUnit_Fixture {
      * 
      */
     public function addAlias($index, $alias) {
-    	if (!array_key_exists('ALIAS',$this->_fixtures[$index])) {
+    	if (!array_key_exists('ALIAS', $this->_fixtures[$index])) {
     		$this->_fixtures[$index]['ALIAS'] = $alias;
     		return true;
     	}
@@ -602,7 +601,7 @@ abstract class PHPUnit_Fixture {
     	$fixture = $this->find($oldAlias);
     	if (false !== $fixture) {
     		for ($index=0;$index<$this->count();$index++) {
-    			if (array_key_exists('ALIAS',$this->_fixtures[$index])) {
+    			if (array_key_exists('ALIAS', $this->_fixtures[$index])) {
     				if ($oldAlias === $this->_fixtures[$index]['ALIAS']) {
     					$this->_fixtures[$index]['ALIAS'] = $newAlias;
     					return true;

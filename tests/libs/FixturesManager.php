@@ -271,7 +271,7 @@ class FixturesManager {
 				    $result = $this->insertTestData($fixture->get(), $fixture->getName());
 				    break;
 				default:
-    				throw new ErrorException('Invalid fixture method call.');             
+    				throw new ErrorException('Invalid fixture method call.');
 			}
     	} else {
     		throw new ErrorException('Fixture must extend PHPUnit_Fixture_DynamicDB.');
@@ -444,7 +444,7 @@ class FixturesManager {
 				foreach ($tables as $table) {
 					$this->_truncate($table);
 				}
-			} elseif ($this->tableExists($name)) {
+	        } elseif ($this->tableExists($name)) {
 	        	$this->_truncate($name);
 	        } else {
 	        	throw new ErrorException($name .' does not exist.');

@@ -146,7 +146,7 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
      * 
      */
     private function _getHTMLResponse($response) {
-    	if(200 === $response->getStatus()) {
+    	if (200 === $response->getStatus()) {
     		$doc = Zend_Search_Lucene_Document_Html::loadHTML($response->getBody());
     		return $doc->getHTML();
     	}
@@ -248,7 +248,7 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
     public function findSchema($name) {
     	$this->_checkSchemaList();
     	foreach ($this->_schemas as $schema) {
-    		if (preg_match("/`{$name}`/i",$schema)) {
+    		if (preg_match("/`{$name}`/i", $schema)) {
     			return $schema;
     		}
     	}

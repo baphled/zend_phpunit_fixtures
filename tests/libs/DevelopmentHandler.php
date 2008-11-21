@@ -53,7 +53,7 @@ class DevelopmentHandler {
             return $this->_fixMan->fixtureMethodCheck($call, $fixture);
 	   } else {
         	throw new ErrorException('Must be a decendant of PHPUnit_Fixtures');
-       }
+	   }
 	}
 	
 	/**
