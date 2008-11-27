@@ -131,8 +131,8 @@ class ConfigSettings {
      */
     static public function setUpDBAdapter() {
     	$config = self::$_config;
-    	if (null === $config->type ) {
-    		$adapter = 'PDO_MYSQL';
+    	if (null === $config->database->type ) {
+    		$adapter = 'MYSQLI';
     	}
         $params = self::getDBParams($config);
         $db = Zend_Db::factory($adapter, $params);
