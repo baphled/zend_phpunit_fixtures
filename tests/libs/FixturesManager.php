@@ -108,14 +108,6 @@ class FixturesManager {
     private $_allowedSQLCmds = null;
     
     /**
-     * Stores the FixturesManager initial environment
-     * 
-     * @var 	string
-     * @access 	private
-     */
-    private $_initialEnv;
-    
-    /**
      * Initialises our DB connection for us.
      * 
      * Takes an environment as the parameter which is used to 
@@ -134,7 +126,6 @@ class FixturesManager {
 		ConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 		$this->_allowedSQLCmds = array('CREATE','INSERT INTO');
-		$this->_initialEnv = $env;
 	}
 	
 	/**
@@ -512,15 +503,15 @@ class FixturesManager {
 	 * @access 	public
 	 */
 	public function loadTable($table) {
-		// get the test database
-		ConfigSettings::setUpConfigEnv('local');
-		ConfigSettings::setUpDBAdapter();		
-		$testDb = Zend_Registry::get('db');
-		
 		// get the development database
 		ConfigSettings::setUpConfigEnv('development');
 		ConfigSettings::setUpDBAdapter();		
 		$devDb = Zend_Registry::get('db');
+		
+		// get the test database
+		ConfigSettings::setUpConfigEnv('local');
+		ConfigSettings::setUpDBAdapter();		
+		$testDb = Zend_Registry::get('db');		
 				
 		$stmt = $devDb->query("SELECT * FROM {$table}");
 		$tableData = $stmt->fetchAll();
