@@ -133,6 +133,8 @@ class ConfigSettings {
     	$config = self::$_config;
     	if (null === $config->database->type ) {
     		$adapter = 'MYSQLI';
+    	} else {
+    		$adapter = $config->database->type;
     	}
         $params = self::getDBParams($config);
         $db = Zend_Db::factory($adapter, $params);
