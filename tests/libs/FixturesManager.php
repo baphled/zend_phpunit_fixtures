@@ -108,6 +108,14 @@ class FixturesManager {
     private $_allowedSQLCmds = null;
     
     /**
+     * Stores the FixturesManager initial environment
+     * 
+     * @var 	string
+     * @access 	private
+     */
+    private $_initialEnv;
+    
+    /**
      * Initialises our DB connection for us.
      * 
      * Takes an environment as the parameter which is used to 
@@ -126,6 +134,7 @@ class FixturesManager {
 		ConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 		$this->_allowedSQLCmds = array('CREATE','INSERT INTO');
+		$this->_initialEnv = $env;
 	}
 	
 	/**
@@ -175,7 +184,7 @@ class FixturesManager {
      */
     private function _truncate($name) {
     	$sql = 'TRUNCATE TABLE ' .$name;
-       	$this->_db->getConnection()->exec($sql);
+       	$this->_db->getConnection()->query($sql);
     }
     
     /**
@@ -191,7 +200,7 @@ class FixturesManager {
     protected function _runFixtureQuery($query) {
     	$this->validateQuery($query);
         try {
-            $this->_db->getConnection()->exec($query);
+            $this->_db->getConnection()->query($query);
         }
         catch(Exception $e) {
             throw new PDOException($e->getMessage());
@@ -490,5 +499,41 @@ class FixturesManager {
 			echo $e->getMessage();
 		}
 		return true;
+	}
+	
+	/**
+	 * Copies table data from development to test
+	 * 
+	 * Copies table data from a table in the development databse to one in the test database
+	 * Connects to the dev database, fetches all records 
+	 * then connects to the test db and does th inserts
+	 * 
+	 * @param	string	$table	The name of the table to copy
+	 * @access 	public
+	 */
+	public function loadTable($table) {
+		// get the test database
+		ConfigSettings::setUpConfigEnv('local');
+		ConfigSettings::setUpDBAdapter();		
+		$testDb = Zend_Registry::get('db');
+		
+		// get the development database
+		ConfigSettings::setUpConfigEnv('development');
+		ConfigSettings::setUpDBAdapter();		
+		$devDb = Zend_Registry::get('db');
+				
+		$stmt = $devDb->query("SELECT * FROM {$table}");
+		$tableData = $stmt->fetchAll();
+		if ($tableData) {
+			$testDb->query("TRUNCATE TABLE {$table}");
+			foreach ($tableData as $tableRow) {
+				$data = array();
+				foreach ($tableRow as $key => $value) {
+					$data[$key] = $value;
+				}
+				
+				$testDb->insert($table, $data);
+			}
+		}
 	}
 }
