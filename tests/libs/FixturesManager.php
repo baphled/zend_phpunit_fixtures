@@ -175,7 +175,7 @@ class FixturesManager {
      */
     private function _truncate($name) {
     	$sql = 'TRUNCATE TABLE ' .$name;
-       	$this->_db->getConnection()->query($sql);
+       	$this->_db->getConnection()->exec($sql);
     }
     
     /**
@@ -191,7 +191,7 @@ class FixturesManager {
     protected function _runFixtureQuery($query) {
     	$this->validateQuery($query);
         try {
-            $this->_db->getConnection()->query($query);
+            $this->_db->getConnection()->exec($query);
         }
         catch(Exception $e) {
             throw new PDOException($e->getMessage());
