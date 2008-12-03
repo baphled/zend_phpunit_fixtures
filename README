@@ -1,0 +1,22 @@
+Zend_PHPUnit_Fixtures
+
+Testing scaffolding for Zend Framework.
+
+Used to help assist in keeping our test cases isolated.
+
+Features
+--------
+Various types of fixtures (standard, DB based & dynamic).
+Aliasing of fixtures, allowing for simple access.
+Define a fixture structure by extending the PHPUnit_Fixtures family.
+Generate test data on the fly.
+DB related fixtures auto clean the DB after each test.
+Integration with MySQL workbench to allow for automatic population of development DB structure.
+
+Install notes
+-------------
+Import files into current Zend Framework projects, must input configuration settings a initially setup development DB, PHPUnitFixtures will deal with creating the tables and inserting the data.
+
+If using MySQL Workbench it is possible to add the link to settings.ini & run PHPUnit_Fixtures_DynamicDB::getSchema('schemaName').
+
+When running the test suites, please not that some DB & MySQL Workbench critical tests will fail if settings are not correctly imputted into settings.ini
