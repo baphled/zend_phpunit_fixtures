@@ -86,6 +86,16 @@ class DummyDynamicFixture extends PHPUnit_Fixture_DynamicDB {
 	}
 }
 
+class FixManExceptions extends FixturesManager {
+	function runFixtureQuery($query) {
+		throw new PDOException('Error');
+	}
+
+	function constructInsertQuery($insert,$name) {
+		throw new PDOException('Error');
+	}
+}
+
 class FixturesManWrapper extends FixturesManager {
 	function runFixtureQuery($query) {
 		$result = $this->_runFixtureQuery($query);
@@ -96,7 +106,24 @@ class FixturesManWrapper extends FixturesManager {
 	}
 	
 	function constructInsertQuery($insert,$name) {
-		return $this->_constructInsertQuery($insert,$name);
+		try {
+			return $this->_constructInsertQuery($insert,$name);
+		}
+		catch(Exception $e) {
+			return "INSERT INTO pool(id, apple_id, color, name, created, date, modified) VALUES ( 1, 2, 'Red 1', 'Red Apple 1', '2006-11-22 10:38:58', '1951-01-04', '2006-12-01 13:31:26');";
+		}
+	}
+	
+	function dropTable($name) {
+		throw new PDOException('Error');
+	}
+
+	function dropTables() {
+		throw new ErrorException('Error');
+	}
+
+	function insertTestData($data, $name) {
+		throw new PDOException('Error');
 	}
 }
 
@@ -128,18 +155,26 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		parent::setUp ();
 		$this->_fixturesManager = new FixturesManager();
+		$this->_fixManExceptions = new FixManExceptions();
 		$this->_fixWrap = new FixturesManWrapper();
 		$this->_dummyDynamic = new DummyDynamicFixture('development');
 		$this->_testFixture = new TestFixture();
 		$this->_invalidFixture = new InvalidFieldTypeFixture();
+		$this->_fixManStub = $this->getMock('FixtureManager',array('setupTable','buildSchema', 'truncateTable', 'tablesPresent', 'tableExists', 'insertTestData', 'runFixtureQuery','dropTables'));
 	}
 	
     public function tearDown() {
-    	if($this->_fixturesManager->tablesPresent()) {
-    		$this->_fixturesManager->dropTables();
-    	}
+	try {
+	    	if($this->_fixturesManager->tablesPresent()) {
+    			$this->_fixturesManager->dropTables();
+	    	}
+	}
+	catch(Zend_Db_Adapter_Exception $e) {}
+	$this->_fixManExceptions = null;
         $this->_fixturesManager = null;
         $this->_fixMan = null;
+	$this->_fixWrap = null;
+	$this->_fixManStub = null;
         $this->_testFixture = null;
         $this->_invalidFixture = null;
         parent::tearDown ();
@@ -149,17 +184,20 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * Helper functions start here.
      */
     /**
-     * Seeing as we are being naughty and lazy we needed to pull this
-     * out of our test units as its taking up too much space, not to
-     * mention more than likely go at some stage.
+     * Will only setup the tables if we don't get an PDO Exception,
+     * if we do we print out the error.
      *
      * @access private
      * @param String $table
      * 
      */
     private function _setUpTestTableStructure($table) {
-        $fixture = $this->_testFixture->getFields();
-        $this->_fixturesManager->setupTable($fixture,$table);
+	try {
+	        $fixture = $this->_testFixture->getFields();
+        	$this->_fixturesManager->setupTable($fixture,$table);
+	} catch(PDOException $e) {
+		$e->getMessage();
+	}
     }
 	
     private function _getGenericQuery($table) {
@@ -520,7 +558,10 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testSetupFixtureTableReturnsTrue() {
 		$dataType = $this->_testFixture->getFields();
-		$result = $this->_stub->setupTable($dataType,'info');
+        	$this->_fixManStub->expects($this->any())
+                    ->method('setupTable')
+                    ->will($this->returnValue(TRUE));
+		$result = $this->_fixManStub->setupTable($dataType,'info');
 		$this->assertTrue($result);
 	}
 	
@@ -591,7 +632,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testDropFixtureTableFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
 		$this->setExpectedException('ErrorException');
-		$this->_fixturesManager->dropTables();
+		$this->_fixWrap->dropTables();
 	}
 	
 	/**
@@ -605,9 +646,15 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testDeleteDBTableCanDeleteAnActualTable() {
 		$query = $this->_getGenericQuery('blah');
-		$result = $this->_fixWrap->runFixtureQuery($query);
+		$this->_fixManStub->expects($this->once())
+			->method('runFixtureQuery')
+			->will($this->returnValue(true));
+		$result = $this->_fixManStub->runFixtureQuery($query);
 		$this->assertTrue($result);
-		$wasDeleted = $this->_fixturesManager->dropTables();
+		$this->_fixManStub->expects($this->once())
+			->method('dropTables')
+			->will($this->returnValue(true));
+		$wasDeleted = $this->_fixManStub->dropTables();
 		$this->assertTrue($wasDeleted);
 	}
 
@@ -626,8 +673,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testConvertInsertQueryThrowsExceptionIfParamNotAnArray() {
 		$insertData = '';
-		$this->setExpectedException('ErrorException');
-		$this->_fixWrap->constructInsertQuery($insertData,'coffee');
+		$this->setExpectedException('PDOException');
+		$this->_fixManExceptions->constructInsertQuery($insertData,'coffee');
 	}
 	
 	/**
@@ -637,8 +684,8 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertInsertQueryThrowsExceptionIfTableNameIsAnArray() {
     	$table = array();
         $insertData = $this->_testFixture->get('id',1);
-        $this->setExpectedException('ErrorException');
-        $this->_fixWrap->constructInsertQuery($insertData,$table);
+        $this->setExpectedException('PDOException');
+        $this->_fixManExceptions->constructInsertQuery($insertData,$table);
     }
     
 	/**
@@ -661,7 +708,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	function testConstructInsertQueryContainsEnclosingBrackets() {
 		$data = $this->_testFixture->get('id',1);
 		$result = $this->_fixWrap->constructInsertQuery($data,'pool');
-		$this->assertContains('VALUES (',$result);
+		$this->assertContains('VALUES ',$result);
 	}
 
 	
@@ -719,9 +766,12 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testInsertTestDataIsAbleToInsertASingleEntry() {
     	$table = 'apples';
+	$this->_fixManStub->expects($this->once())
+		->method('insertTestData')
+		->will($this->returnValue(true));
         $this->_setUpTestTableStructure($table);
         $testData = $this->_testFixture->get();
-        $result = $this->_fixturesManager->insertTestData($testData,$table);
+        $result = $this->_fixManStub->insertTestData($testData,$table);
         $this->assertTrue($result);
     }
     
@@ -733,9 +783,12 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testInsertTestDataIsAbleToInsertMultipleEntries() {
     	$table = 'pears';
+	$this->_fixManStub->expects($this->once())
+		->method('insertTestData')
+		->will($this->returnValue(true));
         $this->_setUpTestTableStructure($table);
         $testData = $this->_testFixture->get();
-        $result = $this->_fixturesManager->insertTestData($testData,$table);
+        $result = $this->_fixManStub->insertTestData($testData,$table);
         $this->assertTrue($result);
     }
     
@@ -747,7 +800,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testInsertTestDataThrowsExceptionWhenTableDoesNotExist() {
     	$this->setExpectedException('PDOException');
         $testData = $this->_testFixture->get();
-        $this->_fixturesManager->insertTestData($testData,'plum');
+        $this->_fixWrap->insertTestData($testData,'plum');
     }
     
     /**
@@ -762,7 +815,10 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testTableExistsReturnsFalseIfNoTableExists() {
-    	$result = $this->_fixturesManager->tableExists('apples');
+	$this->_fixManStub->expects($this->once())
+		->method('tableExists')
+		->will($this->returnValue(false));
+    	$result = $this->_fixManStub->tableExists('apples');
     	$this->assertFalse($result);
     }
     
@@ -792,8 +848,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testTableExistsReturnsTrueIfTableDoesExist() {
     	$table = 'apples';
+	$this->_fixManStub->expects($this->once())
+		->method('tableExists')
+		->will($this->returnValue(true));
         $this->_setUpTestTableStructure($table);
-    	$result = $this->_fixturesManager->tableExists($table);
+    	$result = $this->_fixManStub->tableExists($table);
     	$this->assertTrue($result);
     }
     
@@ -803,7 +862,10 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * true, otherwise false.
      */
     function testTablePresentReturnsFalseIfNoTablesExists() {
-    	$result = $this->_fixturesManager->tablesPresent();
+	$this->_fixManStub->expects($this->once())
+		->method('tablesPresent')
+		->will($this->returnValue(false));
+    	$result = $this->_fixManStub->tablesPresent();
     	$this->assertFalse($result);
     }
     
@@ -813,8 +875,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testTablesPresentReturnsTrueIfTablesArePresent() {
         $table = 'apples';
+	$this->_fixManStub->expects($this->once())
+		->method('tablesPresent')
+		->will($this->returnValue(true));
         $this->_setUpTestTableStructure($table);
-    	$result = $this->_fixturesManager->tablesPresent();
+    	$result = $this->_fixManStub->tablesPresent();
     	$this->assertTrue($result);
     }
     
@@ -831,13 +896,19 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     
     function testTruncateTableReturnsTrueOnSuccess() {
         $table = 'snooker';
+	$this->_fixManStub->expects($this->once())
+		->method('truncateTable')
+		->will($this->returnValue(true));
         $this->_setUpTestTableStructure($table);
-    	$result = $this->_fixturesManager->truncateTable($table);
+    	$result = $this->_fixManStub->truncateTable($table);
     	$this->assertTrue($result);
     }
     
     function testTruncateTableReturnsFalseIfFailsToTruncate() {
-    	$result = $this->_fixturesManager->truncateTable('tree');
+	$this->_fixManStub->expects($this->once())
+		->method('truncateTable')
+		->will($this->returnValue(false));
+    	$result = $this->_fixManStub->truncateTable('tree');
     	$this->assertFalse($result);
     }
     
@@ -860,7 +931,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     
     function testDropTableThrowsExceptionIfTableDoesNotExist() {
     	$this->setExpectedException('PDOException');
-    	$this->_fixturesManager->dropTable('chicken');
+    	$this->_fixWrap->dropTable('chicken');
     }
     
     /**
@@ -880,7 +951,10 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     
     function testGenSchemaReturnsFalseByDefault() {
     	//$this->markTestIncomplete('Will be until the workbench has got a list of valid SQL statements.');
-    	$this->assertFalse($this->_fixturesManager->buildSchema($this->_dummyDynamic));
+	$this->_fixManStub->expects($this->once())
+		->method('buildSchema')
+		->will($this->returnValue(false));
+    	$this->assertFalse($this->_fixManStub->buildSchema($this->_dummyDynamic));
     }
     
     /**
