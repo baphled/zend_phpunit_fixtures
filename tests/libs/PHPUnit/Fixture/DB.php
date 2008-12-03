@@ -34,7 +34,7 @@ abstract class PHPUnit_Fixture_DB extends PHPUnit_Fixture_DynamicDB {
      * @see PHPUnit_Fixture_DynamicDB::__construct()
      * 
      */
-    final public function __construct() {
+    public function __construct() {
     	parent::__construct();
     }
 

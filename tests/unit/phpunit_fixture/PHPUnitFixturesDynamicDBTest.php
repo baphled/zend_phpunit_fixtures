@@ -180,7 +180,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRetreieveSQLSchemaThrowsExceptionIfPatternNotFoundAtAll() {
 		$this->setExpectedException('Zend_Exception');
-		$this->_dynamicDB->retrieveSQLSchema('http://auto.ibetx.com');
+		$this->_dynamicDB->retrieveSQLSchema('http://justanother.url');
 	}
 	
 	/**
@@ -191,7 +191,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	function testRetrieveSQLSchemaIfNoCREATEInResultsThrowsException() {
 		$this->markTestIncomplete('Need to find a site with pre\'s to test this or refactor search pattern out of code.');
 		$this->setExpectedException('Zend_Exception');
-		$this->_dynamicDB->retrieveSQLSchema('http://auto.ibetx.com');
+		$this->_dynamicDB->retrieveSQLSchema('http://justanother.url');
 	}
 	
 	/**

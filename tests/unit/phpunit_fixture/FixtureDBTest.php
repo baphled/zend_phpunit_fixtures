@@ -36,12 +36,14 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		parent::setUp ();
-        $this->_testFix = new TestFixture();
+	        $this->_testFix = new TestFixture();
 		$this->_emptyFix = new EmptyFixture();
+		$this->_FixtureStub = $this->getMock('TestFixture',array('populate','truncate','setup','drop'));
 	}
 	
 	public function tearDown() {
 		$this->_emptyFix = null;
+		$this->_FixtureStub = null;
 		parent::tearDown ();
 	}
     
@@ -111,8 +113,10 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testSetupFixtureTableReturnsTrueIfSetupFixtureTableSucceeds() {
-        $result = $this->_testFix->setup();
-        $this->assertTrue($result);
+	$this->_FixtureStub->expects($this->once())
+		->method('setup')
+		->will($this->returnValue(true));
+        $this->assertTrue($this->_FixtureStub->setup());
         $this->_testFix->drop();
     }
     
@@ -135,8 +139,11 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testDropFixtureTableReturnsTrueOnSuccess() {
-        $this->_testFix->setup();
-        $result = $this->_testFix->drop();
+        //$this->_testFix->setup();
+	$this->_FixtureStub->expects($this->once())
+		->method('drop')
+		->will($this->returnValue(true));
+        $result = $this->_FixtureStub->drop();
         $this->assertTrue($result);
     }
     
@@ -191,8 +198,11 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * will be done by actually calling FixturesManagers method.
      * 
      */
-    function testSetupFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {
-        $result = $this->_testFix->setup();
+    function testSetupFixtureTableReturnsTrueIfFixtureTableIsSuccessfullyBuilt() {	
+	$this->_FixtureStub->expects($this->once())
+		->method('setup')
+		->will($this->returnValue(true));
+        $result = $this->_FixtureStub->setup();
         $this->assertTrue($result);
     }
     
@@ -221,8 +231,11 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * 
      */
     function testpopulateReturnsTrueIfTestDataIsSuccessfullyInserted() {
-        $this->_testFix->setup();
-        $result = $this->_testFix->populate();
+	$this->_FixtureStub->expects($this->once())
+		->method('populate')
+		->will($this->returnValue(true));
+        //$this->_testFix->setup();
+        $result = $this->_FixtureStub->populate();
         $this->assertTrue($result);
     }
     
@@ -231,8 +244,11 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
      * truncate our table.
      */
     function testTruncateTableReturnsTrueOnSuccess() {
-        $this->_testFix->setup();
-        $result = $this->_testFix->truncate();
+	$this->_FixtureStub->expects($this->once())
+		->method('truncate')
+		->will($this->returnValue(true));
+        //$this->_testFix->setup();
+        $result = $this->_FixtureStub->truncate();
         $this->assertTrue($result);
     }
 }
