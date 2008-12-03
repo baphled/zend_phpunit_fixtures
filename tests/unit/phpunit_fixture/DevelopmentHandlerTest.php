@@ -46,6 +46,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 		$this->_dynamicFix = new DynamicFixture();
 		$this->_fakeDevHandler = new FakeDevelopmentHandler('development');
 		$this->_blankFix = new BlankFixture();
+		$this->_devHandlerStub = $this->getMock('DevelopmentHandler',array('build','populate','drop'));
 	}
 	
 	public function tearDown() {
@@ -107,9 +108,12 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testBuildDBReturnsTrueOnSuccess() {
-		$result = $this->_devHandler->build($this->_testFix);
+		$this->_devHandlerStub->expects($this->once())
+			->method('build')
+			->will($this->returnValue(true));
+		$result = $this->_devHandlerStub->build($this->_testFix);
 		$this->assertTrue($result);
-		$this->_devHandler->drop();
+		//$this->_devHandler->drop();
 	}
 	
 	/**
@@ -117,7 +121,10 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	 * across this when testing but will implement anyway for cleanliness.
 	 */
 	function testBuildDBReturnsFalseIfNoTables() {
-		$result = $this->_devHandler->drop();
+		$this->_devHandlerStub->expects($this->once())
+			->method('drop')
+			->will($this->returnValue(false));
+		$result = $this->_devHandlerStub->drop();
 		$this->assertFalse($result);
 	}
 	
@@ -143,10 +150,13 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 	}
 	
 	function testPopulateReturnsTrueIfSuccessfullyPopulatesTable() {
-		$this->_devHandler->build($this->_testFix);
-		$result = $this->_devHandler->populate($this->_testFix);
+		$this->_devHandlerStub->expects($this->once())
+			->method('populate')
+			->will($this->returnValue(true));
+		//$this->_devHandler->build($this->_testFix);
+		$result = $this->_devHandlerStub->populate($this->_testFix);
 		$this->assertTrue($result);
-		$this->_devHandler->drop();
+		//$this->_devHandler->drop();
 	}
 	
 	/**
