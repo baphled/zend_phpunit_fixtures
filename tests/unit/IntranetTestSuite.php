@@ -1,6 +1,5 @@
 <?php
 require_once dirname(__FILE__) .'/../libs/TestHelper.php';
-require_once 'features_list/FeaturesListSuite.php';
 require_once 'phpunit_fixture/PHPUnitFixturesUnitSuite.php';
 
 /**
@@ -17,9 +16,7 @@ class IntranetTestSuite extends PHPUnit_Framework_TestSuite {
 	 * Constructs the test suite handler.
 	 */
 	public function __construct() {
-		$this->setName ( 'IntranetTestSuite' );
-		
-		$this->addTestSuite ( 'FeaturesListSuite' );
+		$this->setName ( 'PHPUnitFixtures TestSuite' );
 		
 		$this->addTestSuite ( 'PHPUnitFixturesUnitSuite' );
 	

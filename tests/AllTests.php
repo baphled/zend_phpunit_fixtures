@@ -1,7 +1,6 @@
 <?php
 require_once dirname(__FILE__) .'/libs/TestHelper.php';
 require_once 'unit/IntranetTestSuite.php';
-require_once 'functional/FunctionalTestSuite.php';
 
 /**
  * Static test suite.
@@ -17,10 +16,7 @@ class AllTests extends PHPUnit_Framework_TestSuite {
 	 */
 	public function __construct() {
 		$this->setName ( 'AllTests' );
-		
 		$this->addTestSuite ( 'IntranetTestSuite' );		
-		$this->addTestSuite ( 'FunctionalTestSuite' );
-	
 	}
 	
 	/**
