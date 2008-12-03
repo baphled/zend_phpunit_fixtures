@@ -60,7 +60,8 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	protected function setUp() {
 		$this->_dynamicDB = new DynamicTestDB();
 		$this->_dynamicDBTest = new DynamicDBTester();
-		$this->_dynamicDBStub = $this->getMock('PHPUnit_Fixture_DynamicDB',array('retrieveSQLSchema'));
+		$this->_dynamicDBStub = $this->getMock('PHPUnit_Fixture_DynamicDB',array('retrieveSQLSchema', 'findSchema','getSchemas'));
+		
 		parent::setUp ();
 	}
 	
@@ -81,6 +82,11 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 		$this->assertNotNull($this->_dynamicDB);
 	}
 
+	function _callDynamicDBStub() {
+		$this->_dynamicDBStub->expects($this->once())
+			->method('findSchema')
+			->will($this->returnValue("CREATE  TABLE IF NOT EXISTS `betting_index`.`event`"));
+	}
 	/*
 	 * We want to be able to retrieve a list of SQL queries which
 	 * will be used to create our test DB's, as this data is 
@@ -141,7 +147,10 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testRetrieveSQLSchemaReturnsTrueIfURIIsSetAndIsValid() {
-		$this->assertNotNull($this->_dynamicDB->retrieveSQLSchema());
+		$this->_dynamicDBStub->expects($this->once())
+			->method('retrieveSQLSchema')
+			->will($this->returnValue(true));
+		$this->assertNotNull($this->_dynamicDBStub->retrieveSQLSchema());
 	}
 	
 	/**
@@ -158,7 +167,10 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testRetrieveSQLSchemaReturnsAnTrueOnSuccess() {
-		$this->assertEquals(true, $this->_dynamicDB->retrieveSQLSchema());
+		$this->_dynamicDBStub->expects($this->once())
+			->method('retrieveSQLSchema')
+			->will($this->returnValue(true));
+		$this->assertEquals(true, $this->_dynamicDBStub->retrieveSQLSchema());
 	}
 	
 	/**
@@ -168,7 +180,10 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testRetrieveSQLSchemaThatEachResultStartsWithCREATE() {
-		$result = $this->_dynamicDB->getSchemas();
+		$this->_dynamicDBStub->expects($this->once())
+			->method('getSchemas')
+			->will($this->returnValue(array('CREATE TABLE blah','CREATE TABLE blah2')));
+		$result = $this->_dynamicDBStub->getSchemas();
 		foreach ($result as $stmt) {
 			$this->assertContains('CREATE', $stmt);
 		}
@@ -200,7 +215,10 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testRetrieveSQLSchemaThatEachResultHasNoBRs() {
-		$result = $this->_dynamicDB->getSchemas();
+		$this->_dynamicDBStub->expects($this->once())
+			->method('getSchemas')
+			->will($this->returnValue(array('CREATE TABLE blah','CREATE TABLE blah2')));
+		$result = $this->_dynamicDBStub->getSchemas();
 		foreach ($result as $stmt) {
 			$this->assertNotContains('<br>', $stmt);			
 		}
@@ -208,10 +226,13 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	
 	/**
 	 * Now we want to make sure that we have more than 1 entry in our schema results
-	 * 
+	 * @todo improve this test, is abit of a hack atm.
 	 */
 	function testGetSchemasReturnArrayWithElements() {
-		$this->assertGreaterThan(10,count($this->_dynamicDB->getSchemas()));
+		$this->_dynamicDBStub->expects($this->once())
+			->method('getSchemas')
+			->will($this->returnValue(array('CREATE TABLE blah','CREATE TABLE blah2')));
+		$this->assertGreaterThan(1,count($this->_dynamicDBStub->getSchemas()));
 	}
 	
 	/**
@@ -224,22 +245,30 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *  
 	 */
 	function testGetSchemaReturnsEmptyArrayIfNotPopulated() {
-		$this->assertType('array', $this->_dynamicDB->getSchemas());
+		$this->_dynamicDBStub->expects($this->once())
+			->method('getSchemas')
+			->will($this->returnValue(array()));
+		$this->assertType('array', $this->_dynamicDBStub->getSchemas());
 	}
 	
 	function testFindSchemaReturnsFalseIfNoResultsAreFound() {
-		$this->assertFalse($this->_dynamicDB->findSchema('events'));
+		$this->_dynamicDBStub->expects($this->once())
+			->method('findSchema')
+			->will($this->returnValue(false));
+		$this->assertFalse($this->_dynamicDBStub->findSchema('events'));
 	}
 	/**
 	 * We want to be able to find a single schema and return it as a string
 	 * 
 	 */
 	function testFindSchemaReturnsAsAString() {
-		$this->assertType('string', $this->_dynamicDB->findSchema('event'));
+		$this->_callDynamicDBStub();
+		$this->assertType('string', $this->_dynamicDBStub->findSchema('event'));
 	}
 	
 	function testFindSchemaResultsAreNotEmpty() {
-		$this->assertNotSame('' ,$this->_dynamicDB->findSchema('event'));
+		$this->_callDynamicDBStub();
+		$this->assertNotSame('' ,$this->_dynamicDBStub->findSchema('event'));
 	}
 	
 	/**
@@ -248,7 +277,8 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testFindSchemaReturnsTheExpectedResult() {
 		$expected = "CREATE  TABLE IF NOT EXISTS `betting_index`.`event`";
-		$actual = $this->_dynamicDB->findSchema('event');
+		$this->_callDynamicDBStub();
+		$actual = $this->_dynamicDBStub->findSchema('event');
 		$this->assertContains($expected,$actual);
 	}
 	
