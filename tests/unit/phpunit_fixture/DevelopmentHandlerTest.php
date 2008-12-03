@@ -54,6 +54,7 @@ class DevelopmentHandlerTest extends PHPUnit_Framework_TestCase {
 		$this->_devHandler = null;
 		$this->_testFix = null;
 		$this->_blankFix = null;
+		$this->_devHandlerStub = null;
 	}
 	
 	function testConstructor() {
