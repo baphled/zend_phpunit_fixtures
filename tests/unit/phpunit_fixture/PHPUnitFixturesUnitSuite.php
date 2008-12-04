@@ -7,6 +7,7 @@
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
+ * @subpackage TestSuite_PHPUnitFixturesUnitSuite
  *
  * $LastChangedBy$
  * 

@@ -7,7 +7,7 @@
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
- * @subpackage TestSuite_PHPUnit_Fixture_DB
+ * @subpackage TestSuite_Fixture_DB
  *
  * Date: Sep 23, 2008
  * Basically gutted PHPUnit_Fixture's test case to refactor

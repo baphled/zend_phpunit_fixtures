@@ -7,7 +7,8 @@
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
- *
+ * @subpackage TestSuite_Fixtures
+ * 
  */
 class InvalidFieldTypeFixture extends PHPUnit_Fixture_DB {
 	public $_table = 'snooker';
