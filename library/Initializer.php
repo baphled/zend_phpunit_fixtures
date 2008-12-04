@@ -1,12 +1,22 @@
 <?php
 /**
- * My new Zend Framework project
+ * Initializer
+ * 
+ * Extension of ZF initalizer, taken out of applications and placed here
+ * configuration depndeing on the type of environment.
+ * (test, development, production, etc.)
+ *  
+ * This can be used to configure environment variables, databases, 
+ * layouts, routers, helpers and more.
  * 
  * @author Ekerete Akpan <ekeretex@gmail.com>
  * @author Yomi Akindayini <yomi@boodah.net>
  * @version $Id: Initializer.php 385 2008-12-01 13:44:44Z dean $
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
+ *
+ * @todo Determine whether this really belongs here or in tests/libs
+ *
  */
 require_once realpath(dirname(__FILE__) .'/../library/Zend/ConfigSettings.php');
 require_once 'Zend/Controller/Plugin/Abstract.php';
@@ -14,15 +24,6 @@ require_once 'Zend/Controller/Front.php';
 require_once 'Zend/Controller/Request/Abstract.php';
 require_once 'Zend/Controller/Action/HelperBroker.php';
 
-/**
- * 
- * Initializes configuration depndeing on the type of environment 
- * (test, development, production, etc.)
- *  
- * This can be used to configure environment variables, databases, 
- * layouts, routers, helpers and more
- *   
- */
 class Initializer extends Zend_Controller_Plugin_Abstract {
     /**
      * @var Zend_Config
@@ -71,7 +72,7 @@ class Initializer extends Zend_Controller_Plugin_Abstract {
     private function _initErrorReporting() {
     	Ibetx_SetupInit::initErrorReporting();
     	// set the test environment parameters
-        if ('local' === Ibetx_SetupInit::$_env) {
+        if ('local' === Zend_SetupInit::$_env) {
 			$this->_front->throwExceptions(true);  
         }
     }
