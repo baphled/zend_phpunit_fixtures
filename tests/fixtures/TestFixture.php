@@ -9,6 +9,7 @@
  * @version $Id$
  * @copyright 2008
  * @subpackage TestSuite
+ * @package Zend_PHPUnit_Scaffolding
  *
  * $LastChangedBy$
  * Date: 01/09/2008

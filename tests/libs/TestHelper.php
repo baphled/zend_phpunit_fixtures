@@ -1,4 +1,12 @@
 <?php 
+/**
+ * @author Yomi (baphled) Akindayini 2008
+ * @version $Id$
+ * @copyright 2008
+ * @package Zend_PHPUnit_Scaffolding
+ * @subpackage TestHelper
+ * 
+ */
 set_include_path('.' . PATH_SEPARATOR .
 				dirname(__FILE__) .  PATH_SEPARATOR .
 				realpath(dirname(__FILE__) . '/../libs' . PATH_SEPARATOR) .

@@ -1,5 +1,15 @@
 <?php
 require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
+/**
+ * InvalidFixture
+ * 
+ * 
+ * @author Yomi (baphled) Akindayini 2008
+ * @version $Id$
+ * @copyright 2008
+ * @package Zend_PHPUnit_Scaffolding
+ *
+ */
 
 /**
  * Used to fake our thrown Zend_Exception 
