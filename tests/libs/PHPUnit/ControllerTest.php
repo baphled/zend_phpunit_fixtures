@@ -1,9 +1,9 @@
 <?php
 /**
  * 
- * ControllerTest instantiate the Ibetx Api Client
+ * ControllerTest
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright GPL 2008
  * @package Zend_PHPUnit_Scaffolding
@@ -13,10 +13,8 @@
 
 class PHPUnit_ControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	
-	protected $_client;
-	
 	/**
-	 * instantiate the Api Client
+	 * Construct our Controller
 	 *
 	 */
 	public function __construct() {

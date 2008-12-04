@@ -6,7 +6,7 @@
  * allowing us to pull specific bits of data, auto-generate
  * new test data & create and insert pre-stated data.
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
