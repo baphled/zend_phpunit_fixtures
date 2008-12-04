@@ -5,7 +5,7 @@
  * Basic little class that handles all our config settings, we basically
  * call each method when we need setup a particular setting.
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
