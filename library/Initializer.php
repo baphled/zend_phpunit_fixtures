@@ -5,7 +5,7 @@
  * @author Ekerete Akpan <ekerete@ibetx.com>
  * @author Yomi Akindayini <yomi@ibetx.com>
  * @version $Id: Initializer.php 385 2008-12-01 13:44:44Z dean $
- * @copyright ibetX Ltd 2008
+ * @copyright 2008
  * @package IX9
  */
 require_once realpath(dirname(__FILE__) .'/../library/Zend/ConfigSettings.php');
