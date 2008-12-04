@@ -6,7 +6,7 @@
  * based fixture data. Here we can deal with the actual
  * setting up and cleaning of our test data and its tables.
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id: DB.php 258 2008-10-31 13:37:10Z yomi $
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding

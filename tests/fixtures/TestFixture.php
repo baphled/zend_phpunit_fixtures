@@ -5,7 +5,7 @@
  * Test Fixture layout, will be used to determine the functionality
  * and integrity of the fixturemanager and fixture class.
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding

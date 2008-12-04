@@ -9,7 +9,7 @@
  * To get running you will need to configure settings.ini with corresponding
  * DB credentials.
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding

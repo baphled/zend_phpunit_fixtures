@@ -7,7 +7,7 @@
  * created this class to deal with the basic creation
  * of our DB and manipulation of test data.
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding

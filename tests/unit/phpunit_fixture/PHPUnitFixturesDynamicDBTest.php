@@ -4,7 +4,7 @@ require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
  * InvalidFixture
  * 
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @subpackage TestSuite_Fixture_DynamicDB

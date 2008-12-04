@@ -6,7 +6,7 @@
  * Helps to check our fixture data types, this can help us
  * not only input data into a DB but also emulate a DB response.
  * 
- * @author Yomi (baphled) Akindayini 2008
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding

@@ -2,8 +2,8 @@
 /**
  * My new Zend Framework project
  * 
- * @author Ekerete Akpan <ekerete@ibetx.com>
- * @author Yomi Akindayini <yomi@ibetx.com>
+ * @author Ekerete Akpan <ekeretex@gmail.com>
+ * @author Yomi Akindayini <yomi@boodah.net>
  * @version $Id: Initializer.php 385 2008-12-01 13:44:44Z dean $
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
