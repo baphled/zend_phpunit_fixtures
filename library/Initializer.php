@@ -6,7 +6,7 @@
  * @author Yomi Akindayini <yomi@ibetx.com>
  * @version $Id: Initializer.php 385 2008-12-01 13:44:44Z dean $
  * @copyright 2008
- * @package IX9
+ * @package Zend_PHPUnit_Scaffolding
  */
 require_once realpath(dirname(__FILE__) .'/../library/Zend/ConfigSettings.php');
 require_once 'Zend/Controller/Plugin/Abstract.php';

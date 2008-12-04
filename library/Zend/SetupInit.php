@@ -8,7 +8,7 @@
  * @author Yomi (baphled) Akindayini <yomi@boodah.net>
  * @copyright 2008
  * @version $Id$
- * @package IX9
+ * @package Zend_PHPUnit_Scaffolding
  *   
  */
 
