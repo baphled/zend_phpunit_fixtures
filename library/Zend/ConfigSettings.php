@@ -79,7 +79,7 @@ class Zend_ConfigSettings {
     static public function setUpConfigEnv($env='development', $path='/../../configs', $file='/settings.ini') {
         $configPath = self::_setPath($path, $file);        
         self::$_config = new Zend_Config_Ini( $configPath, $env);
-        Zend_Registry::set('general', self::$_config);
+        Zend_Registry::set($env, self::$_config);
     }
     
     /**
