@@ -13,10 +13,28 @@ Generate test data on the fly.
 DB related fixtures auto clean the DB after each test.
 Integration with MySQL workbench to allow for automatic population of development DB structure.
 
+Breakdown
+---------
+PHPUnit_Fixtures
+
+Basic fixture handler, used for creating test data that does not interact with a DB. With this object we are able to create basic fixtures that we can use for dummy data with our test cases. Each piece of test data can have an alias ('ALIAS') with the aliases name as the value, doing so will allow us to use the PHPUnit_Fixtures::find($aliasName) which will retrieve the desired fixture.
+
+PHPUnit_Fixtures_DB
+
+Has the same functionality as PHPUnit_Fixtures but used specifically for DB centric tests, DB test data will be added to our '_test' DB, and cleaned up (truncated) on each test case, to make sure that we have the expected data.
+
+PHPUnit_Fixtures_DynamicDB
+
+Has the same functionality as PHPUnit_Fixture_DB, with the added functionality of being able to create tables setup my MySQL Workbench. With an child object of this class we are able to specify retrieving all schema or a specific on (denoted by the schema table name).
+
+DevelopmentHandler
+
+Used to handle our development environments, there are times when we want to quickly place test data on our staging DB for functionality testing and the such like, this class along with one of our PHPUnit_Fixtures, will easily allow us to populate this environment with the data we have been using for our unit tests, making it quicker to migrate test data from one place to another.
+
 Install notes
 -------------
 Import files into current Zend Framework projects, must input configuration settings a initially setup development DB, PHPUnitFixtures will deal with creating the tables and inserting the data.
 
 If using MySQL Workbench it is possible to add the link to settings.ini & run PHPUnit_Fixtures_DynamicDB::getSchema('schemaName').
 
-When running the test suites, please not that some DB & MySQL Workbench critical tests will fail if settings are not correctly imputted into settings.ini
+When running the test suites, please not that you'll see MySQL error if DB credentials are not submitted to the settings.ini file, for the MySQL Workbench to work you must have a working copy of it & store the location of the system within the config file.
