@@ -119,11 +119,11 @@ class FixturesManager {
      */
 	public function __construct($env=null) {
 		if (null === $env) {
-		  ConfigSettings::setUpConfig();
+		  Zend_ConfigSettings::setUpConfig();
 		} else {
-			ConfigSettings::setUpConfigEnv($env);
+			Zend_ConfigSettings::setUpConfigEnv($env);
 		}
-		ConfigSettings::setUpDBAdapter();
+		Zend_ConfigSettings::setUpDBAdapter();
 		$this->_db = Zend_Registry::get('db');
 		$this->_allowedSQLCmds = array('CREATE','INSERT INTO');
 	}
@@ -504,13 +504,13 @@ class FixturesManager {
 	 */
 	public function loadTable($table) {
 		// get the development database
-		ConfigSettings::setUpConfigEnv('development');
-		ConfigSettings::setUpDBAdapter();		
+		Zend_ConfigSettings::setUpConfigEnv('development');
+		Zend_ConfigSettings::setUpDBAdapter();		
 		$devDb = Zend_Registry::get('db');
 		
 		// get the test database
-		ConfigSettings::setUpConfigEnv('local');
-		ConfigSettings::setUpDBAdapter();		
+		Zend_ConfigSettings::setUpConfigEnv('local');
+		Zend_ConfigSettings::setUpDBAdapter();		
 		$testDb = Zend_Registry::get('db');		
 				
 		$stmt = $devDb->query("SELECT * FROM {$table}");

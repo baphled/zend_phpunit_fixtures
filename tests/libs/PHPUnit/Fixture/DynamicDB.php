@@ -68,7 +68,7 @@ abstract class PHPUnit_Fixture_DynamicDB extends PHPUnit_Fixture {
 		} else {
 			$this->_fixMan = new FixturesManager();
 		}
-		ConfigSettings::setUpConfig();
+		Zend_ConfigSettings::setUpConfig();
 		$this->_general = Zend_Registry::get('general');
 	}
 	

@@ -101,7 +101,7 @@ abstract class PHPUnit_Fixture {
 				}
 			}
 		}
-		$tmz = ConfigSettings::setupTimeZone();
+		$tmz = Zend_ConfigSettings::setupTimeZone();
 		date_default_timezone_set($tmz);
 	}
 
