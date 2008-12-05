@@ -117,11 +117,7 @@ class Initializer extends Zend_Controller_Plugin_Abstract {
      */
     public function initView()
     {
-		$view = new Ibetx_Template_View();
-		$viewRenderer = new Zend_Controller_Action_Helper_ViewRenderer();
-		$viewRenderer->setView($view)
-						->setViewBasePathSpec(":moduleDir/views/scripts");
-		Zend_Controller_Action_HelperBroker::addHelper($viewRenderer);    	
+		// Initialise custom views here   	
     }
 
     /**
