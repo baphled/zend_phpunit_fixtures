@@ -1,8 +1,7 @@
 <?php
-require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
-/**
- * InvalidFixture
- * 
+
+/*
+ * InvalidFixture 
  * 
  * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
@@ -16,6 +15,8 @@ require_once dirname(__FILE__) .'/../../libs/TestHelper.php';
  * Used to fake our thrown Zend_Exception 
  * being returned by retrieveSQLSchema
  *
+ * @subpackage TestSuite_Fixture_DynamicDB
+ * @package Zend_PHPUnit_Scaffolding
  */
 class DynamicDBTester extends PHPUnit_Fixture_DynamicDB {
 	
@@ -33,11 +34,17 @@ class DynamicDBTester extends PHPUnit_Fixture_DynamicDB {
  * As PHPUnit_Fixture_DynamicDB, we'll use this to test
  * the class.
  *
+ * @subpackage TestSuite_Fixture_DynamicDB
+ * @package Zend_PHPUnit_Scaffolding
+ *
  */
 class DynamicTestDB extends PHPUnit_Fixture_DynamicDB {}
 
 /**
  * PHPUnit_Fixture_Transactions test case.
+ *
+ * @subpackage TestSuite_Fixture_DynamicDB
+ * @package Zend_PHPUnit_Scaffolding
  * 
  */
 class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {

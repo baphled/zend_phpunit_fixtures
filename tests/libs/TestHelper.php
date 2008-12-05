@@ -1,18 +1,25 @@
-<?php 
-/**
- * @author Yomi (baphled) Akindayini 2008
+v<?php
+/*
+ * TestHelper
+ *
+ * Used to build our include paths linked into ZendFramework.
+ * For each path added to the application we need to add its
+ * path here, so that our test cases can assess them accordingly.
+ *
+ * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
  * @version $Id$
- * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
- * @subpackage TestHelper
- * 
- */
+ * @subpackage TestSuite_TestHelper
+ *
+ * @todo Can make this a procedure call, which can loop through ZF, picking up each of the relvant directories
+ *
+*/
+
 set_include_path('.' . PATH_SEPARATOR .
-				dirname(__FILE__) .  PATH_SEPARATOR .
-				realpath(dirname(__FILE__) . '/../libs' . PATH_SEPARATOR) .
-				realpath(dirname(__FILE__) . '/../fixtures/' . PATH_SEPARATOR) .
-				realpath(dirname(__FILE__) . '/../../application/default/models/' . PATH_SEPARATOR) .
-				realpath(dirname(__FILE__) . '/../../library/' . PATH_SEPARATOR) .
-				get_include_path());
+	dirname(__FILE__) .  PATH_SEPARATOR .
+	dirname(__FILE__) . '/../fixtures' . PATH_SEPARATOR .
+	dirname(__FILE__) . '/../../application/default/models/' . PATH_SEPARATOR .
+	dirname(__FILE__) . '/../../library/' . PATH_SEPARATOR .
+	get_include_path());
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload();
