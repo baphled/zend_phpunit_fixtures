@@ -60,18 +60,18 @@ class Initializer extends Zend_Controller_Plugin_Abstract {
             $root = realpath(dirname(__FILE__) . '/../');
         }
         $this->_root = $root;
-        Ibetx_SetupInit::setupInit();
+        Zend_SetupInit::setupInit();
         $this->_front = Zend_Controller_Front::getInstance();
         $this->_initErrorReporting();
-		$tmz = Ibetx_ConfigSettings::setupTimeZone();
+		$tmz = Zend_ConfigSettings::setupTimeZone();
 		date_default_timezone_set($tmz);
 
     }
 
     private function _initErrorReporting() {
-    	Ibetx_SetupInit::initErrorReporting();
+    	Zend_SetupInit::initErrorReporting();
     	// set the test environment parameters
-        if ('local' === Ibetx_SetupInit::$_env) {
+        if ('local' === Zend_SetupInit::$_env) {
 			$this->_front->throwExceptions(true);  
         }
     }
