@@ -36,7 +36,7 @@ class FixtureDBTest extends PHPUnit_Framework_TestCase {
 	
 	public function setUp() {
 		parent::setUp ();
-	        $this->_testFix = new TestFixture();
+	    $this->_testFix = new DbTestFixture();
 		$this->_emptyFix = new EmptyFixture();
 		$this->_FixtureStub = $this->getMock('TestFixture',array('populate','truncate','setup','drop'));
 	}

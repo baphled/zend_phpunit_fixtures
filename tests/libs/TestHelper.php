@@ -17,7 +17,7 @@
 
 set_include_path('.' . PATH_SEPARATOR .
 	dirname(__FILE__) .  PATH_SEPARATOR .
-	dirname(__FILE__) . '/../fixtures' . PATH_SEPARATOR .
+	dirname(__FILE__) . '/../fixtures/' . PATH_SEPARATOR .
 	dirname(__FILE__) . '/../../application/default/models/' . PATH_SEPARATOR .
 	dirname(__FILE__) . '/../../init/' . PATH_SEPARATOR .
 	get_include_path());

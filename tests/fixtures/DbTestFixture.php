@@ -1,6 +1,6 @@
 <?php
 /**
- * TestFixture
+ * DbBasedTestFixture
  * 
  * Test Fixture layout, will be used to determine the functionality
  * and integrity of the fixturemanager and fixture class.
@@ -19,7 +19,7 @@
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
 
-class TestFixture extends PHPUnit_Fixture {
+class DbTestFixture extends PHPUnit_Fixture_DB {
 	protected $_table = 'apples';
 	
 	protected $_fields = array(
