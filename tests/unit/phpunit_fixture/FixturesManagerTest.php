@@ -117,6 +117,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$this->_fixWrap = new FixturesManWrapper();
 		$this->_dummyDynamic = new DummyDynamicFixture('development');
 		$this->_testFixture = new TestFixture();
+		$this->_dbTestFixture = new DbTestFixture();
 		$this->_invalidFixture = new InvalidFieldTypeFixture();
 		$this->_fixManStub = $this->getMock('FixtureManager',array('setupTable','buildSchema', 'truncateTable', 'tablesPresent', 'tableExists', 'insertTestData', 'runFixtureQuery','dropTable','dropTables','fixtureMethodCheck'));
 	}
@@ -132,6 +133,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$this->_fixMan = null;
 		$this->_fixWrap = null;
 		$this->_fixManStub = null;
+		$this->_dbTestFixture = null;
 		$this->_testFixture = null;
 		$this->_invalidFixture = null;
        parent::tearDown ();
@@ -895,7 +897,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testFixureMethodCheckThrowsExceptionIfInvalidCall() {
         $this->setExpectedException('ErrorException');
-        $this->_fixturesManager->fixtureMethodCheck('blah',$this->_testFixture);
+        $this->_fixturesManager->fixtureMethodCheck('blah', $this->_dbTestFixture);
     }
     
     function testFixtureMethodCheckThrowsExceptionIfFixtureIsNotOfExpectedType() {
