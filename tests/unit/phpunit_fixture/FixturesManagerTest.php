@@ -86,16 +86,6 @@ class DummyDynamicFixture extends PHPUnit_Fixture_DynamicDB {
 	}
 }
 
-class FixManExceptions extends FixturesManager {
-	function runFixtureQuery($query) {
-		throw new PDOException('Error');
-	}
-
-	function constructInsertQuery($insert,$name) {
-		throw new PDOException('Error');
-	}
-}
-
 class FixturesManWrapper extends FixturesManager {
 	function runFixtureQuery($query) {
 		$result = $this->_runFixtureQuery($query);
@@ -155,7 +145,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	public function setUp() {
 		parent::setUp ();
 		$this->_fixturesManager = new FixturesManager();
-		$this->_fixManExceptions = new FixManExceptions();
 		$this->_fixWrap = new FixturesManWrapper();
 		$this->_dummyDynamic = new DummyDynamicFixture('development');
 		$this->_testFixture = new TestFixture();
@@ -170,7 +159,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	    	}
 	}
 	catch(Zend_Db_Adapter_Exception $e) {}
-		$this->_fixManExceptions = null;
 		$this->_fixturesManager = null;
 		$this->_fixMan = null;
 		$this->_fixWrap = null;
@@ -687,8 +675,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     function testConvertInsertQueryThrowsExceptionIfTableNameIsAnArray() {
     	$table = array();
         $insertData = $this->_testFixture->get('id',1);
+        $this->_fixManStub->expects($this->once())
+			->method('insertTestData')
+			->will($this->throwException(new PDOException));
         $this->setExpectedException('PDOException');
-        $this->_fixManExceptions->constructInsertQuery($insertData,$table);
+        $this->_fixManStub->insertTestData($insertData,$table);
     }
     
 	/**
