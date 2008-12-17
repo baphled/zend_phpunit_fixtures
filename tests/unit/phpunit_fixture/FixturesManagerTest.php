@@ -99,10 +99,6 @@ class FixturesManWrapper extends FixturesManager {
 			return "INSERT INTO pool(id, apple_id, color, name, created, date, modified) VALUES ( 1, 2, 'Red 1', 'Red Apple 1', '2006-11-22 10:38:58', '1951-01-04', '2006-12-01 13:31:26');";
 		}
 	}
-
-	function insertTestData($data, $name) {
-		throw new PDOException('Error');
-	}
 }
 
 class FixturesManagerTest extends PHPUnit_Framework_TestCase {
@@ -774,8 +770,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      */
     function testInsertTestDataThrowsExceptionWhenTableDoesNotExist() {
     	$this->setExpectedException('PDOException');
+    	$this->_fixManStub->expects($this->once())
+			->method('insertTestData')
+			->will($this->throwException(new PDOException));
         $testData = $this->_testFixture->get();
-        $this->_fixWrap->insertTestData($testData,'plum');
+        $this->_fixManStub->insertTestData($testData,'plum');
     }
     
     /**
@@ -895,28 +894,18 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      *
      */
     function testFixureMethodCheckThrowsExceptionIfInvalidCall() {
-    	$this->_fixManStub->expects($this->once())
-			->method('fixtureMethodCheck')
-			->will($this->throwException(new ErrorException));
         $this->setExpectedException('ErrorException');
-        $this->_fixManStub->fixtureMethodCheck('blah',$this->_testFixture);
+        $this->_fixturesManager->fixtureMethodCheck('blah',$this->_testFixture);
     }
     
     function testFixtureMethodCheckThrowsExceptionIfFixtureIsNotOfExpectedType() {
-    	$this->_fixManStub->expects($this->once())
-			->method('fixtureMethodCheck')
-			->will($this->throwException(new ErrorException));
     	$this->setExpectedException('ErrorException');
-    	$this->_fixManStub->fixtureMethodCheck('drop','blah');
+    	$this->_fixturesManager->fixtureMethodCheck('drop','blah');
     }
     
     function testDropTableThrowsExceptionIfTableDoesNotExist() {
-    	$this->setExpectedException('PDOException');
-    	$this->_fixManStub->expects($this->once())
-			->method('dropTable')
-			->will($this->throwException(new ErrorException));
-    	$this->setExpectedException('ErrorException');
-    	$this->_fixManStub->dropTable('chicken');
+    	$this->setExpectedException('Zend_Db_Adapter_Exception');
+    	$this->_fixturesManager->dropTable('chicken');
     }
     
     /**
