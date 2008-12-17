@@ -22,6 +22,7 @@ set_include_path('.' . PATH_SEPARATOR .
 	dirname(__FILE__) . '/../../init/' . PATH_SEPARATOR .
 	dirname(__FILE__) . '/../../library/' . PATH_SEPARATOR .
 	dirname(__FILE__) . '/../../application/' . PATH_SEPARATOR .
+		dirname(__FILE__) . '/../unit/' . PATH_SEPARATOR .
 	get_include_path());
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload();
