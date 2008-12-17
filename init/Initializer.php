@@ -18,7 +18,6 @@
  * @todo Determine whether this really belongs here or in tests/libs
  *
  */
-require_once realpath(dirname(__FILE__) .'/../library/Zend/ConfigSettings.php');
 require_once 'Zend/Controller/Plugin/Abstract.php';
 require_once 'Zend/Controller/Front.php';
 require_once 'Zend/Controller/Request/Abstract.php';
