@@ -170,14 +170,14 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	    	}
 	}
 	catch(Zend_Db_Adapter_Exception $e) {}
-	$this->_fixManExceptions = null;
-        $this->_fixturesManager = null;
-        $this->_fixMan = null;
-	$this->_fixWrap = null;
-	$this->_fixManStub = null;
-        $this->_testFixture = null;
-        $this->_invalidFixture = null;
-        parent::tearDown ();
+		$this->_fixManExceptions = null;
+		$this->_fixturesManager = null;
+		$this->_fixMan = null;
+		$this->_fixWrap = null;
+		$this->_fixManStub = null;
+		$this->_testFixture = null;
+		$this->_invalidFixture = null;
+       parent::tearDown ();
     }
 	
     /*
@@ -192,12 +192,12 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      * 
      */
     private function _setUpTestTableStructure($table) {
-	try {
-	        $fixture = $this->_testFixture->getFields();
-        	$this->_fixturesManager->setupTable($fixture,$table);
-	} catch(PDOException $e) {
-		$e->getMessage();
-	}
+		try {
+		        $fixture = $this->_testFixture->getFields();
+	        	$this->_fixturesManager->setupTable($fixture,$table);
+		} catch(PDOException $e) {
+			//$e->getMessage();
+		}
     }
 	
     private function _getGenericQuery($table) {
@@ -673,8 +673,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testConvertInsertQueryThrowsExceptionIfParamNotAnArray() {
 		$insertData = '';
+		$this->_fixManStub->expects($this->once())
+			->method('insertTestData')
+			->will($this->throwException(new PDOException));
 		$this->setExpectedException('PDOException');
-		$this->_fixManExceptions->constructInsertQuery($insertData,'coffee');
+		$this->_fixManStub->insertTestData($insertData,'coffee');
 	}
 	
 	/**
