@@ -926,7 +926,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     }
     
     function testGenSchemaReturnsFalseByDefault() {
-    	//$this->markTestIncomplete('Will be until the workbench has got a list of valid SQL statements.');
 		$this->_fixManStub->expects($this->once())
 			->method('buildSchema')
 			->will($this->returnValue(false));
