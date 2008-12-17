@@ -125,21 +125,6 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	
 	public function __construct() {
 		$this->setName ('FixturesManager Testcase');
-		
-		/*
-		 * For the moment we will only leave this here
-		 * eventually we will move to its own private
-		 * function.
-		 * 
-		 * @todo Is far from perfect, really want to
-		 *       specify how many times the method is
-		 *       run and what to return.
-		 * 
-		 */
-		$this->_stub = $this->getMock('FixturesManager',array('setupTable'));
-        $this->_stub->expects($this->any())
-                    ->method('setupTable')
-                    ->will($this->returnValue(TRUE));
 	}
 	
 	public function setUp() {
