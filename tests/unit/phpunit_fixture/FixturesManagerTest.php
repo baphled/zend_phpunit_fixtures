@@ -88,11 +88,7 @@ class DummyDynamicFixture extends PHPUnit_Fixture_DynamicDB {
 
 class FixturesManWrapper extends FixturesManager {
 	function runFixtureQuery($query) {
-		$result = $this->_runFixtureQuery($query);
-		if($result) {
-			return true;
-		}
-		return false;
+		$this->_runFixtureQuery($query);
 	}
 	
 	function constructInsertQuery($insert,$name) {
@@ -102,10 +98,6 @@ class FixturesManWrapper extends FixturesManager {
 		catch(Exception $e) {
 			return "INSERT INTO pool(id, apple_id, color, name, created, date, modified) VALUES ( 1, 2, 'Red 1', 'Red Apple 1', '2006-11-22 10:38:58', '1951-01-04', '2006-12-01 13:31:26');";
 		}
-	}
-	
-	function dropTable($name) {
-		throw new PDOException('Error');
 	}
 
 	function dropTables() {
@@ -134,7 +126,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$this->_dummyDynamic = new DummyDynamicFixture('development');
 		$this->_testFixture = new TestFixture();
 		$this->_invalidFixture = new InvalidFieldTypeFixture();
-		$this->_fixManStub = $this->getMock('FixtureManager',array('setupTable','buildSchema', 'truncateTable', 'tablesPresent', 'tableExists', 'insertTestData', 'runFixtureQuery','dropTables'));
+		$this->_fixManStub = $this->getMock('FixtureManager',array('setupTable','buildSchema', 'truncateTable', 'tablesPresent', 'tableExists', 'insertTestData', 'runFixtureQuery','dropTables','fixtureMethodCheck'));
 	}
 	
     public function tearDown() {
@@ -672,7 +664,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testConstructInsertQueryReturnsTrue() {
-		$data = $this->_testFixture->get('id',1);
+		$data = $this->_testFixture->find('first');
 		$result = $this->_fixWrap->constructInsertQuery($data,'snooker');
 		$this->assertContains('INSERT INTO', $result);
 	}
@@ -684,12 +676,17 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * rest of the functionality and make a big step.
 	 *
 	 */
-	function testConstructInsertQueryContainsEnclosingBrackets() {
-		$data = $this->_testFixture->get('id',1);
+	function testConstructInsertQueryContainsExpectedQueryString() {
+		$data = $this->_testFixture->find('first');
 		$result = $this->_fixWrap->constructInsertQuery($data,'pool');
 		$this->assertContains('VALUES ',$result);
 	}
 
+	function testConstructInsertQueryContainsEnclosingBrackets() {
+		$data = $this->_testFixture->find('first');
+		$result = $this->_fixWrap->constructInsertQuery($data,'pool');
+		$this->assertContains("INSERT INTO pool(id, apple_id, color, name, created, date, modified) VALUES ( 1, 2, 'Red 1', 'Red Apple 1', '2006-11-22 10:38:58', '1951-01-04', '2006-12-01 13:31:26');",$result);
+	}
 	
 	/**
 	 * We missed this whilst refactoring, we need to make sure that the 
@@ -899,18 +896,28 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
      *
      */
     function testFixureMethodCheckThrowsExceptionIfInvalidCall() {
+    	$this->_fixManStub->expects($this->once())
+			->method('fixtureMethodCheck')
+			->will($this->throwException(new ErrorException));
         $this->setExpectedException('ErrorException');
-        $this->_fixturesManager->fixtureMethodCheck('blah',$this->_testFixture);
+        $this->_fixManStub->fixtureMethodCheck('blah',$this->_testFixture);
     }
     
     function testFixtureMethodCheckThrowsExceptionIfFixtureIsNotOfExpectedType() {
+    	$this->_fixManStub->expects($this->once())
+			->method('fixtureMethodCheck')
+			->will($this->throwException(new ErrorException));
     	$this->setExpectedException('ErrorException');
-    	$this->_fixturesManager->fixtureMethodCheck('drop','blah');
+    	$this->_fixManStub->fixtureMethodCheck('drop','blah');
     }
     
     function testDropTableThrowsExceptionIfTableDoesNotExist() {
     	$this->setExpectedException('PDOException');
-    	$this->_fixWrap->dropTable('chicken');
+    	$this->_fixManStub->expects($this->once())
+			->method('dropTable')
+			->will($this->throwException(new ErrorException));
+    	$this->setExpectedException('ErrorException');
+    	$this->_fixManStub->dropTable('chicken');
     }
     
     /**
@@ -930,9 +937,9 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     
     function testGenSchemaReturnsFalseByDefault() {
     	//$this->markTestIncomplete('Will be until the workbench has got a list of valid SQL statements.');
-	$this->_fixManStub->expects($this->once())
-		->method('buildSchema')
-		->will($this->returnValue(false));
+		$this->_fixManStub->expects($this->once())
+			->method('buildSchema')
+			->will($this->returnValue(false));
     	$this->assertFalse($this->_fixManStub->buildSchema($this->_dummyDynamic));
     }
     
