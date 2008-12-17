@@ -100,10 +100,6 @@ class FixturesManWrapper extends FixturesManager {
 		}
 	}
 
-	function dropTables() {
-		throw new ErrorException('Error');
-	}
-
 	function insertTestData($data, $name) {
 		throw new PDOException('Error');
 	}
@@ -126,7 +122,7 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 		$this->_dummyDynamic = new DummyDynamicFixture('development');
 		$this->_testFixture = new TestFixture();
 		$this->_invalidFixture = new InvalidFieldTypeFixture();
-		$this->_fixManStub = $this->getMock('FixtureManager',array('setupTable','buildSchema', 'truncateTable', 'tablesPresent', 'tableExists', 'insertTestData', 'runFixtureQuery','dropTables','fixtureMethodCheck'));
+		$this->_fixManStub = $this->getMock('FixtureManager',array('setupTable','buildSchema', 'truncateTable', 'tablesPresent', 'tableExists', 'insertTestData', 'runFixtureQuery','dropTable','dropTables','fixtureMethodCheck'));
 	}
 	
     public function tearDown() {
@@ -596,8 +592,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
 	 * 
 	 */
 	function testDropFixtureTableFixturesTableThrowExceptionIfFixturesTableDoesNotExist() {
-		$this->setExpectedException('ErrorException');
-		$this->_fixWrap->dropTables();
+		$this->_fixManStub->expects($this->once())
+			->method('dropTables')
+			->will($this->throwException(new ErrorException));
+    	$this->setExpectedException('ErrorException');
+		$this->_fixManStub->dropTables();
 	}
 	
 	/**
