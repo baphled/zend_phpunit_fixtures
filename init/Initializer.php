@@ -75,7 +75,14 @@ class Initializer extends Zend_Controller_Plugin_Abstract {
 			$this->_front->throwExceptions(true);  
         }
     }
-    
+	/**
+     * Gets the application root directory 
+     * 
+     * @return  string
+     */
+    public static function getAppRoot() {
+    	return realpath(dirname(__FILE__) . '/..') . '/';
+    }
     /**
      * Initialize environment
      * 
