@@ -10,7 +10,7 @@
  * layouts, routers, helpers and more.
  * 
  * @author Ekerete Akpan <ekeretex@gmail.com>
- * @author Yomi Akindayini <yomi@boodah.net>
+ * @author Yomi Colledge <yomi@boodah.net>
  * @version $Id: Initializer.php 385 2008-12-01 13:44:44Z dean $
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
@@ -75,14 +75,7 @@ class Initializer extends Zend_Controller_Plugin_Abstract {
 			$this->_front->throwExceptions(true);  
         }
     }
-	/**
-     * Gets the application root directory 
-     * 
-     * @return  string
-     */
-    public static function getAppRoot() {
-    	return realpath(dirname(__FILE__) . '/..') . '/';
-    }
+    
     /**
      * Initialize environment
      * 

@@ -5,7 +5,7 @@
  * 
  * Static methods used to handle all our generic initialisations.
  * 
- * @author Yomi (baphled) Akindayini <yomi@boodah.net>
+ * @author Yomi (baphled) Colledge <yomi@boodah.net>
  * @copyright 2008
  * @version $Id$
  * @package Zend_PHPUnit_Scaffolding

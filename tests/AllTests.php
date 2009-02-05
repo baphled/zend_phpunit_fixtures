@@ -4,7 +4,7 @@ require_once 'unit/IntranetTestSuite.php';
 
 /**
  * Static test suite.
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008-2009
  * @version $Id: IntranetTestSuite.php 193 2008-09-17 08:56:28Z yomi $
  * @package Zend_PHPUnit_Scaffolding
  * @subpackage TestSuite_AllTests
