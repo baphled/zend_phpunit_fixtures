@@ -7,7 +7,7 @@
  * PHPUnit_Fixture_DB, it seems to make sense to create functionalit that will
  * also create and populate our development DB.
  * 
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @subpackage TestSuite_Fixture_DynamicDB

@@ -3,7 +3,7 @@
  * Simple test suite, allowsing us to test our Fixtures specific
  * test cases.
  * 
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
@@ -19,6 +19,7 @@ require_once 'PHPUnitFixturesDynamicDBTest.php';
 require_once 'DevelopmentHandlerTest.php';
 require_once 'FixtureTest.php';
 require_once 'FixtureDBTest.php';
+require_once 'ZendConfigSettingsTest.php';
 
 require_once 'Zend/Loader.php';
 Zend_Loader::registerAutoload ();
@@ -39,6 +40,7 @@ class PHPUnitFixturesUnitSuite extends PHPUnit_Framework_TestSuite {
 		$this->addTestSuite ( 'FixtureTest' );
 		$this->addTestSuite ( 'PHPUnitFixturesDynamicDBTest' );
 		$this->addTestSuite ( 'FixtureDBTest' );
+		$this->addTestSuite ( 'ZendConfigSettingsTest' );
 	}
 	
 	/**

@@ -5,15 +5,17 @@
  *
  * Bootstrapper for Controller tests, integrates Initializer which determines the development environment.
  * 
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008-2009
+ * @author Nadjaha Wohedally <nadjaha@ibetx.com>
  * @version $Id$
- * @copyright GPL 2008
+ * @copyright GPL 2008-2009
  * @package Zend_PHPUnit_Scaffolding
  * @subpackage Zend_PHPUnit_ControllerTest
  *
  */
 
 class Zend_PHPUnit_ControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
+	
 	
 	/**
 	 * Construct our Controller.
@@ -24,6 +26,7 @@ class Zend_PHPUnit_ControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	 */
 	public function __construct() {
 		parent::__construct();
+		
 	}
 
 	/**
@@ -47,5 +50,23 @@ class Zend_PHPUnit_ControllerTest extends Zend_Test_PHPUnit_ControllerTestCase {
 	 */
 	public function appBootstrap() {		
 		$this->frontController->registerPlugin(new Initializer());		
+	}
+
+	/**
+	 * Dispatch helper function
+	 * 
+	 * Takes our data payload, location and method type & dispatches
+	 * to the appropriate location.
+	 *
+	 * @param Array 	$data		Parameters used to pass on to dispatch.
+	 * @param String 	$location	Location of the dispatch.
+	 * @param String 	$method		POST or GET.
+	 * 
+	 */
+	public function doDispatch($data,$location,$method='POST') {
+		$this->_request = $this->getRequest();
+		$this->_request->setMethod($method)
+		               ->setPost($data);
+		$this->dispatch($location);
 	}
 }

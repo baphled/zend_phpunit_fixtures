@@ -9,7 +9,7 @@
  * To get running you will need to configure settings.ini with corresponding
  * DB credentials.
  * 
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
@@ -906,8 +906,11 @@ class FixturesManagerTest extends PHPUnit_Framework_TestCase {
     }
     
     function testDropTableThrowsExceptionIfTableDoesNotExist() {
-    	$this->setExpectedException('Zend_Db_Adapter_Exception');
-    	$this->_fixturesManager->dropTable('chicken');
+    	$this->setExpectedException('PDOException');
+    	$this->_fixManStub->expects($this->once())
+			->method('dropTable')
+			->will($this->throwException(new PDOException));
+    	$this->_fixManStub->dropTable('chicken');
     }
     
     /**

@@ -3,7 +3,7 @@
 /*
  * InvalidFixture 
  * 
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @subpackage TestSuite_Fixture_DynamicDB
@@ -103,7 +103,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	function _callDynamicDBStub() {
 		$this->_dynamicDBStub->expects($this->once())
 			->method('findSchema')
-			->will($this->returnValue("CREATE  TABLE IF NOT EXISTS `betting_index`.`event`"));
+			->will($this->returnValue("CREATE TABLE IF NOT EXISTS `betting_index`.`event`"));
 	}
 	/*
 	 * We want to be able to retrieve a list of SQL queries which
@@ -177,7 +177,10 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 */
 	function testRetrieveSQLSchemaThrowExceptionIfURIConnectionTimeOut() {
 		$this->setExpectedException('Zend_Exception');
-		$this->_dynamicDB->retrieveSQLSchema('http://blah.com');
+		$this->_dynamicDBStub->expects($this->once())
+			->method('retrieveSQLSchema')
+			->will($this->throwException(new Zend_Exception));
+		$this->_dynamicDBStub->retrieveSQLSchema('http://blah.com');
 	}
 	
 	/**
@@ -294,7 +297,7 @@ class PHPUnitFixturesDynamicDBTest extends PHPUnit_Framework_TestCase {
 	 *
 	 */
 	function testFindSchemaReturnsTheExpectedResult() {
-		$expected = "CREATE  TABLE IF NOT EXISTS `betting_index`.`event`";
+		$expected = "CREATE TABLE IF NOT EXISTS `betting_index`.`event`";
 		$this->_callDynamicDBStub();
 		$actual = $this->_dynamicDBStub->findSchema('event');
 		$this->assertContains($expected,$actual);

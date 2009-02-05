@@ -3,7 +3,7 @@
  *
  * FixtureTestCase
  * 
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008
  * @version $Id$
  * @copyright 2008
  * @package Zend_PHPUnit_Scaffolding
@@ -931,7 +931,7 @@ class FixtureTest extends PHPUnit_Framework_TestCase {
 	function testGenerateMethodMakesRandomStringDoesNotDuplicate() {
 		$newData = array();
 		$duplicateCount = 0;
-		$loopNum = 1000;
+		$loopNum = 500;
 		for($i=0;$i<$loopNum;$i++) {
 			$newData[] = $this->_basicFix->generate();
 		}

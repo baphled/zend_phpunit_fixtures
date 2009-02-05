@@ -6,7 +6,7 @@
  * For each path added to the application we need to add its
  * path here, so that our test cases can assess them accordingly.
  *
- * @author Yomi (baphled) Akindayini <yomi@boodah.net> 2008
+ * @author Yomi (baphled) Colledge <yomi@boodah.net> 2008
  * @version $Id$
  * @package Zend_PHPUnit_Scaffolding
  * @subpackage TestSuite_TestHelper
